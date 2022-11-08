@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">TrelloCloneApp</string>
+    <string name="sign_up">SIGN UP</string>
 </resources>
