@@ -10,10 +10,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TrelloCloneApp">
         <activity
+            android:name=".SignInActivity"
+            android:label="Sign In"
+            android:exported="true" />
+        <activity
             android:name=".SignUpActivity"
             android:exported="true"
-            android:theme="@style/Theme.TrelloCloneApp.NoActionBar"
-            android:label="Sign Up"/>
+            android:label="Sign Up"
+            android:theme="@style/Theme.TrelloCloneApp.NoActionBar" />
         <activity
             android:name=".IntroActivity"
             android:exported="true"
