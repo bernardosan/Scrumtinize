@@ -1,5 +1,6 @@
 package com.example.trellocloneapp.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
@@ -38,7 +39,7 @@ class SignInActivity : BaseActivity() {
 
     private fun signInWithEmailAndPassword(){
 
-        val email: String = binding?.etEmail?.text.toString()
+        val email: String = binding?.etEmail?.text.toString().trim{ it <= ' '}
         val password: String = binding?.etPassword?.text.toString()
 
         if (validateForm(email, password)) {
@@ -51,6 +52,7 @@ class SignInActivity : BaseActivity() {
                         "${user?.email} logged in!",
                         Toast.LENGTH_SHORT
                     ).show()
+                    startActivity(Intent(this, MainActivity::class.java))
                 } else {
                     showErrorSnackBar("${task.exception!!.message}")
                 }

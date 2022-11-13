@@ -5,6 +5,8 @@ import android.text.TextUtils
 import android.widget.Toast
 import com.example.trellocloneapp.R
 import com.example.trellocloneapp.databinding.ActivitySignUpBinding
+import com.example.trellocloneapp.firebase.FirestoreClass
+import com.example.trellocloneapp.models.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 
@@ -52,9 +54,16 @@ class SignUpActivity : BaseActivity() {
         }
     }
 
+    fun userRegisteredSuccess(){
+        Toast.makeText(this, "Successfully registered", Toast.LENGTH_SHORT).show()
+        hideProgressDialog()
+        FirebaseAuth.getInstance().signOut()
+        finish()
+    }
+
     private fun registerUser(){
-        val name: String = binding?.etName?.text.toString()
-        val email: String = binding?.etEmail?.text.toString()
+        val name: String = binding?.etName?.text.toString().trim{ it <= ' '}
+        val email: String = binding?.etEmail?.text.toString().trim{ it <= ' '}
         val password: String = binding?.etPassword?.text.toString()
 
         if(validateForm(name, email, password)){
@@ -65,13 +74,8 @@ class SignUpActivity : BaseActivity() {
                     if (task.isSuccessful) {
                         val firebaseUser: FirebaseUser = task.result!!.user!!
                         val registeredEmail = firebaseUser.email!!
-                        Toast.makeText(
-                            this,
-                            "$name you have successfully registered the email address $registeredEmail",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        FirebaseAuth.getInstance().signOut()
-                        finish()
+                        val user = User(firebaseUser.uid, name, registeredEmail)
+                        FirestoreClass().registerUser(this, user)
                     } else {
                         showErrorSnackBar("${task.exception!!.message}")
                     }
