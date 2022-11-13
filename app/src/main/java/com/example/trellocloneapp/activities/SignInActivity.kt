@@ -6,6 +6,8 @@ import android.text.TextUtils
 import android.widget.Toast
 import com.example.trellocloneapp.R
 import com.example.trellocloneapp.databinding.ActivitySignInBinding
+import com.example.trellocloneapp.firebase.FirestoreClass
+import com.example.trellocloneapp.models.User
 import com.google.firebase.auth.FirebaseAuth
 
 class SignInActivity : BaseActivity() {
@@ -42,16 +44,13 @@ class SignInActivity : BaseActivity() {
         val email: String = binding?.etEmail?.text.toString().trim{ it <= ' '}
         val password: String = binding?.etPassword?.text.toString()
 
+        showProgressDialog(getString(R.string.please_wait))
+
         if (validateForm(email, password)) {
             auth.signInWithEmailAndPassword(email, password).
             addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    val user = auth.currentUser
-                    Toast.makeText(
-                        this,
-                        "${user?.email} logged in!",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    FirestoreClass().signInUser(this)
                     startActivity(Intent(this, MainActivity::class.java))
                 } else {
                     showErrorSnackBar("${task.exception!!.message}")
@@ -78,8 +77,7 @@ class SignInActivity : BaseActivity() {
     override fun onDestroy() {
         super.onDestroy()
         binding = null
-        auth.signOut()
-
+        finish()
     }
 
     public override fun onStart() {
@@ -89,5 +87,11 @@ class SignInActivity : BaseActivity() {
         if(currentUser != null){
             Toast.makeText(this, "Already logged in!", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    fun signInSuccess(loggedInUser: User?) {
+        hideProgressDialog()
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 }

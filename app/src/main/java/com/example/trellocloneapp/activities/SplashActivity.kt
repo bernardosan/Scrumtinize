@@ -7,6 +7,7 @@ import android.os.Handler
 import android.view.WindowManager
 import android.widget.TextView
 import com.example.trellocloneapp.R
+import com.example.trellocloneapp.firebase.FirestoreClass
 
 class SplashActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,7 +25,14 @@ class SplashActivity : BaseActivity() {
         tvAppName.typeface = typeFace
 
         Handler().postDelayed({
-            startActivity(Intent(this, IntroActivity::class.java))
+
+            var currentUserID = FirestoreClass().getCurrentUserId()
+
+            if (currentUserID.isNotEmpty()){
+                startActivity(Intent(this, MainActivity::class.java))
+            } else{
+                startActivity(Intent(this, IntroActivity::class.java))
+            }
             finish() }, 2500)
 
     }
