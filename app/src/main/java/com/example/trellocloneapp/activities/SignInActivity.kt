@@ -1,25 +1,26 @@
-package com.example.trellocloneapp
+package com.example.trellocloneapp.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.trellocloneapp.databinding.ActivitySignUpBinding
+import com.example.trellocloneapp.R
+import com.example.trellocloneapp.databinding.ActivitySignInBinding
 
-class SignUpActivity : AppCompatActivity() {
+class SignInActivity : BaseActivity() {
 
-    private var binding: ActivitySignUpBinding? = null
+    private var binding: ActivitySignInBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivitySignUpBinding.inflate(layoutInflater)
+        binding = ActivitySignInBinding.inflate(layoutInflater)
         setContentView(binding?.root)
-        setSupportActionBar(binding?.toolbarSignUp)
+        setSupportActionBar(binding?.toolbarSignIn)
 
         if (supportActionBar != null) {
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
             supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_black_color_back)
         }
 
-        binding?.toolbarSignUp?.setNavigationOnClickListener {
+        binding?.toolbarSignIn?.setNavigationOnClickListener {
             onBackPressed()
         }
 

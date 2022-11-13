@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    tools:context=".IntroActivity"
+    tools:context=".activities.IntroActivity"
     android:background="@drawable/intro_background">
     <TextView
         android:layout_width="wrap_content"

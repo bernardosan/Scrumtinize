@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".SignUpActivity"
+    tools:context=".activities.SignUpActivity"
     android:background="@drawable/ic_background">
 
     <androidx.appcompat.widget.Toolbar
@@ -74,7 +74,7 @@
             android:inputType="textPassword"/>
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_sign_in"
+            android:id="@+id/btn_sign_up"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

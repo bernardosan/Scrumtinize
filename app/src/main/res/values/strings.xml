@@ -2,4 +2,6 @@
     <string name="app_name">TrelloCloneApp</string>
     <string name="sign_up">SIGN UP</string>
     <string name="sign_in">SIGN IN</string>
+    <string name="please_wait">Please Wait...</string>
+    <string name="please_enter_password">Please enter a password.</string>
 </resources>
