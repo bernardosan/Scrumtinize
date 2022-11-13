@@ -1,6 +1,5 @@
 package com.example.trellocloneapp.activities
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
@@ -54,8 +53,8 @@ class SignUpActivity : BaseActivity() {
     }
 
     private fun registerUser(){
-        val name: String = binding?.etName?.text.toString().trim(){ it <= ' '}
-        val email: String = binding?.etEmail?.text.toString().trim(){ it <= ' '}
+        val name: String = binding?.etName?.text.toString().trim { it <= ' '}
+        val email: String = binding?.etEmail?.text.toString().trim { it <= ' '}
         val password: String = binding?.etPassword?.text.toString()
 
         if(validateForm(name, email, password)){

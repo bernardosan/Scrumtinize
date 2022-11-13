@@ -24,7 +24,7 @@
         android:layout_gravity="center"
         android:layout_marginHorizontal="50dp"
         android:layout_marginVertical="50dp"
-        android:text="Enter your name, e-mail and password to register with us."
+        android:text="@string/tv_signup_text"
         android:textColor="@color/secondary_text_color"
         android:textStyle="bold"
         android:textAlignment="center"/>
@@ -51,8 +51,9 @@
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
             android:layout_marginHorizontal="20dp"
-            android:hint="Name"
-            android:inputType="text"/>
+            android:hint="@string/name"
+            android:inputType="text"
+            android:autofillHints="" />
 
         <EditText
             android:id="@+id/et_email"
@@ -60,8 +61,9 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             android:layout_marginHorizontal="20dp"
-            android:hint="E-mail"
-            android:inputType="textEmailAddress"/>
+            android:hint="@string/e_mail"
+            android:inputType="textEmailAddress"
+            android:autofillHints="" />
 
 
         <EditText
@@ -70,21 +72,23 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             android:layout_marginHorizontal="20dp"
-            android:hint="Password"
-            android:inputType="textPassword"/>
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            android:autofillHints="" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_sign_up"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Sign Up"
+            android:text="@string/sign_up"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:background="@drawable/shape_btn_rounded"
             android:foreground="?attr/selectableItemBackground"
             android:layout_marginHorizontal="20dp"
-            android:layout_marginBottom="15dp"/>
+            android:layout_marginBottom="15dp"
+            tools:ignore="UnusedAttribute" />
 
         </LinearLayout>
 

@@ -4,4 +4,8 @@
     <string name="sign_in">SIGN IN</string>
     <string name="please_wait">Please Wait...</string>
     <string name="please_enter_password">Please enter a password.</string>
+    <string name="tv_signup_text">Enter your name, e-mail and password to register with us.</string>
+    <string name="name">Name</string>
+    <string name="e_mail">E-mail</string>
+    <string name="password">Password</string>
 </resources>

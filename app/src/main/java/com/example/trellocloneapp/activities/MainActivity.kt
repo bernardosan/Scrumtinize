@@ -1,6 +1,5 @@
 package com.example.trellocloneapp.activities
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.trellocloneapp.R
 
