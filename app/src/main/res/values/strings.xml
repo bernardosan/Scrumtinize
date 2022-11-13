@@ -8,4 +8,5 @@
     <string name="name">Name</string>
     <string name="e_mail">E-mail</string>
     <string name="password">Password</string>
+    <string name="please_enter_email">Please enter an email address.</string>
 </resources>
