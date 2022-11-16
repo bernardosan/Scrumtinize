@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.TrelloCloneApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.TrelloCloneApp" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
@@ -10,7 +10,7 @@
         <item name="colorSecondaryVariant">@color/teal_700</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">@color/white</item>
+        <item name="android:statusBarColor">@color/colorPrimary</item>
         <item name="android:textColorSecondary">@color/primary_text_color</item>
         <!-- Customize your theme here. -->
     </style>
@@ -23,6 +23,10 @@
     <style name="ToolbarTheme" parent="@style/ThemeOverlay.MaterialComponents.ActionBar" >
         <item name="colorControlNormal">@color/white</item>
     </style>
+
+    <style name="Theme.AppBarOverlay" parent="@style/ThemeOverlay.AppCompat.DayNight.ActionBar" />
+
+    <style name="Theme.PopUpOverlay" parent="@style/ThemeOverlay.AppCompat.Light" />
 
     <color name="toolbar_color_control_normal">@color/white</color>
 </resources>

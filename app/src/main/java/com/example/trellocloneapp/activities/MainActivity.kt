@@ -16,11 +16,11 @@ class MainActivity : BaseActivity() {
         setContentView(binding?.root)
         // auth = FirebaseAuth.getInstance()
 
-        binding?.btnSignOut?.setOnClickListener {
-            signOutUser()
-            startActivity(Intent(this, SplashActivity::class.java))
-            finish()
-        }
+        //binding?.btnSignOut?.setOnClickListener {
+        //    signOutUser()
+        //    startActivity(Intent(this, SplashActivity::class.java))
+        //    finish()
+        //}
     }
 
     override fun onDestroy() {
