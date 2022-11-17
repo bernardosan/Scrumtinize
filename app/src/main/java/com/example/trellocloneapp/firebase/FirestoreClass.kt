@@ -33,6 +33,7 @@ class FirestoreClass {
                 when(activity){
                     is SignInActivity -> activity.signInSuccess(loggedInUser)
                     is MainActivity -> activity.updateNavigationUserDetails(loggedInUser)
+                    is SignInActivity -> activity.signInSuccess(loggedInUser)
                 }
 
             }

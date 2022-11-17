@@ -11,4 +11,7 @@
     <string name="please_enter_email">Please enter an email address.</string>
     <string name="nav_my_profile">My Profile</string>
     <string name="nav_sign_out">Sign out</string>
+    <string name="mobile">Mobile</string>
+    <string name="update">UPDATE</string>
+    <string name="my_profile">My Profile</string>
 </resources>
