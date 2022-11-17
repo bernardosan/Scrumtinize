@@ -36,8 +36,14 @@ class FirestoreClass {
                 }
 
             }
-            .addOnFailureListener {
-                Log.e("signInUser", "Failed signing in user")
+            .addOnFailureListener { e ->
+
+                when(activity){
+                    is SignInActivity -> activity.hideProgressDialog()
+                    is MainActivity -> activity.hideProgressDialog()
+                }
+
+                Log.e("signInUser", "Failed signing in user", e)
             }
     }
 
