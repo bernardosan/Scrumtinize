@@ -6,21 +6,13 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     android:fitsSystemWindows="true"
     android:theme="@style/Theme.TrelloCloneApp"
     tools:openDrawer="start">
 
-    <include
-        layout="@layout/app_bar_main"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    <include layout="@layout/app_bar_main"/>
 
-    <include
-        layout="@layout/activity_main_content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
+    <include layout="@layout/activity_main_content"/>
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"

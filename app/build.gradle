@@ -47,6 +47,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore:21.4.0'
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.21")
     implementation("de.hdodenhof:circleimageview:3.1.0")
+    implementation ('com.github.bumptech.glide:compiler:4.11.0')
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
