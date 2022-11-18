@@ -2,6 +2,7 @@ package com.example.trellocloneapp.firebase
 
 import android.app.Activity
 import android.util.Log
+import android.widget.Toast
 import com.example.trellocloneapp.activities.MainActivity
 import com.example.trellocloneapp.activities.MyProfileActivity
 import com.example.trellocloneapp.activities.SignInActivity
@@ -24,7 +25,7 @@ class FirestoreClass {
             }
     }
 
-    fun signInUser(activity: Activity){
+    fun updateUserData(activity: Activity){
         mFireStore.collection(Constants.USERS)
             .document(getCurrentUserId())
             .get()
@@ -48,6 +49,26 @@ class FirestoreClass {
                 Log.e("signInUser", "Failed signing in user", e)
             }
     }
+
+
+    fun updateUserProfileData(activity: MyProfileActivity,
+                              userHashMap: HashMap<String, Any>){
+
+        mFireStore.collection(Constants.USERS)
+            .document(getCurrentUserId())
+            .update(userHashMap)
+            .addOnSuccessListener {
+                Log.i(activity.javaClass.simpleName, "Profile")
+                activity.profileUpdateSuccess()
+            }
+            .addOnFailureListener {
+                Log.e(activity.javaClass.simpleName,"Error while creating a board.")
+                Toast.makeText(activity, "Error when updating profile!", Toast.LENGTH_SHORT).show()
+            }
+
+
+    }
+
 
     fun getCurrentUserId(): String {
 

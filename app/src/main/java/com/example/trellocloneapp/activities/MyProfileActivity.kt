@@ -21,6 +21,7 @@ import com.example.trellocloneapp.R
 import com.example.trellocloneapp.databinding.ActivityMyProfileBinding
 import com.example.trellocloneapp.firebase.FirestoreClass
 import com.example.trellocloneapp.models.User
+import com.example.trellocloneapp.utils.Constants
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.launch
@@ -30,7 +31,9 @@ class MyProfileActivity : BaseActivity() {
 
     private var binding: ActivityMyProfileBinding? = null
     private var mSelectedImageFileUri: Uri? = null
-    private var mProfileImageUri: String = ""
+    private var mProfileImageUrl: String = ""
+    private lateinit var mUserDetails: User
+
 
     private val openGalleryLauncher: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()){
@@ -68,7 +71,7 @@ class MyProfileActivity : BaseActivity() {
 
         setupActionBar()
 
-        FirestoreClass().signInUser(this)
+        FirestoreClass().updateUserData(this)
 
         binding?.toolbarMyProfile?.setNavigationOnClickListener {
             onBackPressed()
@@ -77,12 +80,19 @@ class MyProfileActivity : BaseActivity() {
         binding?.btnUpdate?.setOnClickListener {
 
             if(mSelectedImageFileUri != null){
+                showProgressDialog(resources.getString(R.string.please_wait))
                 uploadUserImage()
+            } else{
+                showProgressDialog(resources.getString(R.string.please_wait))
+                updateUserProfileData()
             }
+
+            FirestoreClass().updateUserData(this)
 
         }
 
         binding?.ivMyProfile?.setOnClickListener {
+            FirestoreClass().updateUserData(this)
             updateImageView()
         }
 
@@ -97,7 +107,6 @@ class MyProfileActivity : BaseActivity() {
                 localStorageLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
                 hideProgressDialog()
             }
-
         }
     }
 
@@ -132,18 +141,44 @@ class MyProfileActivity : BaseActivity() {
         builder.create().show()
     }
 
-    private fun updateUser() {
-        TODO("Not yet implemented")
+    private fun updateUserProfileData() {
+        val userHashMap = HashMap<String, Any>()
+        var anyChangesMade = false
+
+        if(mProfileImageUrl.isNotEmpty()){
+            userHashMap[Constants.IMAGE] = mProfileImageUrl
+            Log.i("URL sent", mProfileImageUrl)
+            anyChangesMade = true
+        }
+
+        if(binding?.etNameMyprofile?.text.toString() != mUserDetails.name){
+            userHashMap[Constants.NAME] = binding?.etNameMyprofile?.text.toString()
+            anyChangesMade = true
+        }
+
+        if(binding?.etMobileMyprofile?.text.toString() != mUserDetails.mobile.toString()){
+            userHashMap[Constants.MOBILE] = binding?.etMobileMyprofile?.text.toString().toLong()
+            anyChangesMade = true
+        }
+
+        if (anyChangesMade) {
+            FirestoreClass().updateUserProfileData(this, userHashMap)
+        }
+
+        hideProgressDialog()
+    }
+
+    fun profileUpdateSuccess(){
+        hideProgressDialog()
+        finish()
     }
 
 
     private fun uploadUserImage(){
-        showProgressDialog(resources.getString(R.string.please_wait))
-
         if(mSelectedImageFileUri != null){
 
             val sRef : StorageReference = FirebaseStorage.getInstance().reference.child(
-                "USER_IMAGE" + System.currentTimeMillis() +
+                "USER_IMAGE" + mUserDetails.id +
                         "." + getFileExtension(mSelectedImageFileUri))
 
             sRef.putFile(mSelectedImageFileUri!!).addOnSuccessListener {
@@ -152,7 +187,7 @@ class MyProfileActivity : BaseActivity() {
                 taskSnapshot.metadata!!.reference!!.downloadUrl.addOnSuccessListener {
                     uri ->
                     Log.i("Downloadable Image URL", uri.toString())
-                    mProfileImageUri = uri.toString()
+                    mProfileImageUrl = uri.toString()
                 }
             }.addOnFailureListener {
                 exception ->
@@ -160,7 +195,8 @@ class MyProfileActivity : BaseActivity() {
                 exception.printStackTrace()
                 Toast.makeText(this, "${exception.message}", Toast.LENGTH_SHORT).show()
             }
-
+            updateUserProfileData()
+            Toast.makeText(this, "Updated Successfully!", Toast.LENGTH_SHORT).show()
             hideProgressDialog()
             
         }
@@ -182,12 +218,18 @@ class MyProfileActivity : BaseActivity() {
     }
 
     fun setUserDataInUI(user: User) {
+
+        mUserDetails = user
+
+        Log.i("image received",user.image)
+
         Glide
             .with(this)
             .load(user.image)
             .centerCrop()
             .placeholder(R.drawable.ic_user_place_holder)
             .into(findViewById(R.id.iv_my_profile))
+
 
         binding?.etNameMyprofile?.setText(user.name)
         binding?.etEmailMyprofile?.setText(user.email)

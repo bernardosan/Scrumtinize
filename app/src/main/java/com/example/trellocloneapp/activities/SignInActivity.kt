@@ -50,7 +50,7 @@ class SignInActivity : BaseActivity() {
             auth.signInWithEmailAndPassword(email, password).
             addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    FirestoreClass().signInUser(this)
+                    FirestoreClass().updateUserData(this)
                     startActivity(Intent(this, MainActivity::class.java))
                 } else {
                     showErrorSnackBar("${task.exception!!.message}")
