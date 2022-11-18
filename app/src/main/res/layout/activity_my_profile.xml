@@ -15,7 +15,7 @@
         android:theme="@style/ToolBarMyProfile"/>
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/iv_myprofile"
+        android:id="@+id/iv_my_profile"
         android:layout_width="@dimen/nav_image_size"
         android:layout_height="@dimen/nav_image_size"
         android:layout_marginTop="50dp"
@@ -72,7 +72,7 @@
                 android:layout_marginBottom="20dp"
                 android:layout_marginHorizontal="20dp"
                 android:hint="@string/mobile"
-                android:inputType="textPassword"
+                android:inputType="phone"
                 android:autofillHints="" />
 
             <androidx.appcompat.widget.AppCompatButton

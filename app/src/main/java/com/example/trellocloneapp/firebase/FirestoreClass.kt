@@ -3,6 +3,7 @@ package com.example.trellocloneapp.firebase
 import android.app.Activity
 import android.util.Log
 import com.example.trellocloneapp.activities.MainActivity
+import com.example.trellocloneapp.activities.MyProfileActivity
 import com.example.trellocloneapp.activities.SignInActivity
 import com.example.trellocloneapp.activities.SignUpActivity
 import com.example.trellocloneapp.utils.Constants
@@ -33,7 +34,7 @@ class FirestoreClass {
                 when(activity){
                     is SignInActivity -> activity.signInSuccess(loggedInUser)
                     is MainActivity -> activity.updateNavigationUserDetails(loggedInUser)
-                    is SignInActivity -> activity.signInSuccess(loggedInUser)
+                    is MyProfileActivity -> activity.setUserDataInUI(loggedInUser)
                 }
 
             }
