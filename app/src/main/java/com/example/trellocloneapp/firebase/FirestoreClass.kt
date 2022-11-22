@@ -59,6 +59,7 @@ class FirestoreClass {
             .update(userHashMap)
             .addOnSuccessListener {
                 Log.i(activity.javaClass.simpleName, "Profile")
+                Toast.makeText(activity, "Updated Successfully!", Toast.LENGTH_SHORT).show()
                 activity.profileUpdateSuccess()
             }
             .addOnFailureListener {

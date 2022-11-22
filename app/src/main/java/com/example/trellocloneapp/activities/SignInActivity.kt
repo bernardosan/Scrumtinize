@@ -51,7 +51,6 @@ class SignInActivity : BaseActivity() {
             addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     FirestoreClass().updateUserData(this)
-                    startActivity(Intent(this, MainActivity::class.java))
                 } else {
                     showErrorSnackBar("${task.exception!!.message}")
                 }

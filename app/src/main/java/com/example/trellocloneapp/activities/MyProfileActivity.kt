@@ -39,9 +39,8 @@ class MyProfileActivity : BaseActivity() {
         ActivityResultContracts.StartActivityForResult()){
             result ->
         if(result.resultCode == RESULT_OK && result.data!=null){
-            val image: ImageView = findViewById(R.id.iv_my_profile)
             mSelectedImageFileUri = result.data?.data
-            image.setImageURI(mSelectedImageFileUri)
+            binding?.ivMyProfile?.setImageURI(mSelectedImageFileUri)
         }
     }
 
@@ -71,7 +70,7 @@ class MyProfileActivity : BaseActivity() {
 
         setupActionBar()
 
-        FirestoreClass().updateUserData(this)
+        FirestoreClass().updateUserData(this@MyProfileActivity)
 
         binding?.toolbarMyProfile?.setNavigationOnClickListener {
             onBackPressed()
@@ -82,32 +81,33 @@ class MyProfileActivity : BaseActivity() {
             if(mSelectedImageFileUri != null){
                 showProgressDialog(resources.getString(R.string.please_wait))
                 uploadUserImage()
+                updateUserProfileData()
             } else{
                 showProgressDialog(resources.getString(R.string.please_wait))
                 updateUserProfileData()
             }
 
-            FirestoreClass().updateUserData(this)
-
         }
 
         binding?.ivMyProfile?.setOnClickListener {
-            FirestoreClass().updateUserData(this)
             updateImageView()
         }
+
+        // TODO: FIX BUG ON IMAGE UPDATE
 
     }
 
     private fun updateImageView() {
         requestStoragePermission()
-
-        if(isReadStorageAllowed()){
+        if(isReadStorageAllowed()) {
             showProgressDialog(getString(R.string.please_wait))
             lifecycleScope.launch {
                 localStorageLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+                Log.i("LOG_TAG", "LOCAL STORAGE LAUNCHER OPENED")
                 hideProgressDialog()
             }
         }
+
     }
 
 
@@ -145,7 +145,7 @@ class MyProfileActivity : BaseActivity() {
         val userHashMap = HashMap<String, Any>()
         var anyChangesMade = false
 
-        if(mProfileImageUrl.isNotEmpty()){
+        if(mProfileImageUrl.isNotEmpty() || mProfileImageUrl != mUserDetails.image){
             userHashMap[Constants.IMAGE] = mProfileImageUrl
             Log.i("URL sent", mProfileImageUrl)
             anyChangesMade = true
@@ -182,12 +182,14 @@ class MyProfileActivity : BaseActivity() {
                         "." + getFileExtension(mSelectedImageFileUri))
 
             sRef.putFile(mSelectedImageFileUri!!).addOnSuccessListener {
-                taskSnapshot -> 
+                taskSnapshot ->
                 Log.i("Firebase Image URL", taskSnapshot.metadata!!.reference!!.downloadUrl.toString())
                 taskSnapshot.metadata!!.reference!!.downloadUrl.addOnSuccessListener {
                     uri ->
                     Log.i("Downloadable Image URL", uri.toString())
                     mProfileImageUrl = uri.toString()
+                    binding?.ivMyProfile?.setImageURI(uri)
+
                 }
             }.addOnFailureListener {
                 exception ->
@@ -195,11 +197,10 @@ class MyProfileActivity : BaseActivity() {
                 exception.printStackTrace()
                 Toast.makeText(this, "${exception.message}", Toast.LENGTH_SHORT).show()
             }
-            updateUserProfileData()
-            Toast.makeText(this, "Updated Successfully!", Toast.LENGTH_SHORT).show()
             hideProgressDialog()
-            
+
         }
+
     }
 
 
@@ -224,11 +225,12 @@ class MyProfileActivity : BaseActivity() {
         Log.i("image received",user.image)
 
         Glide
-            .with(this)
+            .with(this@MyProfileActivity)
             .load(user.image)
             .centerCrop()
             .placeholder(R.drawable.ic_user_place_holder)
             .into(findViewById(R.id.iv_my_profile))
+
 
 
         binding?.etNameMyprofile?.setText(user.name)

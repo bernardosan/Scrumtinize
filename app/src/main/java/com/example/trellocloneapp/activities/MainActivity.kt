@@ -25,8 +25,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         binding?.navView?.setNavigationItemSelectedListener(this)
 
-        FirestoreClass().updateUserData(this)
+    }
 
+    override fun onStart() {
+        FirestoreClass().updateUserData(this)
+        super.onStart()
     }
 
     private fun setupActionBar() {
