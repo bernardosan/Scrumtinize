@@ -4,4 +4,5 @@
     <dimen name="nav_bar_header">16sp</dimen>
     <dimen name="nav_image_size">80dp</dimen>
     <dimen name="nav_divider">1dp</dimen>
+    <dimen name="add_board_imageview">160dp</dimen>
 </resources>

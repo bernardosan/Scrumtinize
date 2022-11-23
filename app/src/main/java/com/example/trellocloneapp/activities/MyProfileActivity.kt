@@ -145,11 +145,10 @@ class MyProfileActivity : BaseActivity() {
         val userHashMap = HashMap<String, Any>()
         var anyChangesMade = false
 
-        if(mProfileImageUrl.isNotEmpty()){
-            userHashMap[Constants.IMAGE] = mProfileImageUrl
-            Log.i("URL sent", mProfileImageUrl)
-            anyChangesMade = true
-        }
+        userHashMap[Constants.IMAGE] = mProfileImageUrl
+        Log.i("URL sent", mProfileImageUrl)
+        anyChangesMade = true
+
 
         if(binding?.etNameMyprofile?.text.toString() != mUserDetails.name){
             userHashMap[Constants.NAME] = binding?.etNameMyprofile?.text.toString()

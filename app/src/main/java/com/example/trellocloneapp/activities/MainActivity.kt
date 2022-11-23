@@ -25,6 +25,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         binding?.navView?.setNavigationItemSelectedListener(this)
 
+        binding?.fabAddBoard?.setOnClickListener{
+            val intent = Intent(this, CreateBoardActivity::class.java)
+            startActivity(intent)
+        }
+
         FirestoreClass().updateUserData(this)
 
     }
