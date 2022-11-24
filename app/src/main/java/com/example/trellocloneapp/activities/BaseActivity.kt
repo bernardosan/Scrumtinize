@@ -1,6 +1,9 @@
 package com.example.trellocloneapp.activities
 
+import android.annotation.SuppressLint
 import android.app.Dialog
+import android.icu.text.SimpleDateFormat
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -11,6 +14,9 @@ import com.example.trellocloneapp.R
 import com.example.trellocloneapp.databinding.ActivityBaseBinding
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 open class BaseActivity : AppCompatActivity() {
 
@@ -36,6 +42,17 @@ open class BaseActivity : AppCompatActivity() {
 
     fun hideProgressDialog(){
         mProgressDialog.dismiss()
+    }
+
+    @SuppressLint("NewApi", "SimpleDateFormat")
+    fun getCurrentDate(): String {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+            return LocalDateTime.now().format(formatter)
+        } else {
+            return SimpleDateFormat("dd/MM/yyyy").format(Date())
+        }
+
     }
 
     fun getCurrentUserId(): String{

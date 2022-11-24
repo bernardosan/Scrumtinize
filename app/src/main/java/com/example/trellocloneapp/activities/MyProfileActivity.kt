@@ -2,19 +2,15 @@ package com.example.trellocloneapp.activities
 
 import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
-import android.webkit.MimeTypeMap
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.trellocloneapp.R
@@ -39,9 +35,8 @@ class MyProfileActivity : BaseActivity() {
         ActivityResultContracts.StartActivityForResult()){
             result ->
         if(result.resultCode == RESULT_OK && result.data!=null){
-            val image: ImageView = findViewById(R.id.iv_my_profile)
             mSelectedImageFileUri = result.data?.data
-            image.setImageURI(mSelectedImageFileUri)
+            binding?.ivMyProfile?.setImageURI(mSelectedImageFileUri)
         }
     }
 
@@ -50,7 +45,8 @@ class MyProfileActivity : BaseActivity() {
             permissions.entries
         }
 
-    private val localStorageLauncher : ActivityResultLauncher<String> = registerForActivityResult(ActivityResultContracts.RequestPermission()){
+    private val localStorageLauncher : ActivityResultLauncher<String> = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()){
             isGranted -> if(isGranted){
         val pickIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         try {
@@ -101,7 +97,7 @@ class MyProfileActivity : BaseActivity() {
     private fun updateImageView() {
         requestStoragePermission()
 
-        if(isReadStorageAllowed()){
+        if(Constants.isReadStorageAllowed(this)){
             showProgressDialog(getString(R.string.please_wait))
             lifecycleScope.launch {
                 localStorageLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -110,35 +106,15 @@ class MyProfileActivity : BaseActivity() {
         }
     }
 
-
-
-    private fun isReadStorageAllowed(): Boolean{
-        val result = ContextCompat.checkSelfPermission(
-            this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-        return result
-    }
-
     private fun requestStoragePermission(){
         // Check if the permission was denied and show rationale
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)){
-            showRationaleDialog(getString(R.string.app_name),getString(R.string.app_name) +
-                    "needs to Access Your External Storage")
+            Constants.showRationaleDialog(this, getString(R.string.app_name),
+                getString(R.string.app_name) + "needs to Access Your External Storage")
         }
         else {
             requestPermission.launch(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE))
         }
-
-    }
-
-    private fun showRationaleDialog(
-        title: String,
-        message: String,
-    ) {
-        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-        builder.setTitle(title).setMessage(message).setPositiveButton("Cancel") {
-                dialog, _ -> dialog.dismiss()
-        }
-        builder.create().show()
     }
 
     private fun updateUserProfileData() {
@@ -178,7 +154,7 @@ class MyProfileActivity : BaseActivity() {
 
             val sRef : StorageReference = FirebaseStorage.getInstance().reference.child(
                 "USER_IMAGE" + mUserDetails.id +
-                        "." + getFileExtension(mSelectedImageFileUri))
+                        "." + Constants.getFileExtension(this, mSelectedImageFileUri))
 
             sRef.putFile(mSelectedImageFileUri!!).addOnSuccessListener {
                 taskSnapshot -> 
@@ -201,14 +177,6 @@ class MyProfileActivity : BaseActivity() {
         }
     }
 
-
-    // get files extensions from Uri
-    private fun getFileExtension(uri: Uri?): String?{
-        return MimeTypeMap
-            .getSingleton()
-            .getExtensionFromMimeType(contentResolver.getType(uri!!))
-    }
-
     private fun setupActionBar() {
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar_my_profile)
         setSupportActionBar(findViewById(R.id.toolbar_my_profile))
@@ -223,7 +191,7 @@ class MyProfileActivity : BaseActivity() {
         Log.i("image received",user.image)
 
         Glide
-            .with(this)
+            .with(this@MyProfileActivity)
             .load(user.image)
             .centerCrop()
             .placeholder(R.drawable.ic_user_place_holder)
