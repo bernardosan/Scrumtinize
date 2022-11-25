@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activities.CreateBoardActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_add_board"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        android:theme="@style/ToolBarMyProfile" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/iv_add_board"
+        android:layout_width="@dimen/add_board_imageview"
+        android:layout_height="@dimen/add_board_imageview"
+        android:layout_gravity="center"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="20dp"
+        android:src="@drawable/ic_board_place_holder"
+        app:civ_border_color="@color/white"
+        app:civ_border_width="2dp" />
+
+    <EditText
+        android:id="@+id/et_board_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:autofillHints=""
+        android:hint="@string/board_name"
+        android:inputType="text" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_create_board"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/shape_btn_rounded"
+        android:foreground="?attr/selectableItemBackground"
+        android:text="@string/create"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        tools:ignore="UnusedAttribute" />
+
+</LinearLayout>

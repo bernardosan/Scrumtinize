@@ -3,14 +3,13 @@ package com.example.trellocloneapp.firebase
 import android.app.Activity
 import android.util.Log
 import android.widget.Toast
-import com.example.trellocloneapp.activities.MainActivity
-import com.example.trellocloneapp.activities.MyProfileActivity
-import com.example.trellocloneapp.activities.SignInActivity
-import com.example.trellocloneapp.activities.SignUpActivity
+import com.example.trellocloneapp.activities.*
+import com.example.trellocloneapp.models.Board
 import com.example.trellocloneapp.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.storage.FirebaseStorage
 
 class FirestoreClass {
 
@@ -22,6 +21,37 @@ class FirestoreClass {
             .set(userInfo, SetOptions.merge())
             .addOnSuccessListener {
                 activity.userRegisteredSuccess()
+            }
+            .addOnFailureListener {
+                Log.e(activity.javaClass.simpleName,"Error writing document")
+            }
+    }
+
+    fun getUserNameById(id: String): String{
+        var username = "username"
+        mFireStore
+            .collection(Constants.USERS)
+            .document(id)
+            .get()
+            .addOnSuccessListener {
+                username = it.toObject(com.example.trellocloneapp.models.User::class.java)!!.name
+            }
+            .addOnFailureListener {
+                it.printStackTrace()
+            }
+
+        return username
+    }
+
+    fun createBoard(activity: CreateBoardActivity, boardInfo: Board){
+        mFireStore.collection(Constants.BOARDS)
+            .document()
+            .set(boardInfo, SetOptions.merge())
+            .addOnSuccessListener {
+                activity.boardCreatedSuccessfully()
+            }
+            .addOnFailureListener {
+                Log.e(activity.javaClass.simpleName,"Error writing document")
             }
     }
 
@@ -44,6 +74,7 @@ class FirestoreClass {
                 when(activity){
                     is SignInActivity -> activity.hideProgressDialog()
                     is MainActivity -> activity.hideProgressDialog()
+                    is MyProfileActivity -> activity.hideProgressDialog()
                 }
 
                 Log.e("signInUser", "Failed signing in user", e)

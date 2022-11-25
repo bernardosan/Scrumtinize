@@ -39,6 +39,7 @@ class MyProfileActivity : BaseActivity() {
         ActivityResultContracts.StartActivityForResult()){
             result ->
         if(result.resultCode == RESULT_OK && result.data!=null){
+            val image: ImageView = findViewById(R.id.iv_my_profile)
             mSelectedImageFileUri = result.data?.data
             binding?.ivMyProfile?.setImageURI(mSelectedImageFileUri)
         }
@@ -49,7 +50,8 @@ class MyProfileActivity : BaseActivity() {
             permissions.entries
         }
 
-    private val localStorageLauncher : ActivityResultLauncher<String> = registerForActivityResult(ActivityResultContracts.RequestPermission()){
+    private val localStorageLauncher : ActivityResultLauncher<String> = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()){
             isGranted -> if(isGranted){
         val pickIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         try {
@@ -87,9 +89,12 @@ class MyProfileActivity : BaseActivity() {
                 updateUserProfileData()
             }
 
+            FirestoreClass().updateUserData(this)
+
         }
 
         binding?.ivMyProfile?.setOnClickListener {
+            FirestoreClass().updateUserData(this)
             updateImageView()
         }
 
@@ -99,30 +104,21 @@ class MyProfileActivity : BaseActivity() {
 
     private fun updateImageView() {
         requestStoragePermission()
-        if(isReadStorageAllowed()) {
+
+        if(Constants.isReadStorageAllowed(this)){
             showProgressDialog(getString(R.string.please_wait))
             lifecycleScope.launch {
                 localStorageLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-                Log.i("LOG_TAG", "LOCAL STORAGE LAUNCHER OPENED")
                 hideProgressDialog()
             }
         }
-
-    }
-
-
-
-    private fun isReadStorageAllowed(): Boolean{
-        val result = ContextCompat.checkSelfPermission(
-            this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-        return result
     }
 
     private fun requestStoragePermission(){
         // Check if the permission was denied and show rationale
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)){
-            showRationaleDialog(getString(R.string.app_name),getString(R.string.app_name) +
-                    "needs to Access Your External Storage")
+            Constants.showRationaleDialog(this, getString(R.string.app_name),
+                getString(R.string.app_name) + "needs to Access Your External Storage")
         }
         else {
             requestPermission.launch(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE))
@@ -145,11 +141,10 @@ class MyProfileActivity : BaseActivity() {
         val userHashMap = HashMap<String, Any>()
         var anyChangesMade = false
 
-        if(mProfileImageUrl.isNotEmpty() || mProfileImageUrl != mUserDetails.image){
-            userHashMap[Constants.IMAGE] = mProfileImageUrl
-            Log.i("URL sent", mProfileImageUrl)
-            anyChangesMade = true
-        }
+        userHashMap[Constants.IMAGE] = mProfileImageUrl
+        Log.i("URL sent", mProfileImageUrl)
+        anyChangesMade = true
+
 
         if(binding?.etNameMyprofile?.text.toString() != mUserDetails.name){
             userHashMap[Constants.NAME] = binding?.etNameMyprofile?.text.toString()
@@ -179,10 +174,10 @@ class MyProfileActivity : BaseActivity() {
 
             val sRef : StorageReference = FirebaseStorage.getInstance().reference.child(
                 "USER_IMAGE" + mUserDetails.id +
-                        "." + getFileExtension(mSelectedImageFileUri))
+                        "." + Constants.getFileExtension(this, mSelectedImageFileUri))
 
             sRef.putFile(mSelectedImageFileUri!!).addOnSuccessListener {
-                taskSnapshot ->
+                taskSnapshot -> 
                 Log.i("Firebase Image URL", taskSnapshot.metadata!!.reference!!.downloadUrl.toString())
                 taskSnapshot.metadata!!.reference!!.downloadUrl.addOnSuccessListener {
                     uri ->
@@ -197,10 +192,11 @@ class MyProfileActivity : BaseActivity() {
                 exception.printStackTrace()
                 Toast.makeText(this, "${exception.message}", Toast.LENGTH_SHORT).show()
             }
+            updateUserProfileData()
+            Toast.makeText(this, "Updated Successfully!", Toast.LENGTH_SHORT).show()
             hideProgressDialog()
-
+            
         }
-
     }
 
 
@@ -230,7 +226,6 @@ class MyProfileActivity : BaseActivity() {
             .centerCrop()
             .placeholder(R.drawable.ic_user_place_holder)
             .into(findViewById(R.id.iv_my_profile))
-
 
 
         binding?.etNameMyprofile?.setText(user.name)
