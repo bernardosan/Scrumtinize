@@ -1,23 +1,35 @@
 package com.example.trellocloneapp.activities
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import android.widget.TextView
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.trellocloneapp.R
+import com.example.trellocloneapp.adapters.MainAdapter
 import com.example.trellocloneapp.databinding.ActivityMainBinding
 import com.example.trellocloneapp.firebase.FirestoreClass
+import com.example.trellocloneapp.models.Board
 import com.example.trellocloneapp.models.User
 import com.example.trellocloneapp.utils.Constants
+import com.example.trellocloneapp.utils.boardListTest
 import com.google.android.material.navigation.NavigationView
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private var binding: ActivityMainBinding? = null
     private var mUserName: String? = null
+    val assignedTo: ArrayList<String> = ArrayList()
+    val documentId: String = ""
+
+    companion object{
+        const val CREATE_BOARD_REQUEST_CODE = 10
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,14 +40,43 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         binding?.navView?.setNavigationItemSelectedListener(this)
 
+        boardsListToUI(boardListTest.boardList) // TODO: FIX BUG ON FIREBASE BOARDS CALL
+
         binding?.fabAddBoard?.setOnClickListener{
             val intent = Intent(this, CreateBoardActivity::class.java)
             intent.putExtra(Constants.NAME, mUserName)
-            startActivity(intent)
+            startActivityForResult(intent, 10)
         }
 
         FirestoreClass().updateUserData(this)
 
+    }
+
+
+    private fun boardsListToUI(boardsList: ArrayList<Board>){
+
+        if(boardsList.size > 0){
+            val adapter = MainAdapter(boardsList, this)
+
+            binding?.rvBoardsList?.layoutManager = LinearLayoutManager(this)
+            binding?.rvBoardsList?.adapter = adapter
+            binding?.rvBoardsList?.visibility = View.VISIBLE
+            binding?.tvNoBoardsAvailable?.visibility = View.GONE
+
+            binding?.rvBoardsList?.setHasFixedSize(true)
+
+            adapter.setOnClickListener(object: MainAdapter.OnClickListener{
+                override fun onClick(position: Int, model: Board) {
+                    val intent = Intent(this@MainActivity, TaskListActivity::class.java)
+                    intent.putExtra(Constants.DOCUMENT_ID, model.documentId)
+                    startActivity(intent)
+                }
+            })
+
+        } else {
+            binding?.rvBoardsList?.visibility = View.GONE
+            binding?.tvNoBoardsAvailable?.visibility = View.VISIBLE
+        }
     }
 
     private fun setupActionBar() {
@@ -61,6 +102,13 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             binding?.drawerLayout!!.closeDrawer(GravityCompat.START)
         } else{
             super.onBackPressed()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == CREATE_BOARD_REQUEST_CODE && resultCode == Activity.RESULT_OK){
+            // FirestoreClass().getBoardsList(this)
         }
     }
 
@@ -97,5 +145,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             .into(findViewById(R.id.nav_user_image))
 
         findViewById<TextView>(R.id.tv_username).text = user.name
+
+
     }
 }

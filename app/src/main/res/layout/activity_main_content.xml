@@ -22,7 +22,8 @@
             android:id="@+id/rv_boards_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"/>
+            android:visibility="visible"
+            tools:listitem="@layout/recyclerview_item"/>
 
         <TextView
             android:id="@+id/tv_no_boards_available"
@@ -31,7 +32,8 @@
             android:text="@string/no_boards_available"
             android:textSize="16sp"
             android:textColor="@color/secondary_text_color"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:visibility="gone"/>
 
     </androidx.cardview.widget.CardView>
 

@@ -9,7 +9,6 @@ import com.example.trellocloneapp.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
-import com.google.firebase.storage.FirebaseStorage
 
 class FirestoreClass {
 
@@ -25,6 +24,29 @@ class FirestoreClass {
             .addOnFailureListener {
                 Log.e(activity.javaClass.simpleName,"Error writing document")
             }
+    }
+
+    fun getBoardsList(activity: MainActivity): ArrayList<Board> {
+        val boardList: ArrayList<Board> = ArrayList()
+
+        mFireStore.collection(Constants.BOARDS)
+            .whereArrayContains(Constants.ASSIGNED_TO, activity.getCurrentUserId())
+            .get()
+            .addOnSuccessListener {
+                document -> Log.i(activity.javaClass.simpleName, document.documents.toString())
+                for(i in document.documents){
+                    val board = i.toObject(Board::class.java)!!
+                    board.documentId = i.id
+                    boardList.add(board)
+                }
+
+            }
+            .addOnFailureListener {
+                activity.hideProgressDialog()
+                Log.e(activity.javaClass.simpleName, "Error while creating the board list")
+            }
+
+        return boardList
     }
 
     fun getUserNameById(id: String): String{
@@ -110,6 +132,26 @@ class FirestoreClass {
             currentUserID = currentUser.uid
         }
         return currentUserID
+    }
+
+    fun getBoardDetails(taskListActivity: TaskListActivity, boardDocumentId: String) {
+
+        mFireStore.collection(Constants.BOARDS)
+            .document(boardDocumentId)
+            .get()
+            .addOnSuccessListener {
+                    document -> Log.i(taskListActivity.javaClass.simpleName, document.toString())
+                taskListActivity.boardDetails(document.toObject(Board::class.java)!!)
+
+
+            }
+            .addOnFailureListener {
+
+                taskListActivity.hideProgressDialog()
+                Log.e(taskListActivity.javaClass.simpleName, "Error while creating the board list")
+            }
+
+
     }
 
 }
