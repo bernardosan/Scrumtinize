@@ -12,9 +12,7 @@
         android:id="@+id/nav_user_image"
         android:layout_width="@dimen/nav_image_size"
         android:layout_height="@dimen/nav_image_size"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="@dimen/nav_content_margin_bottom"
         android:layout_gravity="center"
         app:civ_border_color="@color/white"
         app:civ_border_width="2dp"
@@ -26,13 +24,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/app_name"
-        android:textSize="@dimen/nav_bar_header"
+        android:textSize="@dimen/nav_user_name_text_size"
         android:layout_gravity="center"
         android:layout_marginBottom="10dp"
         />
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="@dimen/nav_divider"
+        android:layout_height="@dimen/nav_divider_height"
         android:background="@color/colorPrimary"/>
 </LinearLayout>

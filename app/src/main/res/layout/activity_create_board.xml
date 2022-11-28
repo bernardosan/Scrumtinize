@@ -16,8 +16,8 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/iv_add_board"
-        android:layout_width="@dimen/add_board_imageview"
-        android:layout_height="@dimen/add_board_imageview"
+        android:layout_width="@dimen/board_image_size"
+        android:layout_height="@dimen/board_image_size"
         android:layout_gravity="center"
         android:layout_marginTop="50dp"
         android:layout_marginBottom="20dp"

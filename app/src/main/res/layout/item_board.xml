@@ -16,8 +16,8 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/iv_board_image"
-            android:layout_width="@dimen/item_board_size"
-            android:layout_height="@dimen/item_board_size"
+            android:layout_width="@dimen/board_image_size"
+            android:layout_height="@dimen/board_image_size"
             android:src="@drawable/ic_board_place_holder"
             app:civ_border_color="@color/primary_text_color"
             app:civ_border_width="0.5dp"
@@ -34,8 +34,9 @@
                 android:id="@+id/tv_board_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/item_board_name_layout_marginStart"
                 android:textColor="@color/primary_text_color"
-                android:textSize="16sp"
+                android:textSize="@dimen/item_board_name_text_size"
                 tools:text="Board Name"
                 />
 
@@ -43,8 +44,9 @@
                 android:id="@+id/tv_create_by"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/item_board_name_layout_marginStart"
                 android:textColor="@color/primary_text_color"
-                android:textSize="16sp"
+                android:textSize="@dimen/item_board_created_by_text_size"
                 tools:text="Create by"
                 />
 

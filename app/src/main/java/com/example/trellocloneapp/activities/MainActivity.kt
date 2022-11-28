@@ -47,8 +47,16 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         }
 
+        showProgressDialog(resources.getString(R.string.please_wait))
         FirestoreClass().updateUserData(this, true)
 
+
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        showProgressDialog(resources.getString(R.string.please_wait))
+        FirestoreClass().updateUserData(this, true)
     }
 
 
@@ -76,7 +84,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             binding?.rvBoardsList?.visibility = View.GONE
             binding?.tvNoBoardsAvailable?.visibility = View.VISIBLE
         }
-
     }
 
     private fun setupActionBar() {
@@ -147,10 +154,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         findViewById<TextView>(R.id.tv_username).text = user.name
 
         if(readBoardsList){
-            showProgressDialog(resources.getString(R.string.please_wait))
             FirestoreClass().getBoardsList(this)
         }
-
 
     }
 }

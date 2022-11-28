@@ -15,7 +15,7 @@
         android:gravity="center"
         android:text="@string/app_name"
         android:textColor="@color/white"
-        android:textSize="@dimen/splash_screen_title"
+        android:textSize="@dimen/splash_screen_title_text_size"
         android:textStyle="bold"
         android:textAlignment="center"/>
 

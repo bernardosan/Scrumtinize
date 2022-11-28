@@ -6,18 +6,17 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.trellocloneapp.R
-import com.example.trellocloneapp.databinding.RecyclerviewItemBinding
-import com.example.trellocloneapp.firebase.FirestoreClass
+import com.example.trellocloneapp.databinding.ItemBoardBinding
 import com.example.trellocloneapp.models.Board
 
 class MainAdapter(val boardList: ArrayList<Board>, val context: Context):RecyclerView.Adapter<MainAdapter.MainViewHolder>() {
 
     private var onClickListener: OnClickListener? = null
 
-    inner class MainViewHolder (val itemBinding: RecyclerviewItemBinding) : RecyclerView.ViewHolder(itemBinding.root){
+    inner class MainViewHolder (val itemBinding: ItemBoardBinding) : RecyclerView.ViewHolder(itemBinding.root){
         fun bindItem(board: Board){
             itemBinding.tvBoardName.text = board.name
-            itemBinding.tvCreateBy.text = board.createdBy
+            itemBinding.tvCreateBy.text =  "created by: " + board.createdBy
             Glide
                 .with(context)
                 .load(board.image)
@@ -37,7 +36,7 @@ class MainAdapter(val boardList: ArrayList<Board>, val context: Context):Recycle
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
-        return MainViewHolder(RecyclerviewItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        return MainViewHolder(ItemBoardBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
@@ -48,6 +47,7 @@ class MainAdapter(val boardList: ArrayList<Board>, val context: Context):Recycle
                 onClickListener!!.onClick(position, board)
             }
         }
+
     }
 
     override fun getItemCount(): Int {

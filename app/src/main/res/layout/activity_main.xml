@@ -41,25 +41,25 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
-                android:elevation="@dimen/cardview_default_elevation"
-                app:cardCornerRadius="@dimen/cardview_default_radius">
+                android:elevation="@dimen/card_view_elevation"
+                app:cardCornerRadius="@dimen/card_view_corner_radius">
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_boards_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:visibility="visible"
-                    tools:listitem="@layout/recyclerview_item"/>
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_boards_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="visible"
+                        tools:listitem="@layout/item_board"/>
 
-                <TextView
-                    android:id="@+id/tv_no_boards_available"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="@string/no_boards_available"
-                    android:textSize="16sp"
-                    android:textColor="@color/secondary_text_color"
-                    android:gravity="center"
-                    android:visibility="gone"/>
+                    <TextView
+                        android:id="@+id/tv_no_boards_available"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="@string/no_boards_available"
+                        android:textSize="16sp"
+                        android:textColor="@color/secondary_text_color"
+                        android:gravity="center"
+                        android:visibility="gone"/>
 
             </androidx.cardview.widget.CardView>
 
