@@ -26,19 +26,19 @@ class TaskListActivity :BaseActivity() {
         showProgressDialog(resources.getString(R.string.please_wait))
         FirestoreClass().getBoardDetails(this, boardDocumentId)
 
-
     }
 
     fun boardDetails(board: Board){
         hideProgressDialog()
         setupActionBar(board.name)
-
-
     }
 
     private fun setupActionBar(title: String) {
         setSupportActionBar(binding?.toolbarTaskListActivity)
         binding?.toolbarTaskListActivity?.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
         binding?.toolbarTaskListActivity?.title = title
+        binding?.toolbarTaskListActivity?.setNavigationOnClickListener {
+            onBackPressed()
+        }
     }
 }

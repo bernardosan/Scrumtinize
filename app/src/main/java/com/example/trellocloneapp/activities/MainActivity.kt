@@ -40,20 +40,19 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         binding?.navView?.setNavigationItemSelectedListener(this)
 
-        boardsListToUI(boardListTest.boardList) // TODO: FIX BUG ON FIREBASE BOARDS CALL
-
         binding?.fabAddBoard?.setOnClickListener{
             val intent = Intent(this, CreateBoardActivity::class.java)
             intent.putExtra(Constants.NAME, mUserName)
-            startActivityForResult(intent, 10)
+            startActivityForResult(intent, CREATE_BOARD_REQUEST_CODE)
+
         }
 
-        FirestoreClass().updateUserData(this)
+        FirestoreClass().updateUserData(this, true)
 
     }
 
 
-    private fun boardsListToUI(boardsList: ArrayList<Board>){
+    fun boardsListToUI(boardsList: ArrayList<Board>){
 
         if(boardsList.size > 0){
             val adapter = MainAdapter(boardsList, this)
@@ -77,6 +76,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             binding?.rvBoardsList?.visibility = View.GONE
             binding?.tvNoBoardsAvailable?.visibility = View.VISIBLE
         }
+
     }
 
     private fun setupActionBar() {
@@ -107,8 +107,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == CREATE_BOARD_REQUEST_CODE && resultCode == Activity.RESULT_OK){
-            // FirestoreClass().getBoardsList(this)
+        if (requestCode == CREATE_BOARD_REQUEST_CODE && resultCode == Activity.RESULT_OK){
+            FirestoreClass().getBoardsList(this)
         }
     }
 
@@ -133,7 +133,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         return true
     }
 
-    fun updateNavigationUserDetails(user: User) {
+    fun updateNavigationUserDetails(user: User, readBoardsList: Boolean) {
 
         mUserName = user.name
 
@@ -145,6 +145,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             .into(findViewById(R.id.nav_user_image))
 
         findViewById<TextView>(R.id.tv_username).text = user.name
+
+        if(readBoardsList){
+            showProgressDialog(resources.getString(R.string.please_wait))
+            FirestoreClass().getBoardsList(this)
+        }
 
 
     }

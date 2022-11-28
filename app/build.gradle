@@ -48,9 +48,20 @@ dependencies {
     implementation "androidx.activity:activity-ktx:1.4.0-beta01"
 
     //firebase
-    implementation 'com.google.firebase:firebase-auth:21.1.0'
-    implementation 'com.google.firebase:firebase-firestore:24.4.0'
-    implementation 'com.google.firebase:firebase-storage:20.1.0'
+    // Import the BoM for the Firebase platform
+    implementation platform('com.google.firebase:firebase-bom:29.0.3')
+
+    // Declare the dependency for the Firebase Authentication library
+    implementation 'com.google.firebase:firebase-auth-ktx'
+
+    // Declare the dependency for the Cloud Firestore library
+    implementation 'com.google.firebase:firebase-firestore-ktx'
+
+    //Notification
+    implementation 'com.google.firebase:firebase-messaging:23.0.0'
+
+    // Declare the dependency for the Cloud Storage library
+    implementation 'com.google.firebase:firebase-storage-ktx'
 
     //circle ImageView
     implementation("de.hdodenhof:circleimageview:3.1.0")

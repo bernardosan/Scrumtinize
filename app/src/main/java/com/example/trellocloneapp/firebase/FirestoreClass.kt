@@ -26,30 +26,29 @@ class FirestoreClass {
             }
     }
 
-    fun getBoardsList(activity: MainActivity): ArrayList<Board> {
-        val boardList: ArrayList<Board> = ArrayList()
-
+    fun getBoardsList(activity: MainActivity){
         mFireStore.collection(Constants.BOARDS)
-            .whereArrayContains(Constants.ASSIGNED_TO, activity.getCurrentUserId())
+            .whereArrayContains(Constants.ASSIGNED_TO,getCurrentUserId())
             .get()
             .addOnSuccessListener {
-                document -> Log.i(activity.javaClass.simpleName, document.documents.toString())
+                    document->
+                Log.i(activity.javaClass.simpleName,document.documents.toString())
+                val boardList: ArrayList<Board> = ArrayList()
                 for(i in document.documents){
                     val board = i.toObject(Board::class.java)!!
                     board.documentId = i.id
                     boardList.add(board)
                 }
-
+                activity.hideProgressDialog()
+                activity.boardsListToUI(boardList)
             }
             .addOnFailureListener {
                 activity.hideProgressDialog()
-                Log.e(activity.javaClass.simpleName, "Error while creating the board list")
+                Log.e(activity.javaClass.simpleName,"Error while creating the board",it)
             }
-
-        return boardList
     }
 
-    fun getUserNameById(id: String): String{
+    /* fun getUserNameById(id: String): String{
         var username = "username"
         mFireStore
             .collection(Constants.USERS)
@@ -63,7 +62,7 @@ class FirestoreClass {
             }
 
         return username
-    }
+    }*/
 
     fun createBoard(activity: CreateBoardActivity, boardInfo: Board){
         mFireStore.collection(Constants.BOARDS)
@@ -77,7 +76,7 @@ class FirestoreClass {
             }
     }
 
-    fun updateUserData(activity: Activity){
+    fun updateUserData(activity: Activity, readBoardsList: Boolean = false){
         mFireStore.collection(Constants.USERS)
             .document(getCurrentUserId())
             .get()
@@ -86,7 +85,7 @@ class FirestoreClass {
 
                 when(activity){
                     is SignInActivity -> activity.signInSuccess(loggedInUser)
-                    is MainActivity -> activity.updateNavigationUserDetails(loggedInUser)
+                    is MainActivity-> activity.updateNavigationUserDetails(loggedInUser, readBoardsList)
                     is MyProfileActivity -> activity.setUserDataInUI(loggedInUser)
                 }
 

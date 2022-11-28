@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.trellocloneapp.R
 import com.example.trellocloneapp.databinding.RecyclerviewItemBinding
+import com.example.trellocloneapp.firebase.FirestoreClass
 import com.example.trellocloneapp.models.Board
 
 class MainAdapter(val boardList: ArrayList<Board>, val context: Context):RecyclerView.Adapter<MainAdapter.MainViewHolder>() {

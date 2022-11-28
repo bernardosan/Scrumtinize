@@ -31,8 +31,6 @@ class CreateBoardActivity : BaseActivity() {
     private var mBoardImageURL: String = ""
 
     private lateinit var mUserName: String
-    private lateinit var mUserUID: String
-
 
     private val openGalleryLauncher: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()){
@@ -94,6 +92,7 @@ class CreateBoardActivity : BaseActivity() {
             if(mSelectedImageFileUri != null) {
                 uploadBoardImage()
                 finish()
+                FirestoreClass().updateUserData(this, true)
             } else {
                 showProgressDialog(getString(R.string.please_wait))
                 createBoard()
@@ -142,11 +141,11 @@ class CreateBoardActivity : BaseActivity() {
         val assignedUsersArrayList: ArrayList<String> = ArrayList()
         assignedUsersArrayList.add(getCurrentUserId())
 
-        var board = Board(
+        val board = Board(
             binding?.etBoardName?.text.toString(),
             mBoardImageURL,
-            getCurrentUserId(),
-            getCurrentDate()!!,
+            mUserName,
+            getCurrentDate(),
             assignedUsersArrayList
         )
 

@@ -30,6 +30,7 @@ object Constants {
     const val MOBILE: String = "mobile"
     const val ASSIGNED_TO: String = "assignedTo"
     const val DOCUMENT_ID: String = "documentId"
+    const val CREATED_BY: String = "createdBy"
 
     // get files extensions from Uri
     fun getFileExtension(activity: Activity, uri: Uri?): String?{
