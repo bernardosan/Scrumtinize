@@ -1,6 +1,7 @@
 package com.example.trellocloneapp.activities
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.app.Dialog
 import android.icu.text.SimpleDateFormat
 import android.os.Build
@@ -17,6 +18,7 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.storage.FirebaseStorage
+import io.grpc.Context
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -86,5 +88,4 @@ open class BaseActivity : AppCompatActivity() {
         snackBarView.setBackgroundColor(ContextCompat.getColor(this, R.color.snackbar_error))
         snackBar.show()
     }
-
 }

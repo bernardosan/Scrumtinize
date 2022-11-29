@@ -76,6 +76,19 @@ class FirestoreClass {
             }
     }
 
+    fun deleteBoard(activity: MainActivity, boardId: String){
+        mFireStore.collection(Constants.BOARDS)
+            .document(boardId)
+            .delete()
+            .addOnSuccessListener {
+                Toast.makeText(activity, "Board deleted.", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener {
+                it.printStackTrace()
+                Toast.makeText(activity, "Failed to delete board.", Toast.LENGTH_SHORT).show()
+            }
+    }
+
     fun updateUserData(activity: Activity, readBoardsList: Boolean = false){
         mFireStore.collection(Constants.USERS)
             .document(getCurrentUserId())

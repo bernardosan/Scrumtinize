@@ -1,6 +1,7 @@
 package com.example.trellocloneapp.activities
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
@@ -77,6 +78,12 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                     val intent = Intent(this@MainActivity, TaskListActivity::class.java)
                     intent.putExtra(Constants.DOCUMENT_ID, model.documentId)
                     startActivity(intent)
+                }
+            })
+
+            adapter.setOnLongClickListener(object: MainAdapter.OnLongClickListener{
+                override fun onLongClick(position: Int, model: Board) {
+                    alertDialogForDeleteBoard(position, model)
                 }
             })
 
@@ -157,5 +164,28 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             FirestoreClass().getBoardsList(this)
         }
 
+    }
+
+    private fun deleteBoard(boardId: String){
+        showProgressDialog(resources.getString(R.string.please_wait))
+        FirestoreClass().deleteBoard(this, boardId)
+        FirestoreClass().updateUserData(this, true)
+    }
+
+    private fun alertDialogForDeleteBoard(position: Int, model: Board){
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Alert")
+        builder.setMessage("Are you sure you want to delete ${model.name} board?")
+        builder.setIcon(android.R.drawable.ic_dialog_alert)
+        builder.setPositiveButton("Yes"){
+                dialogInterface, which -> dialogInterface.dismiss()
+                deleteBoard(model.documentId)
+        }
+        builder.setNegativeButton("No"){
+                dialogInterface, which -> dialogInterface.dismiss()
+        }
+        val alertDialog: AlertDialog = builder.create()
+        alertDialog.setCancelable(false)
+        alertDialog.show()
     }
 }
