@@ -67,7 +67,7 @@ open class TaskListAdapter(private val context: Context, private var list: Array
                 itemBinding.cvAddCard.visibility = View.VISIBLE
             }
 
-            itemBinding.ibDoneCardName.setOnClickListener {
+            itemBinding.ibCloseCardName.setOnClickListener {
                 itemBinding.tvAddCard.visibility = View.VISIBLE
                 itemBinding.cvAddCard.visibility = View.GONE
             }
