@@ -1,5 +1,6 @@
 package com.example.trellocloneapp.adapters
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.res.Resources
 import android.view.LayoutInflater
@@ -58,9 +59,37 @@ open class TaskListAdapter(private val context: Context, private var list: Array
             }
 
             itemBinding.ibEditListName.setOnClickListener {
+
+                itemBinding.etEditTaskListName.setText(model.title)
+                itemBinding.llTitleView.visibility = View.GONE
+                itemBinding.cvEditTaskListName.visibility = View.VISIBLE
+
+            }
+
+            itemBinding.ibCloseEditableView.setOnClickListener{
+                itemBinding.cvEditTaskListName.visibility = View.GONE
+                itemBinding.llTitleView.visibility = View.VISIBLE
+            }
+
+            itemBinding.ibDoneEditListName.setOnClickListener{
+
+                val listName = itemBinding.etEditTaskListName.text.toString()
+                if(listName.isNotEmpty()){
+                    if(context is TaskListActivity){
+                        context.updateTaskList(position,listName,model)
+                    }
+                } else {
+                    Toast.makeText(context, "Please enter a list name.", Toast.LENGTH_SHORT).show()
+                }
                 itemBinding.llTitleView.visibility = View.GONE
                 itemBinding.cvEditTaskListName.visibility = View.VISIBLE
             }
+
+            itemBinding.ibDeleteList.setOnClickListener {
+                alertDialogForDeleteList(position,model.title)
+            }
+
+
 
             itemBinding.tvAddCard.setOnClickListener {
                 itemBinding.tvAddCard.visibility = View.GONE
@@ -94,6 +123,26 @@ open class TaskListAdapter(private val context: Context, private var list: Array
 
     override fun getItemCount(): Int {
         return list.size
+    }
+
+    private fun alertDialogForDeleteList(position: Int, title: String){
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("Alert")
+        builder.setMessage("Are you sure you want to delete $title task?")
+        builder.setIcon(android.R.drawable.ic_dialog_alert)
+        builder.setPositiveButton("Yes"){
+            dialogInterface, which -> dialogInterface.dismiss()
+
+            if(context is TaskListActivity){
+                context.deleteTaskList(position)
+            }
+        }
+        builder.setNegativeButton("No"){
+            dialogInterface, which -> dialogInterface.dismiss()
+        }
+        val alertDialog: AlertDialog = builder.create()
+        alertDialog.setCancelable(false)
+        alertDialog.show()
     }
 
     private fun Int.toDp(): Int =
