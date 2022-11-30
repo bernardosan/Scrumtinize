@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.trellocloneapp.R
@@ -24,6 +25,18 @@ open class TaskListAdapter(private val context: Context, private var list: Array
 
         fun bindItem(position: Int) {
             val model = list[position]
+
+            itemBinding.rvCardList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            itemBinding.rvCardList.setHasFixedSize(true)
+            itemBinding.rvCardList.adapter = CardListAdapter(context, model.cardList, position)
+
+            if(list.size > 0){
+                itemBinding.rvCardList.visibility = View.VISIBLE
+            } else{
+                itemBinding.rvCardList.visibility = View.GONE
+            }
+
+
             if(position == list.size -1) {
                 itemBinding.tvAddTaskList.visibility = View.VISIBLE
                 itemBinding.llTaskItem.visibility = View.GONE
@@ -89,11 +102,24 @@ open class TaskListAdapter(private val context: Context, private var list: Array
                 alertDialogForDeleteList(position,model.title)
             }
 
+            itemBinding.tvAddCard.setOnClickListener{
 
-
-            itemBinding.tvAddCard.setOnClickListener {
+                itemBinding.etCardName.text.clear()
                 itemBinding.tvAddCard.visibility = View.GONE
                 itemBinding.cvAddCard.visibility = View.VISIBLE
+            }
+
+            itemBinding.ibDoneCardName.setOnClickListener {
+                val cardName = itemBinding.etCardName.text.toString()
+                if(cardName.isNotEmpty()){
+                    if(context is TaskListActivity){
+                        context.createCard(cardName, position)
+                    }
+                } else {
+                    Toast.makeText(context, "Please enter a card name.", Toast.LENGTH_SHORT).show()
+                }
+                itemBinding.tvAddCard.visibility = View.VISIBLE
+                itemBinding.cvAddCard.visibility = View.GONE
             }
 
             itemBinding.ibCloseCardName.setOnClickListener {

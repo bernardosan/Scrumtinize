@@ -5,6 +5,7 @@ import android.util.Log
 import android.widget.Toast
 import com.example.trellocloneapp.activities.*
 import com.example.trellocloneapp.models.Board
+import com.example.trellocloneapp.models.Task
 import com.example.trellocloneapp.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -163,6 +164,25 @@ class FirestoreClass {
             }
 
     }
+
+   /* fun addUpdateCardList(taskListActivity: TaskListActivity, board: Board, taskPosition: Int){
+        val cardListHashMap = HashMap<String, Any>()
+        cardListHashMap[Constants.CARD_LIST] = board.taskList[taskPosition].cardList
+
+
+        mFireStore.collection(Constants.BOARDS)
+            .document(board.documentId)
+            .update(cardListHashMap)
+            .addOnSuccessListener {
+                taskListActivity.addUpdateCardListSuccess()
+            }
+            .addOnFailureListener {
+                it.printStackTrace()
+                taskListActivity.hideProgressDialog()
+                Log.e(taskListActivity.javaClass.simpleName, "Error while updating the task list")
+            }
+
+    }*/
 
     fun getBoardDetails(taskListActivity: TaskListActivity, boardDocumentId: String) {
 
