@@ -28,6 +28,7 @@ class MyProfileActivity : BaseActivity() {
     private var binding: ActivityMyProfileBinding? = null
     private var mSelectedImageFileUri: Uri? = null
     private var mProfileImageUrl: String = ""
+    private val userHashMap = HashMap<String, Any>()
     private lateinit var mUserDetails: User
 
 
@@ -89,7 +90,6 @@ class MyProfileActivity : BaseActivity() {
         }
 
         binding?.ivMyProfile?.setOnClickListener {
-            FirestoreClass().updateUserData(this)
             updateImageView()
         }
 
@@ -121,13 +121,11 @@ class MyProfileActivity : BaseActivity() {
     }
 
     private fun updateUserProfileData() {
-        val userHashMap = HashMap<String, Any>()
         var anyChangesMade = false
 
-        userHashMap[Constants.IMAGE] = mProfileImageUrl
-        Log.i("URL sent", mProfileImageUrl)
-        anyChangesMade = true
-
+        if(mSelectedImageFileUri != null && mProfileImageUrl != mSelectedImageFileUri.toString()){
+            anyChangesMade = true
+        }
 
         if(binding?.etNameMyprofile?.text.toString() != mUserDetails.name){
             userHashMap[Constants.NAME] = binding?.etNameMyprofile?.text.toString()
@@ -152,7 +150,7 @@ class MyProfileActivity : BaseActivity() {
     }
 
 
-    private fun uploadUserImage(){
+    private fun uploadUserImage(): String{
         if(mSelectedImageFileUri != null){
 
             val sRef : StorageReference = FirebaseStorage.getInstance().reference.child(
@@ -166,7 +164,9 @@ class MyProfileActivity : BaseActivity() {
                     uri ->
                     Log.i("Downloadable Image URL", uri.toString())
                     mProfileImageUrl = uri.toString()
-                    binding?.ivMyProfile?.setImageURI(uri)
+
+
+                    //binding?.ivMyProfile?.setImageURI(uri)
 
                 }
             }.addOnFailureListener {
@@ -180,6 +180,7 @@ class MyProfileActivity : BaseActivity() {
             hideProgressDialog()
             
         }
+        return mProfileImageUrl
     }
 
     private fun setupActionBar() {
@@ -194,14 +195,14 @@ class MyProfileActivity : BaseActivity() {
         mUserDetails = user
 
         Log.i("image received",user.image)
-
+        /*
         Glide
             .with(this@MyProfileActivity)
             .load(user.image)
             .centerCrop()
             .placeholder(R.drawable.ic_user_place_holder)
             .into(findViewById(R.id.iv_my_profile))
-
+        */
 
         binding?.etNameMyprofile?.setText(user.name)
         binding?.etEmailMyprofile?.setText(user.email)

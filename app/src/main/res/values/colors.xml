@@ -24,4 +24,6 @@
     <color name="divider_color">#EAEAEA</color>
     <color name="task_list_action_color">#F7F6FA</color>
     <color name="task_list_title_view_bg_color">#F8F8F8</color>
+
+    <color name="ic_launcher_background">#0C90F1</color>
 </resources>

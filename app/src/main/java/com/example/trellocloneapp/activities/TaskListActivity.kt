@@ -1,16 +1,13 @@
 package com.example.trellocloneapp.activities
 
-import android.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.trellocloneapp.R
-import com.example.trellocloneapp.adapters.CardListAdapter
 import com.example.trellocloneapp.adapters.TaskListAdapter
 import com.example.trellocloneapp.databinding.ActivityTaskListBinding
-import com.example.trellocloneapp.databinding.ItemTaskBinding
 import com.example.trellocloneapp.firebase.FirestoreClass
 import com.example.trellocloneapp.models.Board
 import com.example.trellocloneapp.models.Card
@@ -99,11 +96,23 @@ class TaskListActivity :BaseActivity() {
         }
     }
 
-    fun addUpdateCardListSuccess() {
-        hideProgressDialog()
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_members,menu)
+        return super.onCreateOptionsMenu(menu)
+    }
 
-        showProgressDialog(resources.getString(R.string.please_wait))
-        FirestoreClass().getBoardDetails(this, mBoardDetails.documentId)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+
+            R.id.action_members ->{
+                val intent = Intent(this, MembersActivity::class.java)
+                intent.putExtra(Constants.BOARD_DETAIL, mBoardDetails)
+                startActivity(intent)
+            }
+
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 
     fun createCard(cardName: String, taskPosition: Int){

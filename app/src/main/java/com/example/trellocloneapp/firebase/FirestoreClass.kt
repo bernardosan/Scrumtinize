@@ -5,7 +5,7 @@ import android.util.Log
 import android.widget.Toast
 import com.example.trellocloneapp.activities.*
 import com.example.trellocloneapp.models.Board
-import com.example.trellocloneapp.models.Task
+import com.example.trellocloneapp.models.User
 import com.example.trellocloneapp.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -15,7 +15,7 @@ class FirestoreClass {
 
     private val mFireStore = FirebaseFirestore.getInstance()
 
-    fun registerUser(activity: SignUpActivity, userInfo: com.example.trellocloneapp.models.User){
+    fun registerUser(activity: SignUpActivity, userInfo: User){
         mFireStore.collection(Constants.USERS)
             .document(getCurrentUserId())
             .set(userInfo, SetOptions.merge())
@@ -95,7 +95,7 @@ class FirestoreClass {
             .document(getCurrentUserId())
             .get()
             .addOnSuccessListener { document ->
-                val loggedInUser = document.toObject(com.example.trellocloneapp.models.User::class.java)!!
+                val loggedInUser = document.toObject(User::class.java)!!
 
                 when(activity){
                     is SignInActivity -> activity.signInSuccess(loggedInUser)
@@ -136,10 +136,9 @@ class FirestoreClass {
 
     }
 
-
     fun getCurrentUserId(): String {
 
-        var currentUser = FirebaseAuth.getInstance().currentUser
+        val currentUser = FirebaseAuth.getInstance().currentUser
         var currentUserID = ""
         if(currentUser != null){
             currentUserID = currentUser.uid
@@ -195,16 +194,34 @@ class FirestoreClass {
                 val board = document.toObject(Board::class.java)!!
                 board.documentId = document.id
                 taskListActivity.boardDetails(board)
-
-
             }
             .addOnFailureListener {
-
                 taskListActivity.hideProgressDialog()
                 Log.e(taskListActivity.javaClass.simpleName, "Error while creating the board list")
             }
-
-
     }
+
+    fun getAssignedMembersList(activity: MembersActivity, assignedTo: ArrayList<String>){
+        mFireStore.collection(Constants.USERS)
+            .whereIn(Constants.ID, assignedTo)
+            .get()
+            .addOnSuccessListener {
+                val usersList : ArrayList<User> = ArrayList()
+
+                for(i in it.documents){
+                    val user = i.toObject(User::class.java)!!
+                    usersList.add(user)
+                }
+
+                activity.setupMembersList(usersList)
+            }
+            .addOnFailureListener {
+                it.printStackTrace()
+                activity.hideProgressDialog()
+                Toast.makeText(activity, "Error when loading users.", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+
 
 }

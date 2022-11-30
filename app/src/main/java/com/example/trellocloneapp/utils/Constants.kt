@@ -34,6 +34,9 @@ object Constants {
     const val TASK_LIST: String = "taskList"
     const val CARD_LIST: String = "cardList"
 
+    const val BOARD_DETAIL: String = "board_detail"
+    const val ID: String = "id"
+
     // get files extensions from Uri
     fun getFileExtension(activity: Activity, uri: Uri?): String?{
         return MimeTypeMap
