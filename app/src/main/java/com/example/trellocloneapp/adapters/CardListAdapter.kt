@@ -3,10 +3,10 @@ package com.example.trellocloneapp.adapters
 import android.app.AlertDialog
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView
+import com.example.trellocloneapp.R
 import com.example.trellocloneapp.activities.TaskListActivity
 import com.example.trellocloneapp.databinding.ItemCardBinding
 import com.example.trellocloneapp.models.Board
@@ -15,8 +15,7 @@ import com.example.trellocloneapp.models.Card
 open class CardListAdapter(private val context: Context, private var cardList: ArrayList<Card>, private var taskPosition: Int) :
     RecyclerView.Adapter<CardListAdapter.MainViewHolder>(){
 
-    private var onClickListener: CardListAdapter.OnClickListener? = null
-    private var onLongClickListener: CardListAdapter.OnLongClickListener? = null
+    private var onClickListener: OnClickListener? = null
 
     inner class MainViewHolder (private val itemBinding: ItemCardBinding) : RecyclerView.ViewHolder(itemBinding.root) {
 
@@ -63,19 +62,10 @@ open class CardListAdapter(private val context: Context, private var cardList: A
         fun onClick(position: Int, model: Board)
     }
 
-    interface  OnLongClickListener{
-        fun onLongClick(position: Int, model: Board){
-        }
-    }
-
     fun setOnClickListener(onClickListener: OnClickListener){
         this.onClickListener = onClickListener
     }
 
-    fun setOnLongClickListener(onLongClickListener: OnLongClickListener){
-        this.onLongClickListener = onLongClickListener
-
-    }
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
@@ -86,9 +76,10 @@ open class CardListAdapter(private val context: Context, private var cardList: A
 
     override fun onBindViewHolder(holder: MainViewHolder, cardPosition: Int) {
         holder.bindItem(cardPosition)
-        holder.itemView.setOnLongClickListener {
-            alertDialogForDeleteList(cardPosition, taskPosition, cardList[cardPosition].title)
-            true
+
+        holder.itemView.setOnClickListener {
+            alertDialogForDeleteList(cardPosition, taskPosition)
+
         }
     }
 
@@ -96,7 +87,7 @@ open class CardListAdapter(private val context: Context, private var cardList: A
         return cardList.size
     }
 
-    fun alertDialogForDeleteList(cardPosition: Int, taskPosition: Int, cardTitle: String){
+    fun alertDialogForDeleteList(cardPosition: Int, taskPosition: Int){
         val builder = AlertDialog.Builder(context)
         builder.setTitle("Alert")
         builder.setMessage("You want to delete the card?")

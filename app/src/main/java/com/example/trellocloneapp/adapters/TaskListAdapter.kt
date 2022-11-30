@@ -8,18 +8,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.example.trellocloneapp.R
 import com.example.trellocloneapp.activities.TaskListActivity
-import com.example.trellocloneapp.databinding.ItemBoardBinding
 import com.example.trellocloneapp.databinding.ItemTaskBinding
-import com.example.trellocloneapp.models.Board
 import com.example.trellocloneapp.models.Task
+import java.util.*
+import kotlin.collections.ArrayList
 
 open class TaskListAdapter(private val context: Context, private var list: ArrayList<Task>) :
     RecyclerView.Adapter<TaskListAdapter.MainViewHolder>(){
+
+    private var mPositionDraggedFrom = -1
+    private var mPositionDraggedTo = -1
 
     inner class MainViewHolder (val itemBinding: ItemTaskBinding) : RecyclerView.ViewHolder(itemBinding.root){
 
@@ -144,8 +146,74 @@ open class TaskListAdapter(private val context: Context, private var list: Array
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         holder.bindItem(position)
-    }
 
+        val adapter = CardListAdapter(context, list[holder.adapterPosition].cardList, holder.adapterPosition)
+        holder.itemBinding.rvCardList.adapter = adapter
+
+        //  Creates an ItemTouchHelper that will work with the given Callback.
+        val helper = ItemTouchHelper(object :
+            ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
+            /*Called when ItemTouchHelper wants to move the dragged item from its old position to
+             the new position.*/
+
+            override fun onMove(
+                recyclerView: RecyclerView,
+                dragged: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                val draggedPosition = dragged.adapterPosition
+                val targetPosition = target.adapterPosition
+
+                if (mPositionDraggedFrom == -1) {
+                    mPositionDraggedFrom = draggedPosition
+                }
+                mPositionDraggedTo = targetPosition
+
+                /**
+                 * Swaps the elements at the specified positions in the specified list.
+                 */
+
+                /**
+                 * Swaps the elements at the specified positions in the specified list.
+                 */
+                Collections.swap(list[holder.adapterPosition].cardList, draggedPosition, targetPosition)
+
+                // move item in `draggedPosition` to `targetPosition` in adapter.
+                adapter.notifyItemMoved(draggedPosition, targetPosition)
+
+                return false // true if moved, false otherwise
+            }
+
+            // Called when a ViewHolder is swiped by the user.
+            override fun onSwiped(
+                viewHolder: RecyclerView.ViewHolder,
+                direction: Int
+            ) { // remove from adapter
+            }
+
+            /*Called by the ItemTouchHelper when the user interaction with an element is over and it
+             also completed its animation.*/
+            override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+                super.clearView(recyclerView, viewHolder)
+
+                if (mPositionDraggedFrom != -1 && mPositionDraggedTo != -1 && mPositionDraggedFrom != mPositionDraggedTo) {
+
+                    (context as TaskListActivity).updateCard(
+                        holder.adapterPosition,
+                        list[holder.adapterPosition].cardList
+                    )
+                }
+
+                // Reset the global variables
+                mPositionDraggedFrom = -1
+                mPositionDraggedTo = -1
+            }
+        })
+
+        /*Attaches the ItemTouchHelper to the provided RecyclerView. If TouchHelper is already
+        attached to a RecyclerView, it will first detach from the previous one.*/
+        helper.attachToRecyclerView(holder.itemBinding.rvCardList)
+    }
 
     override fun getItemCount(): Int {
         return list.size
@@ -157,14 +225,14 @@ open class TaskListAdapter(private val context: Context, private var list: Array
         builder.setMessage("Are you sure you want to delete $title list?")
         builder.setIcon(android.R.drawable.ic_dialog_alert)
         builder.setPositiveButton("Yes"){
-            dialogInterface, which -> dialogInterface.dismiss()
+                dialogInterface, _ -> dialogInterface.dismiss()
 
             if(context is TaskListActivity){
                 context.deleteTaskList(position)
             }
         }
         builder.setNegativeButton("No"){
-            dialogInterface, which -> dialogInterface.dismiss()
+                dialogInterface, _ -> dialogInterface.dismiss()
         }
         val alertDialog: AlertDialog = builder.create()
         alertDialog.setCancelable(false)

@@ -130,16 +130,15 @@ class TaskListActivity :BaseActivity() {
         FirestoreClass().addUpdateTaskList(this, mBoardDetails)
     }
 
-    /* fun updateCard(cardPosition: Int, taskPosition: Int, cardName: String, model: Card){
+    fun updateCard(taskPosition: Int, cardList: ArrayList<Card>){
         mBoardDetails.taskList.removeAt(mBoardDetails.taskList.size - 1)
 
-        val card = Card(cardName, model.createdBy)
-        mBoardDetails.taskList[taskPosition].cardList[cardPosition] = card
+        mBoardDetails.taskList[taskPosition].cardList = cardList
 
         showProgressDialog(resources.getString(R.string.please_wait))
         FirestoreClass().addUpdateTaskList(this, mBoardDetails)
 
-    }*/
+    }
 
 
     fun deleteCard(cardPosition: Int, taskPosition: Int){

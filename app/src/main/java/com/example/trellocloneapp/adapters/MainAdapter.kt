@@ -1,14 +1,12 @@
 package com.example.trellocloneapp.adapters
 
-import android.app.AlertDialog
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.trellocloneapp.R
-import com.example.trellocloneapp.activities.MainActivity
-import com.example.trellocloneapp.activities.TaskListActivity
 import com.example.trellocloneapp.databinding.ItemBoardBinding
 import com.example.trellocloneapp.models.Board
 
@@ -18,6 +16,7 @@ class MainAdapter(val boardList: ArrayList<Board>, val context: Context):Recycle
     private var onLongClickListener: OnLongClickListener ? = null
 
     inner class MainViewHolder (val itemBinding: ItemBoardBinding) : RecyclerView.ViewHolder(itemBinding.root){
+        @SuppressLint("SetTextI18n")
         fun bindItem(board: Board){
             itemBinding.tvBoardName.text = board.name
             itemBinding.tvCreateBy.text =  "created by: " + board.createdBy
@@ -64,14 +63,10 @@ class MainAdapter(val boardList: ArrayList<Board>, val context: Context):Recycle
             onLongClickListener!!.onLongClick(position, board)
             true
         }
-
-
     }
 
     override fun getItemCount(): Int {
         return boardList.size
-
     }
-
 
 }
