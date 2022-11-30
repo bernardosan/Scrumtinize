@@ -116,7 +116,6 @@ class FirestoreClass {
             }
     }
 
-
     fun updateUserProfileData(activity: MyProfileActivity,
                               userHashMap: HashMap<String, Any>){
 
@@ -219,6 +218,43 @@ class FirestoreClass {
                 it.printStackTrace()
                 activity.hideProgressDialog()
                 Toast.makeText(activity, "Error when loading users.", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    fun getMemberDetails(activity: MembersActivity, email: String){
+
+        mFireStore.collection(Constants.USERS)
+            .whereEqualTo(Constants.EMAIL, email)
+            .get()
+            .addOnSuccessListener {
+                if(it.documents.size > 0){
+                    val user = it.documents[0].toObject(User::class.java)!!
+                    activity.memberDetails(user)
+                } else {
+                    activity.hideProgressDialog()
+                    activity.showErrorSnackBar("No such member found")
+                }
+            }
+            .addOnFailureListener {
+                activity.hideProgressDialog()
+                it.printStackTrace()
+            }
+
+    }
+
+    fun assignMemberToBoard(activity: MembersActivity, board: Board, user: User){
+        val assignedToHashMap = HashMap<String, Any>()
+        assignedToHashMap[Constants.ASSIGNED_TO] = board.assignedTo
+
+        mFireStore.collection(Constants.BOARDS)
+            .document(board.documentId)
+            .update(assignedToHashMap)
+            .addOnSuccessListener {
+                activity.memberAssignSuccess(user)
+            }
+            .addOnFailureListener {
+                activity.hideProgressDialog()
+                it.printStackTrace()
             }
     }
 

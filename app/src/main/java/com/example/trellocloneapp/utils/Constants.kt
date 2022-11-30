@@ -36,6 +36,7 @@ object Constants {
 
     const val BOARD_DETAIL: String = "board_detail"
     const val ID: String = "id"
+    const val EMAIL: String = "email"
 
     // get files extensions from Uri
     fun getFileExtension(activity: Activity, uri: Uri?): String?{

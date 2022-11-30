@@ -177,7 +177,8 @@
                 android:id="@+id/rv_card_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/task_item_rv_card_list_margin" />
+                android:layout_margin="@dimen/task_item_rv_card_list_margin"
+                android:nestedScrollingEnabled="false"/>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cv_add_card"
