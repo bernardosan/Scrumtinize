@@ -141,5 +141,6 @@
     <dimen name="dialog_list_marginTopBottom">3dp</dimen>
 
     <dimen name="item_selected_member_image_size">45dp</dimen>
+    <dimen name="card_details_weight_padding">5dp</dimen>
 
 </resources>

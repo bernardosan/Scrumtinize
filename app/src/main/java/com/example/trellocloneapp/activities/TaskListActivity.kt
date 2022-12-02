@@ -1,9 +1,13 @@
 package com.example.trellocloneapp.activities
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
+
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.trellocloneapp.R
 import com.example.trellocloneapp.adapters.TaskListAdapter
@@ -17,21 +21,30 @@ import com.example.trellocloneapp.utils.Constants
 class TaskListActivity :BaseActivity() {
 
     private var binding: ActivityTaskListBinding? = null
-
+    private var mBoardDocumentId: String = ""
     private lateinit var mBoardDetails: Board
+
+    var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            // val data: Intent? = result.data
+            showProgressDialog(resources.getString(R.string.please_wait))
+            FirestoreClass().getBoardDetails(this, mBoardDetails.documentId)
+
+        }
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTaskListBinding.inflate(layoutInflater)
         setContentView(binding?.root)
 
-        var boardDocumentId = ""
         if(intent.hasExtra(Constants.DOCUMENT_ID)){
-            boardDocumentId = intent.getStringExtra(Constants.DOCUMENT_ID)!!
+            mBoardDocumentId = intent.getStringExtra(Constants.DOCUMENT_ID)!!
         }
 
         showProgressDialog(resources.getString(R.string.please_wait))
-        FirestoreClass().getBoardDetails(this, boardDocumentId)
+        FirestoreClass().getBoardDetails(this, mBoardDocumentId)
 
     }
 
@@ -107,7 +120,7 @@ class TaskListActivity :BaseActivity() {
             R.id.action_members ->{
                 val intent = Intent(this, MembersActivity::class.java)
                 intent.putExtra(Constants.BOARD_DETAIL, mBoardDetails)
-                startActivity(intent)
+                resultLauncher.launch(intent)
             }
 
         }
@@ -156,6 +169,10 @@ class TaskListActivity :BaseActivity() {
 
         showProgressDialog(resources.getString(R.string.please_wait))
         FirestoreClass().addUpdateTaskList(this, mBoardDetails)
+    }
+
+    fun cardDetails(taskPosition: Int, cardPosition: Int){
+        startActivity(Intent(this, CardDetailsActivity::class.java))
     }
 
 }

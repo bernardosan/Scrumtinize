@@ -59,7 +59,7 @@ open class CardListAdapter(private val context: Context, private var cardList: A
     }
 
     interface  OnClickListener {
-        fun onClick(position: Int, model: Board)
+        fun onClick(position: Int)
     }
 
     fun setOnClickListener(onClickListener: OnClickListener){
@@ -78,7 +78,9 @@ open class CardListAdapter(private val context: Context, private var cardList: A
         holder.bindItem(cardPosition)
 
         holder.itemView.setOnClickListener {
-            alertDialogForDeleteList(cardPosition, taskPosition)
+            if(onClickListener != null){
+                onClickListener!!.onClick(cardPosition)
+            }
 
         }
     }
@@ -86,25 +88,4 @@ open class CardListAdapter(private val context: Context, private var cardList: A
     override fun getItemCount(): Int {
         return cardList.size
     }
-
-    fun alertDialogForDeleteList(cardPosition: Int, taskPosition: Int){
-        val builder = AlertDialog.Builder(context)
-        builder.setTitle("Alert")
-        builder.setMessage("You want to delete the card?")
-        builder.setIcon(android.R.drawable.ic_dialog_alert)
-        builder.setPositiveButton("Yes"){
-                dialogInterface, _ -> dialogInterface.dismiss()
-
-            if(context is TaskListActivity){
-                context.deleteCard(cardPosition, taskPosition)
-            }
-        }
-        builder.setNegativeButton("No"){
-                dialogInterface, _ -> dialogInterface.dismiss()
-        }
-        val alertDialog: AlertDialog = builder.create()
-        alertDialog.setCancelable(false)
-        alertDialog.show()
-    }
-
 }

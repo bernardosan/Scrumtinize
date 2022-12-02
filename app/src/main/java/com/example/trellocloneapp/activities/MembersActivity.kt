@@ -1,5 +1,6 @@
 package com.example.trellocloneapp.activities
 
+import android.app.Activity
 import android.app.Dialog
 import android.os.Bundle
 import android.view.Menu
@@ -21,6 +22,7 @@ class MembersActivity : BaseActivity() {
     private lateinit var mAssignedMemberList: ArrayList<User>
     private lateinit var mBoardDetails: Board
     private var binding: ActivityMembersBinding? = null
+    private var anyChangesMade: Boolean = false
 
 
 
@@ -77,6 +79,13 @@ class MembersActivity : BaseActivity() {
 
     }
 
+    override fun onBackPressed() {
+        if(anyChangesMade){
+            setResult(Activity.RESULT_OK)
+        }
+        super.onBackPressed()
+    }
+
     fun memberDetails(user: User){
         mBoardDetails.assignedTo.add(user.id)
         FirestoreClass().assignMemberToBoard(this,mBoardDetails,user)
@@ -86,6 +95,7 @@ class MembersActivity : BaseActivity() {
         hideProgressDialog()
         mAssignedMemberList.add(user)
         setupMembersList(mAssignedMemberList)
+        anyChangesMade = true
     }
 
     fun setupMembersList(list: ArrayList<User>){

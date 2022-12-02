@@ -49,4 +49,9 @@
 
     <string name="str_select_member">Select Member</string>
     <string name="image_contentDescription">Content Image</string>
+    <string name="zero_number">0</string>
+    <string name="card_weight">Card Weight</string>
+    <string name="add_weight">add weight</string>
+    <string name="remove_weight">remove weight</string>
+    <string name="card_details">Card Details</string>
 </resources>

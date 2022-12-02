@@ -144,11 +144,21 @@ open class TaskListAdapter(private val context: Context, private var list: Array
         return view
     }
 
-    override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
-        holder.bindItem(position)
+    override fun onBindViewHolder(holder: MainViewHolder, taskPosition: Int) {
+        holder.bindItem(taskPosition)
 
         val adapter = CardListAdapter(context, list[holder.adapterPosition].cardList, holder.adapterPosition)
         holder.itemBinding.rvCardList.adapter = adapter
+        adapter.setOnClickListener(
+            object:CardListAdapter.OnClickListener{
+                override fun onClick(cardPosition: Int) {
+                    if(context is TaskListActivity){
+                        context.cardDetails(taskPosition, cardPosition)
+                    }
+                }
+            }
+        )
+
 
         //  Creates an ItemTouchHelper that will work with the given Callback.
         val helper = ItemTouchHelper(object :

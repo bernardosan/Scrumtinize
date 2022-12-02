@@ -15,10 +15,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TrelloCloneApp">
         <activity
-            android:name=".activities.MembersActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.TrelloCloneApp.NoActionBar"
+            android:name=".activities.CardDetailsActivity"
             android:exported="true" />
+        <activity
+            android:name=".activities.MembersActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.TrelloCloneApp.NoActionBar" />
         <activity
             android:name=".activities.TaskListActivity"
             android:exported="true"
