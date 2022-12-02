@@ -16,7 +16,9 @@
         android:theme="@style/Theme.TrelloCloneApp">
         <activity
             android:name=".activities.CardDetailsActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.TrelloCloneApp.NoActionBar" />
         <activity
             android:name=".activities.MembersActivity"
             android:exported="true"

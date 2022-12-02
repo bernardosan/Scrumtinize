@@ -39,6 +39,8 @@
         <entry key="..\:/Users/carol/Documents/GitHub/TrelloCloneApp/app/src/main/res/layout/item_board.xml" value="0.23867753623188406" />
         <entry key="..\:/Users/carol/Documents/GitHub/TrelloCloneApp/app/src/main/res/layout/nav_header_main.xml" value="0.17395833333333333" />
         <entry key="..\:/Users/carol/Documents/GitHub/TrelloCloneApp/app/src/main/res/layout/recyclerview_item.xml" value="0.15943491422805248" />
+        <entry key="..\:/Users/carol/Documents/GitHub/TrelloCloneApp/app/src/main/res/menu/menu_add_member.xml" value="0.23541666666666666" />
+        <entry key="..\:/Users/carol/Documents/GitHub/TrelloCloneApp/app/src/main/res/menu/menu_delete_card.xml" value="0.23541666666666666" />
       </map>
     </option>
   </component>
