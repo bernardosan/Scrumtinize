@@ -36,6 +36,7 @@ class CardDetailsActivity : BaseActivity() {
         populatingCardDetailsUI()
 
 
+
         binding?.btnUpdateCardDetails?.setOnClickListener {
             if(binding?.etNameCardDetails?.text?.isNotEmpty()!!){
                 updateCardDetails()
@@ -84,6 +85,8 @@ class CardDetailsActivity : BaseActivity() {
         if(intent.hasExtra(Constants.CARD_LIST_ITEM_POSITION)){
             mCardPosition = intent.getIntExtra(Constants.CARD_LIST_ITEM_POSITION, -1)
         }
+
+        mSelectedColor = mBoardDetails.taskList[mTaskListPosition].cardList[mCardPosition].labelColor
     }
 
     private fun populatingCardDetailsUI(){
@@ -93,6 +96,12 @@ class CardDetailsActivity : BaseActivity() {
                 .cardList[mCardPosition]
                 .title)
         binding?.etNameCardDetails?.setSelection(binding?.etNameCardDetails?.text!!.length)
+        if (mSelectedColor.isNotEmpty()){
+            setColor()
+        } else {
+            binding?.tvSelectLabelColor?.text = getString(R.string.select_color)
+        }
+
     }
 
     override fun onBackPressed() {
@@ -115,7 +124,8 @@ class CardDetailsActivity : BaseActivity() {
 
         val card = Card(binding?.etNameCardDetails?.text.toString(),
             mBoardDetails.taskList[mTaskListPosition].cardList[mCardPosition].createdBy,
-            mBoardDetails.taskList[mTaskListPosition].cardList[mCardPosition].assignedTo)
+            mBoardDetails.taskList[mTaskListPosition].cardList[mCardPosition].assignedTo,
+            mSelectedColor)
 
         mBoardDetails.taskList[mTaskListPosition].cardList[mCardPosition] = card
         showProgressDialog(resources.getString(R.string.please_wait))
@@ -163,7 +173,6 @@ class CardDetailsActivity : BaseActivity() {
         colorsList.add("#D57C1D")
         colorsList.add("#770000")
         colorsList.add("#0022F8")
-        colorsList.add("#FFFFFF")
         return colorsList
     }
 
@@ -177,7 +186,8 @@ class CardDetailsActivity : BaseActivity() {
         val dialog = object: LabelColorListDialog(
             this,
             colorsList,
-            resources.getString(R.string.str_select_label_color)){
+            resources.getString(R.string.str_select_label_color),
+            mSelectedColor){
             override fun onItemSelected(color: String) {
                 mSelectedColor = color
                 setColor()

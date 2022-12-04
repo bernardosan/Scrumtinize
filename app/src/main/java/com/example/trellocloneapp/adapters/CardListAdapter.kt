@@ -2,7 +2,9 @@ package com.example.trellocloneapp.adapters
 
 import android.app.AlertDialog
 import android.content.Context
+import android.graphics.Color
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView
@@ -24,6 +26,12 @@ open class CardListAdapter(private val context: Context, private var cardList: A
 
             itemBinding.tvCardName.text = model.title
 
+            if(model.labelColor.isNotEmpty()){
+                itemBinding.viewLabelColor.visibility = View.VISIBLE
+                itemBinding.viewLabelColor.setBackgroundColor(Color.parseColor(model.labelColor))
+            } else {
+                itemBinding.viewLabelColor.visibility = View.GONE
+            }
 
             /*
             itemBinding.ibEditCardName.setOnClickListener {

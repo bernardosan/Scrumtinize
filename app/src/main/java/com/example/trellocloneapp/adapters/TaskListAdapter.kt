@@ -151,9 +151,9 @@ open class TaskListAdapter(private val context: Context, private var list: Array
         holder.itemBinding.rvCardList.adapter = adapter
         adapter.setOnClickListener(
             object:CardListAdapter.OnClickListener{
-                override fun onClick(cardPosition: Int) {
+                override fun onClick(position: Int) {
                     if(context is TaskListActivity){
-                        context.cardDetails(taskPosition, cardPosition)
+                        context.cardDetails(holder.adapterPosition, position)
                     }
                 }
             }
