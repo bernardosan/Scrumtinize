@@ -1,41 +1,26 @@
 package com.example.trellocloneapp.activities
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.app.Dialog
 import android.icu.text.SimpleDateFormat
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
 import android.os.Handler
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.example.trellocloneapp.R
-import com.example.trellocloneapp.databinding.ActivityBaseBinding
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.storage.FirebaseStorage
-import io.grpc.Context
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-open class BaseActivity : AppCompatActivity() {
-
-    private var binding: ActivityBaseBinding? = null
+abstract class BaseActivity : AppCompatActivity() {
 
     private var doubleBackToExitPressedOnce = false
 
     private lateinit var mProgressDialog: Dialog
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityBaseBinding.inflate(layoutInflater)
-        setContentView(binding?.root)
-    }
 
     fun showProgressDialog(text: String){
         mProgressDialog = Dialog(this)

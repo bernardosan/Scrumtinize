@@ -17,8 +17,8 @@ class SplashActivity : BaseActivity() {
         val tvAppName : TextView = findViewById(R.id.tv_app_name)
 
         window.setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
         )
 
         val typeFace: Typeface = Typeface.createFromAsset(assets, "coolvetica rg.otf" )
