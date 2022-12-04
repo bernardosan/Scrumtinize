@@ -162,15 +162,6 @@ class TaskListActivity :BaseActivity() {
 
     }
 
-
-    fun deleteCard(cardPosition: Int, taskPosition: Int){
-        mBoardDetails.taskList.removeAt(mBoardDetails.taskList.size - 1)
-        mBoardDetails.taskList[taskPosition].cardList.removeAt(cardPosition)
-
-        showProgressDialog(resources.getString(R.string.please_wait))
-        FirestoreClass().addUpdateTaskList(this, mBoardDetails)
-    }
-
     fun cardDetails(taskPosition: Int, cardPosition: Int){
         intent = Intent(this, CardDetailsActivity::class.java)
         intent.putExtra(Constants.BOARD_DETAIL, mBoardDetails)

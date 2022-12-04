@@ -1,15 +1,19 @@
 package com.example.trellocloneapp.activities
 
 import android.app.Activity
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuItem
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.example.trellocloneapp.R
 import com.example.trellocloneapp.databinding.ActivityCardDetailsBinding
+import com.example.trellocloneapp.firebase.FirestoreClass
 import com.example.trellocloneapp.models.Board
+import com.example.trellocloneapp.models.Card
 import com.example.trellocloneapp.utils.Constants
 
-class CardDetailsActivity : AppCompatActivity() {
+class CardDetailsActivity : BaseActivity() {
 
     private var binding: ActivityCardDetailsBinding? = null
 
@@ -27,6 +31,20 @@ class CardDetailsActivity : AppCompatActivity() {
         getIntentData()
         setupActionBar()
         populatingCardDetailsUI()
+
+
+        binding?.btnUpdateCardDetails?.setOnClickListener {
+            if(binding?.etNameCardDetails?.text?.isNotEmpty()!!){
+                updateCardDetails()
+            } else {
+                Toast.makeText(this, "Please enter a Card Name", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        binding?.toolbarCardDetailsActivity?.setOnMenuItemClickListener {
+            alertDialogForDeleteList(mCardPosition,mTaskListPosition)
+           true
+        }
 
     }
 
@@ -75,6 +93,56 @@ class CardDetailsActivity : AppCompatActivity() {
             setResult(Activity.RESULT_OK)
         }
         super.onBackPressed()
+    }
+
+    fun addUpdateTaskListSuccess() {
+        hideProgressDialog()
+
+        setResult(Activity.RESULT_OK)
+        finish()
+
+    }
+
+    private fun updateCardDetails(){
+        val card = Card(binding?.etNameCardDetails?.text.toString(),
+            mBoardDetails.taskList[mTaskListPosition].cardList[mCardPosition].createdBy,
+            mBoardDetails.taskList[mTaskListPosition].cardList[mCardPosition].assignedTo)
+
+        mBoardDetails.taskList[mTaskListPosition].cardList[mCardPosition] = card
+        showProgressDialog(resources.getString(R.string.please_wait))
+        FirestoreClass().addUpdateTaskList(this, mBoardDetails)
+
+        anyChangesMade = true
+    }
+
+    private fun deleteCard(cardPosition: Int, taskPosition: Int){
+        mBoardDetails.taskList[taskPosition].cardList.removeAt(cardPosition)
+        mBoardDetails.taskList.removeAt(mBoardDetails.taskList.size - 1)
+
+
+        showProgressDialog(resources.getString(R.string.please_wait))
+        FirestoreClass().addUpdateTaskList(this, mBoardDetails)
+    }
+
+    private fun alertDialogForDeleteList(cardPosition: Int, taskPosition: Int){
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Alert")
+        builder.setMessage("You want to delete the card?")
+        builder.setIcon(android.R.drawable.ic_dialog_alert)
+        builder.setPositiveButton("Yes"){
+                dialogInterface, _ -> dialogInterface.dismiss()
+
+            deleteCard(cardPosition, taskPosition)
+            anyChangesMade = true
+            onBackPressed()
+
+        }
+        builder.setNegativeButton("No"){
+                dialogInterface, _ -> dialogInterface.dismiss()
+        }
+        val alertDialog: AlertDialog = builder.create()
+        alertDialog.setCancelable(false)
+        alertDialog.show()
     }
 
 }

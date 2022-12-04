@@ -66,7 +66,7 @@ open class MembersListAdapter(private val context: Context, private var membersL
         return membersList.size
     }
 
-    fun alertDialogForDeleteList(cardPosition: Int, taskPosition: Int){
+    /*fun alertDialogForDeleteList(cardPosition: Int, taskPosition: Int){
         val builder = AlertDialog.Builder(context)
         builder.setTitle("Alert")
         builder.setMessage("You want to delete the card?")
@@ -84,6 +84,6 @@ open class MembersListAdapter(private val context: Context, private var membersL
         val alertDialog: AlertDialog = builder.create()
         alertDialog.setCancelable(false)
         alertDialog.show()
-    }
+    }*/
 
 }

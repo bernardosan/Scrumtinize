@@ -145,7 +145,7 @@ class FirestoreClass {
         return currentUserID
     }
 
-    fun addUpdateTaskList(taskListActivity: TaskListActivity, board: Board){
+    fun addUpdateTaskList(activity: Activity, board: Board){
         val taskListHashMap = HashMap<String, Any>()
         taskListHashMap[Constants.TASK_LIST] = board.taskList
 
@@ -153,12 +153,20 @@ class FirestoreClass {
             .document(board.documentId)
             .update(taskListHashMap)
             .addOnSuccessListener {
-                taskListActivity.addUpdateTaskListSuccess()
+                if(activity is TaskListActivity) {
+                    activity.addUpdateTaskListSuccess()
+                } else if (activity is CardDetailsActivity){
+                    activity.addUpdateTaskListSuccess()
+                }
             }
             .addOnFailureListener {
                 it.printStackTrace()
-                taskListActivity.hideProgressDialog()
-                Log.e(taskListActivity.javaClass.simpleName, "Error while updating the task list")
+                if(activity is TaskListActivity){
+                    activity.hideProgressDialog()
+                } else if (activity is CardDetailsActivity){
+                    activity.hideProgressDialog()
+                }
+                Log.e(activity.javaClass.simpleName, "Error while updating the task list")
             }
 
     }
