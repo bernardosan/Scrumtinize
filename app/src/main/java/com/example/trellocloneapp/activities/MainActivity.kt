@@ -162,6 +162,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         if(readBoardsList){
             FirestoreClass().getBoardsList(this)
+        }else{
+            hideProgressDialog()
         }
 
     }

@@ -16,6 +16,7 @@ import com.example.trellocloneapp.firebase.FirestoreClass
 import com.example.trellocloneapp.models.Board
 import com.example.trellocloneapp.models.Card
 import com.example.trellocloneapp.models.Task
+import com.example.trellocloneapp.models.User
 import com.example.trellocloneapp.utils.Constants
 
 class TaskListActivity :BaseActivity() {
@@ -23,6 +24,7 @@ class TaskListActivity :BaseActivity() {
     private var binding: ActivityTaskListBinding? = null
     private var mBoardDocumentId: String = ""
     private lateinit var mBoardDetails: Board
+    private lateinit var mAssignedMemberDetailList: ArrayList<User>
 
     var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
@@ -60,6 +62,9 @@ class TaskListActivity :BaseActivity() {
         binding?.rvTaskList?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding?.rvTaskList?.setHasFixedSize(true)
         binding?.rvTaskList?.adapter = TaskListAdapter(this, board.taskList)
+
+        showProgressDialog(resources.getString(R.string.please_wait))
+        FirestoreClass().getAssignedMembersList(this, mBoardDetails.assignedTo)
     }
 
     fun addUpdateTaskListSuccess(){
@@ -167,7 +172,13 @@ class TaskListActivity :BaseActivity() {
         intent.putExtra(Constants.BOARD_DETAIL, mBoardDetails)
         intent.putExtra(Constants.TASK_LIST_ITEM_POSITION, taskPosition)
         intent.putExtra(Constants.CARD_LIST_ITEM_POSITION, cardPosition)
+        intent.putExtra(Constants.BOARD_MEMBERS_LIST,mAssignedMemberDetailList)
         resultLauncher.launch(intent)
+    }
+
+    fun boardMembersDetailsList(list: ArrayList<User>){
+        mAssignedMemberDetailList = list
+        hideProgressDialog()
     }
 
 }
