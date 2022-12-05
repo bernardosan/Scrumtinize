@@ -6,17 +6,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.trellocloneapp.R
-import com.example.trellocloneapp.adapters.LabelColorListItemAdapter
+import com.example.trellocloneapp.adapters.MembersListAdapter
 import com.example.trellocloneapp.databinding.DialogListBinding
+import com.example.trellocloneapp.models.User
 
-abstract class LabelColorListDialog(
+abstract class MembersListDialog(
     context: Context,
-    private var list: ArrayList<String>,
-    private val title: String = "",
-    private val mSelectedColor: String = ""
+    private var list: ArrayList<User>,
+    private val title: String = ""
 ): Dialog(context){
 
-    private var adapter: LabelColorListItemAdapter? = null
+    private var adapter: MembersListAdapter? = null
     private var binding: DialogListBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,19 +37,17 @@ abstract class LabelColorListDialog(
     private fun setUpRecyclerView() {
         binding?.tvTitle?.text = title
         binding?.rvList?.layoutManager = LinearLayoutManager(context)
-        adapter = LabelColorListItemAdapter(list, mSelectedColor)
+        adapter = MembersListAdapter(context, list)
         binding?.rvList?.adapter = adapter
 
-        adapter!!.setOnClickListener(object : LabelColorListItemAdapter.OnClickListener {
-            override fun onClick(position: Int, color: String) {
+        adapter!!.setOnClickListener(object : MembersListAdapter.OnClickListener {
+            override fun onClick(position: Int, user: User, action:String) {
                 dismiss()
-                onItemSelected(color)
-
+                onItemSelected(user, action)
             }
 
         })
     }
 
-    protected abstract fun onItemSelected(color: String)
-
+    protected abstract fun onItemSelected(user: User, action:String)
 }

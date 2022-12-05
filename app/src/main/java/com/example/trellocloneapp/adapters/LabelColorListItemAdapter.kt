@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.trellocloneapp.databinding.ItemLabelColorBinding
 
 class LabelColorListItemAdapter (
-    private val context: Context,
     private var list: ArrayList<String>,
     private val mSelectedColor : String
     ) : RecyclerView.Adapter<LabelColorListItemAdapter.MainViewHolder>(){

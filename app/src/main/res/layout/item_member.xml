@@ -8,10 +8,12 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/ll_item_member"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
+        android:background="?attr/selectableItemBackground"
         android:padding="@dimen/item_member_content_padding">
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -47,6 +49,17 @@
                 android:textSize="@dimen/item_member_email_text_size"
                 tools:text="Email" />
         </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_selected_member"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginEnd="@dimen/item_label_color_selected_image_marginEnd"
+            android:contentDescription="@string/image_contentDescription"
+            android:src="@drawable/ic_baseline_blue_check_24"
+            android:visibility="gone"
+            tools:visibility="visible"/>
 
     </LinearLayout>
 
