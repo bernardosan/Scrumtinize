@@ -31,6 +31,7 @@ class CardDetailsActivity : BaseActivity() {
     private var mSelectedColor = ""
     private lateinit var mMembersDetailList: ArrayList<User>
     private var mSelectedDueDate: Long = 0L
+    private var mWeight: Int = 0
 
     private var anyChangesMade = false
 
@@ -47,6 +48,20 @@ class CardDetailsActivity : BaseActivity() {
         binding?.toolbarCardDetailsActivity?.setOnMenuItemClickListener {
             alertDialogForDeleteList(mCardPosition,mTaskListPosition)
            true
+        }
+
+        binding?.ibAddWeight?.setOnClickListener {
+            if(mWeight < 5) {
+                mWeight += 1
+                binding?.tvSelectCardWeight?.text = "$mWeight/5"
+            }
+        }
+
+        binding?.ibRemoveWeight?.setOnClickListener {
+            if(mWeight > 0) {
+                mWeight -= 1
+                binding?.tvSelectCardWeight?.text = "$mWeight/5"
+            }
         }
 
         binding?.tvSelectLabelColor?.setOnClickListener {
@@ -112,20 +127,28 @@ class CardDetailsActivity : BaseActivity() {
 
         mSelectedColor = mBoardDetails.taskList[mTaskListPosition].cardList[mCardPosition].labelColor
         mSelectedDueDate = mBoardDetails.taskList[mTaskListPosition].cardList[mCardPosition].dueDate
+        mWeight = mBoardDetails.taskList[mTaskListPosition].cardList[mCardPosition].weight
     }
 
     private fun populatingCardDetailsUI(){
+
         binding?.etNameCardDetails?.setText(
             mBoardDetails
                 .taskList[mTaskListPosition]
                 .cardList[mCardPosition]
                 .title)
+
         binding?.etNameCardDetails?.setSelection(binding?.etNameCardDetails?.text!!.length)
+
+        binding?.tvSelectCardWeight?.text = "$mWeight/5"
+
         if (mSelectedColor.isNotEmpty()){
             setColor()
         } else {
             binding?.tvSelectLabelColor?.text = getString(R.string.select_color)
         }
+
+
 
     }
 
@@ -151,7 +174,8 @@ class CardDetailsActivity : BaseActivity() {
             mBoardDetails.taskList[mTaskListPosition].cardList[mCardPosition].createdBy,
             mBoardDetails.taskList[mTaskListPosition].cardList[mCardPosition].assignedTo,
             mSelectedColor,
-            mSelectedDueDate)
+            mSelectedDueDate,
+            mWeight)
 
         //val taskList: ArrayList<Task> = mBoardDetails.taskList
         //taskList.removeAt(taskList.size - 1)
