@@ -7,12 +7,14 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.trellocloneapp.R
+import com.example.trellocloneapp.activities.TaskListActivity
 import com.example.trellocloneapp.databinding.ItemCardSelectedMemberBinding
 import com.example.trellocloneapp.models.SelectedMembers
 
 open class CardMemberListItemsAdapter (
     private val context: Context,
-    private var list: ArrayList<SelectedMembers>
+    private var list: ArrayList<SelectedMembers>,
+    private var assignMembers: Boolean
 ) : RecyclerView.Adapter<CardMemberListItemsAdapter.MainViewHolder>(){
 
     private var onClickListener: OnClickListener? = null
@@ -22,7 +24,7 @@ open class CardMemberListItemsAdapter (
         fun bindItem(position: Int) {
             val item = list[position]
 
-            if(position == list.size - 1){
+            if(position == list.size - 1 && assignMembers){
                 itemBinding.ivAddMember.visibility = View.VISIBLE
                 itemBinding.ivSelectedMemberImage.visibility = View.GONE
             } else{
@@ -36,13 +38,6 @@ open class CardMemberListItemsAdapter (
                 .centerCrop()
                 .placeholder(R.drawable.ic_user_place_holder)
                 .into(itemBinding.ivSelectedMemberImage)
-
-
-            itemView.setOnClickListener {
-                if (onClickListener != null) {
-                    onClickListener!!.onClick(position)
-                }
-            }
 
 
         }
@@ -66,6 +61,12 @@ open class CardMemberListItemsAdapter (
 
     override fun onBindViewHolder(holder: MainViewHolder, Position: Int) {
         holder.bindItem(Position)
+        holder.itemView.setOnClickListener {
+
+            if (onClickListener != null) {
+                onClickListener!!.onClick(holder.adapterPosition)
+            }
+        }
     }
 
     override fun getItemCount(): Int {

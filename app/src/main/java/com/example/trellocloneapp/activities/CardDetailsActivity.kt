@@ -1,6 +1,7 @@
 package com.example.trellocloneapp.activities
 
 import android.app.Activity
+import android.app.DatePickerDialog
 import android.graphics.Color
 import android.os.Bundle
 import android.view.Menu
@@ -14,11 +15,11 @@ import com.example.trellocloneapp.databinding.ActivityCardDetailsBinding
 import com.example.trellocloneapp.dialogs.LabelColorListDialog
 import com.example.trellocloneapp.dialogs.MembersListDialog
 import com.example.trellocloneapp.firebase.FirestoreClass
-import com.example.trellocloneapp.models.Board
-import com.example.trellocloneapp.models.Card
-import com.example.trellocloneapp.models.SelectedMembers
-import com.example.trellocloneapp.models.User
+import com.example.trellocloneapp.models.*
 import com.example.trellocloneapp.utils.Constants
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 class CardDetailsActivity : BaseActivity() {
 
@@ -29,6 +30,7 @@ class CardDetailsActivity : BaseActivity() {
     private var mCardPosition = -1
     private var mSelectedColor = ""
     private lateinit var mMembersDetailList: ArrayList<User>
+    private var mSelectedDueDate: Long = 0L
 
     private var anyChangesMade = false
 
@@ -42,16 +44,6 @@ class CardDetailsActivity : BaseActivity() {
         populatingCardDetailsUI()
         setupSelectedMembersList()
 
-
-
-        binding?.btnUpdateCardDetails?.setOnClickListener {
-            if(binding?.etNameCardDetails?.text?.isNotEmpty()!!){
-                updateCardDetails()
-            } else {
-                Toast.makeText(this, "Please enter a Card Name", Toast.LENGTH_SHORT).show()
-            }
-        }
-
         binding?.toolbarCardDetailsActivity?.setOnMenuItemClickListener {
             alertDialogForDeleteList(mCardPosition,mTaskListPosition)
            true
@@ -64,6 +56,24 @@ class CardDetailsActivity : BaseActivity() {
         binding?.tvSelectMembers?.setOnClickListener {
             membersListDialog()
         }
+
+        if(mSelectedDueDate > 0){
+            val date = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH).format(Date(mSelectedDueDate))
+            binding?.tvSelectDueDate?.text = date
+        }
+
+        binding?.tvSelectDueDate?.setOnClickListener {
+            showDatePicker()
+        }
+
+        binding?.btnUpdateCardDetails?.setOnClickListener {
+            if(binding?.etNameCardDetails?.text?.isNotEmpty()!!){
+                updateCardDetails()
+            } else {
+                Toast.makeText(this, "Please enter a Card Name", Toast.LENGTH_SHORT).show()
+            }
+        }
+
 
     }
 
@@ -101,6 +111,7 @@ class CardDetailsActivity : BaseActivity() {
         }
 
         mSelectedColor = mBoardDetails.taskList[mTaskListPosition].cardList[mCardPosition].labelColor
+        mSelectedDueDate = mBoardDetails.taskList[mTaskListPosition].cardList[mCardPosition].dueDate
     }
 
     private fun populatingCardDetailsUI(){
@@ -139,7 +150,11 @@ class CardDetailsActivity : BaseActivity() {
         val card = Card(binding?.etNameCardDetails?.text.toString(),
             mBoardDetails.taskList[mTaskListPosition].cardList[mCardPosition].createdBy,
             mBoardDetails.taskList[mTaskListPosition].cardList[mCardPosition].assignedTo,
-            mSelectedColor)
+            mSelectedColor,
+            mSelectedDueDate)
+
+        //val taskList: ArrayList<Task> = mBoardDetails.taskList
+        //taskList.removeAt(taskList.size - 1)
 
         mBoardDetails.taskList[mTaskListPosition].cardList[mCardPosition] = card
         showProgressDialog(resources.getString(R.string.please_wait))
@@ -280,7 +295,7 @@ class CardDetailsActivity : BaseActivity() {
             binding?.tvSelectMembers?.visibility = View.GONE
             binding?.rvSelectedMembersList?.visibility = View.VISIBLE
             binding?.rvSelectedMembersList?.layoutManager = GridLayoutManager(this, 6)
-            val adapter = CardMemberListItemsAdapter(this, selectedMembersList)
+            val adapter = CardMemberListItemsAdapter(this, selectedMembersList, true)
             binding?.rvSelectedMembersList?.adapter = adapter
             adapter.setOnClickListener(
                 object : CardMemberListItemsAdapter.OnClickListener {
@@ -293,4 +308,27 @@ class CardDetailsActivity : BaseActivity() {
 
         }
     }
+
+    private fun showDatePicker(){
+        val c = Calendar.getInstance()
+        val year = c.get(Calendar.YEAR)
+        val month = c.get(Calendar.MONTH)
+        val day = c.get(Calendar.DAY_OF_MONTH)
+        val dpd = DatePickerDialog(
+            this,
+            DatePickerDialog.OnDateSetListener {
+                _, mYear, monthOfYear, dayOfMonth ->
+                val sDayOfMonth = if (dayOfMonth < 10) "0$dayOfMonth" else "$dayOfMonth"
+                val sMonthOfYear = if ((monthOfYear + 1)< 10) "0${monthOfYear + 1}" else "$monthOfYear"
+                val selectedDate = "$sDayOfMonth/$sMonthOfYear/$mYear"
+                binding?.tvSelectDueDate?.text = selectedDate
+                val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
+                val date = sdf.parse(selectedDate)
+                mSelectedDueDate = date!!.time },
+            year,
+            month,
+            day)
+        dpd.show()
+    }
+
 }

@@ -30,7 +30,7 @@ open class TaskListAdapter(private val context: Context, private var list: Array
 
             itemBinding.rvCardList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             itemBinding.rvCardList.setHasFixedSize(true)
-            itemBinding.rvCardList.adapter = CardListAdapter(context, model.cardList, position)
+            itemBinding.rvCardList.adapter = CardListAdapter(context, model.cardList)
 
             if(list.size > 0){
                 itemBinding.rvCardList.visibility = View.VISIBLE
@@ -147,7 +147,7 @@ open class TaskListAdapter(private val context: Context, private var list: Array
     override fun onBindViewHolder(holder: MainViewHolder, taskPosition: Int) {
         holder.bindItem(taskPosition)
 
-        val adapter = CardListAdapter(context, list[holder.adapterPosition].cardList, holder.adapterPosition)
+        val adapter = CardListAdapter(context, list[holder.adapterPosition].cardList)
         holder.itemBinding.rvCardList.adapter = adapter
         adapter.setOnClickListener(
             object:CardListAdapter.OnClickListener{

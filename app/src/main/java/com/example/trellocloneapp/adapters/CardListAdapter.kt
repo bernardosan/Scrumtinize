@@ -6,15 +6,18 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.GridLayout
 import android.widget.ImageButton
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.trellocloneapp.R
 import com.example.trellocloneapp.activities.TaskListActivity
 import com.example.trellocloneapp.databinding.ItemCardBinding
 import com.example.trellocloneapp.models.Board
 import com.example.trellocloneapp.models.Card
+import com.example.trellocloneapp.models.SelectedMembers
 
-open class CardListAdapter(private val context: Context, private var cardList: ArrayList<Card>, private var taskPosition: Int) :
+open class CardListAdapter(private val context: Context, private var cardList: ArrayList<Card>) :
     RecyclerView.Adapter<CardListAdapter.MainViewHolder>(){
 
     private var onClickListener: OnClickListener? = null
@@ -31,6 +34,50 @@ open class CardListAdapter(private val context: Context, private var cardList: A
                 itemBinding.viewLabelColor.setBackgroundColor(Color.parseColor(model.labelColor))
             } else {
                 itemBinding.viewLabelColor.visibility = View.GONE
+            }
+
+            if ((context as TaskListActivity).mAssignedMemberDetailList.size > 0){
+                val selectedMembersList: ArrayList<SelectedMembers> = ArrayList()
+
+                for(i in context.mAssignedMemberDetailList.indices){
+                    for(j in model.assignedTo){
+                        if(context.mAssignedMemberDetailList[i].id == j){
+                            val selectedMembers = SelectedMembers(
+                                context.mAssignedMemberDetailList[i].id,
+                                context.mAssignedMemberDetailList[i].image)
+
+                            selectedMembersList.add(selectedMembers)
+
+                        }
+
+                    }
+                }
+
+                if(selectedMembersList.size > 0){
+                    if(selectedMembersList.size == 1 && selectedMembersList[0].id == model.createdBy){
+                        itemBinding.rvCardSelectedMembersList.visibility = View.GONE
+                    } else {
+                        itemBinding.rvCardSelectedMembersList.visibility = View.VISIBLE
+                        itemBinding.rvCardSelectedMembersList.layoutManager = GridLayoutManager(context, 4)
+
+                        val adapter = CardMemberListItemsAdapter(context, selectedMembersList, false)
+
+                        itemBinding.rvCardSelectedMembersList.adapter = adapter
+
+                        adapter.setOnClickListener(object: CardMemberListItemsAdapter.OnClickListener{
+                                override fun onClick(position: Int) {
+                                    if(onClickListener != null){
+                                        onClickListener!!.onClick(position)
+                                    }
+                                }
+                            }
+                        )
+
+                    }
+                } else {
+                    itemBinding.rvCardSelectedMembersList.visibility = View.GONE
+                }
+
             }
 
             /*
@@ -89,8 +136,8 @@ open class CardListAdapter(private val context: Context, private var cardList: A
             if(onClickListener != null){
                 onClickListener!!.onClick(cardPosition)
             }
-
         }
+
     }
 
     override fun getItemCount(): Int {
