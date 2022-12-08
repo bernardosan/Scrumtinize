@@ -1,5 +1,6 @@
 package com.example.trellocloneapp.adapters
 
+import android.R.attr
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
@@ -9,6 +10,13 @@ import com.bumptech.glide.Glide
 import com.example.trellocloneapp.R
 import com.example.trellocloneapp.databinding.ItemBoardBinding
 import com.example.trellocloneapp.models.Board
+import android.R.attr.data
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.trellocloneapp.activities.TaskListActivity
+import java.util.*
+import kotlin.collections.ArrayList
+
 
 class MainAdapter(val boardList: ArrayList<Board>, val context: Context):RecyclerView.Adapter<MainAdapter.MainViewHolder>() {
 
@@ -54,8 +62,9 @@ class MainAdapter(val boardList: ArrayList<Board>, val context: Context):Recycle
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         val board = boardList[position]
         holder.bindItem(board)
+
         holder.itemView.setOnClickListener {
-            if(onClickListener != null){
+            if (onClickListener != null) {
                 onClickListener!!.onClick(position, board)
             }
         }
@@ -63,10 +72,24 @@ class MainAdapter(val boardList: ArrayList<Board>, val context: Context):Recycle
             onLongClickListener!!.onLongClick(position, board)
             true
         }
+
     }
 
     override fun getItemCount(): Int {
         return boardList.size
     }
 
+    fun removeItem(position: Int) {
+        boardList.removeAt(position)
+        notifyItemRemoved(position)
+    }
+
+    fun restoreItem(board: Board, position: Int) {
+        boardList.add(position, board)
+        notifyItemInserted(position)
+    }
+
+    fun getData(): ArrayList<Board> {
+        return boardList
+    }
 }

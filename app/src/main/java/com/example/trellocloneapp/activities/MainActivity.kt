@@ -22,6 +22,16 @@ import com.example.trellocloneapp.models.User
 import com.example.trellocloneapp.utils.Constants
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.installations.FirebaseInstallations
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.recyclerview.widget.ItemTouchHelper
+
+import androidx.recyclerview.widget.RecyclerView
+import com.example.trellocloneapp.models.Card
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+
+
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private var binding: ActivityMainBinding? = null
@@ -29,6 +39,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     val assignedTo: ArrayList<String> = ArrayList()
     val documentId: String = ""
     private lateinit var mSharedPreferences: SharedPreferences
+    private var mPositionDraggedFrom = -1
+    private var mPositionDraggedTo = -1
+    private lateinit var mAdapter: MainAdapter
+
 
     companion object {
         const val CREATE_BOARD_REQUEST_CODE = 10
@@ -85,10 +99,14 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
             binding?.rvBoardsList?.layoutManager = LinearLayoutManager(this)
             binding?.rvBoardsList?.adapter = adapter
+            mAdapter = adapter
             binding?.rvBoardsList?.visibility = View.VISIBLE
             binding?.tvNoBoardsAvailable?.visibility = View.GONE
 
             binding?.rvBoardsList?.setHasFixedSize(true)
+
+            enableItemSwap(boardsList)
+
 
             adapter.setOnClickListener(object : MainAdapter.OnClickListener {
                 override fun onClick(position: Int, model: Board) {
@@ -205,6 +223,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
         builder.setNegativeButton("No") { dialogInterface, _ ->
             dialogInterface.dismiss()
+            showProgressDialog(resources.getString(R.string.please_wait))
+
+            FirestoreClass().getBoardsList(this)
         }
         val alertDialog: AlertDialog = builder.create()
         alertDialog.setCancelable(false)
@@ -223,6 +244,70 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     private fun updateFCMToken(token: String) {
         val userHashMap = HashMap<String, Any>()
         userHashMap[Constants.FCM_TOKEN] = token
+    }
+
+    private fun enableItemSwap(boardList: ArrayList<Board>) {
+        //  Creates an ItemTouchHelper that will work with the given Callback.
+        val helper = ItemTouchHelper(object :
+            ItemTouchHelper.SimpleCallback(
+                0/*ItemTouchHelper.UP or ItemTouchHelper.DOWN*/,
+                ItemTouchHelper.END
+            ) {
+            /*Called when ItemTouchHelper wants to move the dragged item from its old position to
+         the new position.*/
+
+            override fun onMove(
+                recyclerView: RecyclerView,
+                dragged: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                val draggedPosition = dragged.adapterPosition
+                val targetPosition = target.adapterPosition
+
+                if (mPositionDraggedFrom == -1) {
+                    mPositionDraggedFrom = draggedPosition
+                }
+                mPositionDraggedTo = targetPosition
+
+                Collections.swap(boardList, draggedPosition, targetPosition)
+
+
+                // move item in `draggedPosition` to `targetPosition` in adapter.
+                mAdapter.notifyItemMoved(draggedPosition, targetPosition)
+
+                return false // true if moved, false otherwise
+            }
+
+            // Called when a ViewHolder is swiped by the user.
+            override fun onSwiped(
+                viewHolder: RecyclerView.ViewHolder,
+                direction: Int
+            ) { // remove from adapter
+                alertDialogForDeleteBoard(boardList[viewHolder.adapterPosition])
+            }
+
+            /*Called by the ItemTouchHelper when the user interaction with an element is over and it
+         also completed its animation.*/
+            override fun clearView(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder
+            ) {
+                super.clearView(recyclerView, viewHolder)
+
+                if (mPositionDraggedFrom != -1 && mPositionDraggedTo != -1 && mPositionDraggedFrom != mPositionDraggedTo) {
+
+
+                }
+
+                // Reset the global variables
+                mPositionDraggedFrom = -1
+                mPositionDraggedTo = -1
+            }
+        })
+
+        /*Attaches the ItemTouchHelper to the provided RecyclerView. If TouchHelper is already
+    attached to a RecyclerView, it will first detach from the previous one.*/
+        helper.attachToRecyclerView(binding?.rvBoardsList)
     }
 
 }
