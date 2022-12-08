@@ -28,12 +28,19 @@ open class CardListAdapter(private val context: Context, private var cardList: A
             val model = cardList[cardPosition]
 
             itemBinding.tvCardName.text = model.title
+            itemBinding.tvCardWeight.text = model.weight.toString()
 
             if(model.labelColor.isNotEmpty()){
                 itemBinding.viewLabelColor.visibility = View.VISIBLE
                 itemBinding.viewLabelColor.setBackgroundColor(Color.parseColor(model.labelColor))
             } else {
                 itemBinding.viewLabelColor.visibility = View.GONE
+            }
+
+            if(model.weight > 0){
+                itemBinding.tvCardWeight.visibility = View.VISIBLE
+            } else {
+                itemBinding.tvCardWeight.visibility = View.GONE
             }
 
             if ((context as TaskListActivity).mAssignedMemberDetailList.size > 0){

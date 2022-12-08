@@ -2,7 +2,9 @@ package com.example.trellocloneapp.activities
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -18,17 +20,17 @@ import com.example.trellocloneapp.firebase.FirestoreClass
 import com.example.trellocloneapp.models.Board
 import com.example.trellocloneapp.models.User
 import com.example.trellocloneapp.utils.Constants
-import com.example.trellocloneapp.utils.boardListTest
 import com.google.android.material.navigation.NavigationView
-
+import com.google.firebase.installations.FirebaseInstallations
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private var binding: ActivityMainBinding? = null
     private var mUserName: String? = null
     val assignedTo: ArrayList<String> = ArrayList()
     val documentId: String = ""
+    private lateinit var mSharedPreferences: SharedPreferences
 
-    companion object{
+    companion object {
         const val CREATE_BOARD_REQUEST_CODE = 10
     }
 
@@ -39,14 +41,29 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         setContentView(binding?.root)
         setupActionBar()
 
+        mSharedPreferences =
+            this.getSharedPreferences(Constants.SCRUMTINIZE_PREFERENCES, Context.MODE_PRIVATE)
+
+        val tokenUpdated = mSharedPreferences.getBoolean(Constants.FCM_TOKEN_UPDATED, false)
+
+        if (!tokenUpdated) {
+            FirebaseInstallations
+                .getInstance()
+                .getToken(true)
+                .addOnSuccessListener(this@MainActivity) {
+                    updateFCMToken(it.token)
+                }
+        }
+
         binding?.navView?.setNavigationItemSelectedListener(this)
 
-        binding?.fabAddBoard?.setOnClickListener{
+        binding?.fabAddBoard?.setOnClickListener {
             val intent = Intent(this, CreateBoardActivity::class.java)
             intent.putExtra(Constants.NAME, mUserName)
             startActivityForResult(intent, CREATE_BOARD_REQUEST_CODE)
 
         }
+
 
         showProgressDialog(resources.getString(R.string.please_wait))
         FirestoreClass().updateUserData(this, true)
@@ -61,9 +78,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
 
-    fun boardsListToUI(boardsList: ArrayList<Board>){
+    fun boardsListToUI(boardsList: ArrayList<Board>) {
 
-        if(boardsList.size > 0){
+        if (boardsList.size > 0) {
             val adapter = MainAdapter(boardsList, this)
 
             binding?.rvBoardsList?.layoutManager = LinearLayoutManager(this)
@@ -73,7 +90,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
             binding?.rvBoardsList?.setHasFixedSize(true)
 
-            adapter.setOnClickListener(object: MainAdapter.OnClickListener{
+            adapter.setOnClickListener(object : MainAdapter.OnClickListener {
                 override fun onClick(position: Int, model: Board) {
                     val intent = Intent(this@MainActivity, TaskListActivity::class.java)
                     intent.putExtra(Constants.DOCUMENT_ID, model.documentId)
@@ -81,9 +98,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 }
             })
 
-            adapter.setOnLongClickListener(object: MainAdapter.OnLongClickListener{
+            adapter.setOnLongClickListener(object : MainAdapter.OnLongClickListener {
                 override fun onLongClick(position: Int, model: Board) {
-                    alertDialogForDeleteBoard(position, model)
+                    alertDialogForDeleteBoard(model)
                 }
             })
 
@@ -104,7 +121,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     private fun toggleDrawer() {
         val drawerLayout = findViewById<DrawerLayout?>(R.id.drawer_layout)
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)){
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)
         } else {
             drawerLayout.openDrawer(GravityCompat.START)
@@ -112,22 +129,22 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     override fun onBackPressed() {
-        if (binding?.drawerLayout!!.isDrawerOpen(GravityCompat.START)){
+        if (binding?.drawerLayout!!.isDrawerOpen(GravityCompat.START)) {
             binding?.drawerLayout!!.closeDrawer(GravityCompat.START)
-        } else{
+        } else {
             super.onBackPressed()
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == CREATE_BOARD_REQUEST_CODE && resultCode == Activity.RESULT_OK){
+        if (requestCode == CREATE_BOARD_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             FirestoreClass().getBoardsList(this)
         }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
+        when (item.itemId) {
             R.id.nav_my_profile -> {
                 val intent = Intent(this, MyProfileActivity::class.java)
                 startActivity(intent)
@@ -135,6 +152,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
             R.id.nav_sign_out -> {
                 signOutUser()
+
+                mSharedPreferences.edit().clear().apply()
+
                 val intent = Intent(this, SplashActivity::class.java)
                 startActivity(intent)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -160,34 +180,49 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         findViewById<TextView>(R.id.tv_username).text = user.name
 
-        if(readBoardsList){
+        if (readBoardsList) {
             FirestoreClass().getBoardsList(this)
-        }else{
+        } else {
             hideProgressDialog()
         }
 
     }
 
-    private fun deleteBoard(boardId: String){
+    private fun deleteBoard(boardId: String) {
         showProgressDialog(resources.getString(R.string.please_wait))
         FirestoreClass().deleteBoard(this, boardId)
         FirestoreClass().updateUserData(this, true)
     }
 
-    private fun alertDialogForDeleteBoard(position: Int, model: Board){
+    private fun alertDialogForDeleteBoard(model: Board) {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Alert")
         builder.setMessage("Are you sure you want to delete ${model.name} board?")
         builder.setIcon(android.R.drawable.ic_dialog_alert)
-        builder.setPositiveButton("Yes"){
-                dialogInterface, which -> dialogInterface.dismiss()
-                deleteBoard(model.documentId)
+        builder.setPositiveButton("Yes") { dialogInterface, which ->
+            dialogInterface.dismiss()
+            deleteBoard(model.documentId)
         }
-        builder.setNegativeButton("No"){
-                dialogInterface, which -> dialogInterface.dismiss()
+        builder.setNegativeButton("No") { dialogInterface, _ ->
+            dialogInterface.dismiss()
         }
         val alertDialog: AlertDialog = builder.create()
         alertDialog.setCancelable(false)
         alertDialog.show()
     }
+
+    fun tokenUpdateSuccess() {
+        hideProgressDialog()
+        val editor: SharedPreferences.Editor = mSharedPreferences.edit()
+        editor.putBoolean(Constants.FCM_TOKEN_UPDATED, true)
+        editor.apply()
+        showProgressDialog(resources.getString(R.string.please_wait))
+        FirestoreClass().updateUserData(this, true)
+    }
+
+    private fun updateFCMToken(token: String) {
+        val userHashMap = HashMap<String, Any>()
+        userHashMap[Constants.FCM_TOKEN] = token
+    }
+
 }

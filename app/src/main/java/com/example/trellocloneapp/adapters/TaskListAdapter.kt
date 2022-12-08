@@ -38,7 +38,6 @@ open class TaskListAdapter(private val context: Context, private var list: Array
                 itemBinding.rvCardList.visibility = View.GONE
             }
 
-
             if(position == list.size -1) {
                 itemBinding.tvAddTaskList.visibility = View.VISIBLE
                 itemBinding.llTaskItem.visibility = View.GONE
@@ -48,7 +47,15 @@ open class TaskListAdapter(private val context: Context, private var list: Array
                 itemBinding.llTaskItem.visibility = View.VISIBLE
             }
 
-            itemBinding.tvTaskListTitle.text = model.title
+            val weight = countListWeight(model)
+
+            if (weight > 0) {
+                itemBinding.tvTaskListTitle.text = weight.toString() + ". " + model.title
+            } else {
+                itemBinding.tvTaskListTitle.text = model.title
+            }
+
+
             itemBinding.tvAddTaskList.setOnClickListener {
                 itemBinding.tvAddTaskList.visibility = View.GONE
                 itemBinding.cvAddTaskListName.visibility = View.VISIBLE
@@ -247,6 +254,14 @@ open class TaskListAdapter(private val context: Context, private var list: Array
         val alertDialog: AlertDialog = builder.create()
         alertDialog.setCancelable(false)
         alertDialog.show()
+    }
+
+    private fun countListWeight(task: Task): Int{
+        var weight = 0
+        for(i in task.cardList.indices){
+            weight += task.cardList[i].weight
+        }
+        return weight
     }
 
     private fun Int.toDp(): Int =

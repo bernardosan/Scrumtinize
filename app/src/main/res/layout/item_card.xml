@@ -4,14 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/item_card_content_margin"
-    android:background="?attr/selectableItemBackground"
     android:elevation="@dimen/item_card_cv_elevation"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    >
 
     <LinearLayout
+        android:id="@+id/ll_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="?attr/selectableItemBackground">
 
         <View
             android:id="@+id/view_label_color"
@@ -27,13 +29,24 @@
 
                 <TextView
                     android:id="@+id/tv_card_name"
-                    android:layout_weight="1"
+                    android:layout_weight="10"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackground"
                     android:padding="@dimen/item_card_name_text_padding"
                     android:textSize="@dimen/item_card_name_text_size"
                     tools:text="Card Name" />
+
+                <TextView
+                    android:id="@+id/tv_card_weight"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:textSize="@dimen/item_card_name_text_size"
+                    android:textColor="@color/primary_text_color"
+                    android:textStyle="bold"
+                    android:visibility="visible"
+                    tools:text="0"/>
 
             </LinearLayout>
 

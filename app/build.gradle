@@ -46,6 +46,8 @@ dependencies {
 
     //coroutines
     implementation "androidx.activity:activity-ktx:1.4.0-beta01"
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.1'
 
     //firebase
     // Import the BoM for the Firebase platform

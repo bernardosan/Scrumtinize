@@ -24,7 +24,7 @@ class TaskListActivity :BaseActivity() {
     private lateinit var mBoardDetails: Board
     lateinit var mAssignedMemberDetailList: ArrayList<User>
 
-    var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             // val data: Intent? = result.data
             showProgressDialog(resources.getString(R.string.please_wait))
@@ -39,7 +39,7 @@ class TaskListActivity :BaseActivity() {
         binding = ActivityTaskListBinding.inflate(layoutInflater)
         setContentView(binding?.root)
 
-        if(intent.hasExtra(Constants.DOCUMENT_ID)){
+        if(intent.hasExtra(Constants.DOCUMENT_ID)) {
             mBoardDocumentId = intent.getStringExtra(Constants.DOCUMENT_ID)!!
         }
 
@@ -76,7 +76,7 @@ class TaskListActivity :BaseActivity() {
     }
 
     fun updateTaskList(position: Int, listName: String, model: Task){
-        val task = Task(listName, model.createdBy)
+        val task = Task(listName, model.createdBy, model.cardList, countListWeight(position))
         mBoardDetails.taskList[position] = task
         mBoardDetails.taskList.removeAt(mBoardDetails.taskList.size - 1)
 
@@ -130,7 +130,7 @@ class TaskListActivity :BaseActivity() {
         val cardAssignedUsersList: ArrayList<String> = ArrayList()
         cardAssignedUsersList.add(FirestoreClass().getCurrentUserId())
 
-        val card = Card(cardName,FirestoreClass().getCurrentUserId(), cardAssignedUsersList)
+        val card = Card(cardName,FirestoreClass().getCurrentUserId(), cardAssignedUsersList,"",0L,0)
         val cardsList = mBoardDetails.taskList[taskPosition].cardList
 
         cardsList.add(card)
@@ -138,7 +138,8 @@ class TaskListActivity :BaseActivity() {
         val task = Task(
             mBoardDetails.taskList[taskPosition].title,
             mBoardDetails.taskList[taskPosition].createdBy,
-            cardsList
+            cardsList,
+            countListWeight(taskPosition)
         )
 
         mBoardDetails.taskList[taskPosition] = task
@@ -178,6 +179,24 @@ class TaskListActivity :BaseActivity() {
         binding?.rvTaskList?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding?.rvTaskList?.setHasFixedSize(true)
         binding?.rvTaskList?.adapter = TaskListAdapter(this, mBoardDetails.taskList)
+    }
+
+    private fun countBoardWeight(): Int{
+        var weight = 0
+        for(i in mBoardDetails.taskList.indices){
+            for(j in mBoardDetails.taskList[i].cardList.indices){
+                weight += mBoardDetails.taskList[i].cardList[j].weight
+            }
+        }
+        return weight
+    }
+
+    private fun countListWeight(taskPosition: Int): Int{
+        var weight = 0
+        for(i in mBoardDetails.taskList[taskPosition].cardList.indices){
+                weight += mBoardDetails.taskList[taskPosition].cardList[i].weight
+            }
+        return weight
     }
 
 }
