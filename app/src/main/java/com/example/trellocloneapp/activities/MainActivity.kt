@@ -211,9 +211,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         builder.setIcon(android.R.drawable.ic_dialog_alert)
         builder.setPositiveButton("Yes") { dialogInterface, _ ->
             dialogInterface.dismiss()
+            deleteBoard(model.documentId)
             mAdapter.removeItem(position)
             mAdapter.notifyItemRemoved(position)
-            deleteBoard(model.documentId)
 
         }
         builder.setNegativeButton("No") { dialogInterface, _ ->
