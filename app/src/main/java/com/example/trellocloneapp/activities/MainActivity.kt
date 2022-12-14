@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.*
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -27,9 +28,15 @@ import androidx.recyclerview.widget.ItemTouchHelper
 
 import androidx.recyclerview.widget.RecyclerView
 import com.example.trellocloneapp.models.Card
+import java.text.FieldPosition
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
+import android.graphics.drawable.ColorDrawable
+
+import android.graphics.drawable.Drawable
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -119,6 +126,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             adapter.setOnLongClickListener(object : MainAdapter.OnLongClickListener {
                 override fun onLongClick(position: Int, model: Board) {
                     alertDialogForDeleteBoard(model)
+
                 }
             })
 
@@ -220,6 +228,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         builder.setPositiveButton("Yes") { dialogInterface, which ->
             dialogInterface.dismiss()
             deleteBoard(model.documentId)
+
         }
         builder.setNegativeButton("No") { dialogInterface, _ ->
             dialogInterface.dismiss()
@@ -248,33 +257,36 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     private fun enableItemSwap(boardList: ArrayList<Board>) {
         //  Creates an ItemTouchHelper that will work with the given Callback.
-        val helper = ItemTouchHelper(object :
-            ItemTouchHelper.SimpleCallback(
-                0/*ItemTouchHelper.UP or ItemTouchHelper.DOWN*/,
-                ItemTouchHelper.END
-            ) {
-            /*Called when ItemTouchHelper wants to move the dragged item from its old position to
-         the new position.*/
+        val helper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.START) {
+
+            private val deleteIcon = ContextCompat.getDrawable(this@MainActivity, R.drawable.ic_delete_card)
+            private val intrinsicWidth = deleteIcon!!.intrinsicWidth
+            private val intrinsicHeight = deleteIcon!!.intrinsicHeight
+            private val background = ColorDrawable()
+            private val backgroundColor = Color.parseColor("#f44336")
+            private val clearPaint = Paint().apply { xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR) }
+
+
+
+            override fun getMovementFlags(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder
+            ): Int {
+                /**
+                 * To disable "swipe" for specific item return 0 here.
+                 * For example:
+                 * if (viewHolder?.itemViewType == YourAdapter.SOME_TYPE) return 0
+                 * if (viewHolder?.adapterPosition == 0) return 0
+                 */
+                if (viewHolder.adapterPosition == 10) return 0
+                return super.getMovementFlags(recyclerView, viewHolder)
+            }
 
             override fun onMove(
                 recyclerView: RecyclerView,
                 dragged: RecyclerView.ViewHolder,
                 target: RecyclerView.ViewHolder
             ): Boolean {
-                val draggedPosition = dragged.adapterPosition
-                val targetPosition = target.adapterPosition
-
-                if (mPositionDraggedFrom == -1) {
-                    mPositionDraggedFrom = draggedPosition
-                }
-                mPositionDraggedTo = targetPosition
-
-                Collections.swap(boardList, draggedPosition, targetPosition)
-
-
-                // move item in `draggedPosition` to `targetPosition` in adapter.
-                mAdapter.notifyItemMoved(draggedPosition, targetPosition)
-
                 return false // true if moved, false otherwise
             }
 
@@ -286,23 +298,37 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 alertDialogForDeleteBoard(boardList[viewHolder.adapterPosition])
             }
 
-            /*Called by the ItemTouchHelper when the user interaction with an element is over and it
-         also completed its animation.*/
-            override fun clearView(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder
-            ) {
-                super.clearView(recyclerView, viewHolder)
+            override fun onChildDraw(c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
 
-                if (mPositionDraggedFrom != -1 && mPositionDraggedTo != -1 && mPositionDraggedFrom != mPositionDraggedTo) {
+                val itemView = viewHolder.itemView
+                val itemHeight = itemView.bottom - itemView.top
+                val isCanceled = dX == 0f && !isCurrentlyActive
 
-
+                if (isCanceled) {
+                    c.drawRect(itemView.right + dX, itemView.top.toFloat(), itemView.right.toFloat(), itemView.bottom.toFloat(), clearPaint)
+                    super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                    return
                 }
 
-                // Reset the global variables
-                mPositionDraggedFrom = -1
-                mPositionDraggedTo = -1
+                // Draw the red delete background
+                background.color = backgroundColor
+                background.setBounds(itemView.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
+                background.draw(c)
+
+                // Calculate position of delete icon
+                val deleteIconTop = itemView.top + (itemHeight - intrinsicHeight) / 2
+                val deleteIconMargin = (itemHeight - intrinsicHeight) / 2
+                val deleteIconLeft = itemView.right - deleteIconMargin - intrinsicWidth
+                val deleteIconRight = itemView.right - deleteIconMargin
+                val deleteIconBottom = deleteIconTop + intrinsicHeight
+
+                // Draw the delete icon
+                deleteIcon?.setBounds(deleteIconLeft, deleteIconTop, deleteIconRight, deleteIconBottom)
+                deleteIcon?.draw(c)
+
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
             }
+
         })
 
         /*Attaches the ItemTouchHelper to the provided RecyclerView. If TouchHelper is already

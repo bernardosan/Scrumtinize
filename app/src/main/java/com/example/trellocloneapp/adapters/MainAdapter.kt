@@ -11,6 +11,7 @@ import com.example.trellocloneapp.R
 import com.example.trellocloneapp.databinding.ItemBoardBinding
 import com.example.trellocloneapp.models.Board
 import android.R.attr.data
+import android.graphics.Color
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.trellocloneapp.activities.TaskListActivity
@@ -62,6 +63,8 @@ class MainAdapter(val boardList: ArrayList<Board>, val context: Context):Recycle
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         val board = boardList[position]
         holder.bindItem(board)
+
+        holder.itemView.setBackgroundColor(Color.WHITE)
 
         holder.itemView.setOnClickListener {
             if (onClickListener != null) {
