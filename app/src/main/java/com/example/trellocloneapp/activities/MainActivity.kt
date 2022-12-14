@@ -23,31 +23,22 @@ import com.example.trellocloneapp.models.User
 import com.example.trellocloneapp.utils.Constants
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.installations.FirebaseInstallations
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.recyclerview.widget.ItemTouchHelper
 
 import androidx.recyclerview.widget.RecyclerView
-import com.example.trellocloneapp.models.Card
-import java.text.FieldPosition
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import android.graphics.drawable.ColorDrawable
 
-import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private var binding: ActivityMainBinding? = null
     private var mUserName: String? = null
-    val assignedTo: ArrayList<String> = ArrayList()
-    val documentId: String = ""
     private lateinit var mSharedPreferences: SharedPreferences
-    private var mPositionDraggedFrom = -1
-    private var mPositionDraggedTo = -1
     private lateinit var mAdapter: MainAdapter
 
 
