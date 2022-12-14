@@ -112,7 +112,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
             binding?.rvBoardsList?.setHasFixedSize(true)
 
-            enableItemSwap(boardsList)
+            enableItemSwipe(boardsList)
 
 
             adapter.setOnClickListener(object : MainAdapter.OnClickListener {
@@ -125,7 +125,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
             adapter.setOnLongClickListener(object : MainAdapter.OnLongClickListener {
                 override fun onLongClick(position: Int, model: Board) {
-                    alertDialogForDeleteBoard(model)
+                    alertDialogForDeleteBoard(model, position)
 
                 }
             })
@@ -215,25 +215,24 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     private fun deleteBoard(boardId: String) {
-        showProgressDialog(resources.getString(R.string.please_wait))
         FirestoreClass().deleteBoard(this, boardId)
-        FirestoreClass().updateUserData(this, true)
     }
 
-    private fun alertDialogForDeleteBoard(model: Board) {
+    private fun alertDialogForDeleteBoard(model: Board, position: Int) {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Alert")
         builder.setMessage("Are you sure you want to delete ${model.name} board?")
         builder.setIcon(android.R.drawable.ic_dialog_alert)
         builder.setPositiveButton("Yes") { dialogInterface, which ->
             dialogInterface.dismiss()
+            mAdapter.removeItem(position)
+            mAdapter.notifyItemRemoved(position)
             deleteBoard(model.documentId)
 
         }
         builder.setNegativeButton("No") { dialogInterface, _ ->
             dialogInterface.dismiss()
             showProgressDialog(resources.getString(R.string.please_wait))
-
             FirestoreClass().getBoardsList(this)
         }
         val alertDialog: AlertDialog = builder.create()
@@ -255,8 +254,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         userHashMap[Constants.FCM_TOKEN] = token
     }
 
-    private fun enableItemSwap(boardList: ArrayList<Board>) {
-        //  Creates an ItemTouchHelper that will work with the given Callback.
+    private fun enableItemSwipe(boardList: ArrayList<Board>) {
         val helper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.START) {
 
             private val deleteIcon = ContextCompat.getDrawable(this@MainActivity, R.drawable.ic_delete_card)
@@ -266,8 +264,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             private val backgroundColor = Color.parseColor("#f44336")
             private val clearPaint = Paint().apply { xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR) }
 
-
-
+            /*
             override fun getMovementFlags(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder
@@ -278,9 +275,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                  * if (viewHolder?.itemViewType == YourAdapter.SOME_TYPE) return 0
                  * if (viewHolder?.adapterPosition == 0) return 0
                  */
-                if (viewHolder.adapterPosition == 10) return 0
+
                 return super.getMovementFlags(recyclerView, viewHolder)
             }
+            */
 
             override fun onMove(
                 recyclerView: RecyclerView,
@@ -295,7 +293,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 viewHolder: RecyclerView.ViewHolder,
                 direction: Int
             ) { // remove from adapter
-                alertDialogForDeleteBoard(boardList[viewHolder.adapterPosition])
+                alertDialogForDeleteBoard(boardList[viewHolder.adapterPosition], viewHolder.adapterPosition)
             }
 
             override fun onChildDraw(c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
