@@ -30,6 +30,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import android.graphics.drawable.ColorDrawable
+import androidx.activity.result.contract.ActivityResultContracts
 
 import androidx.core.content.ContextCompat
 
@@ -42,10 +43,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     private lateinit var mAdapter: MainAdapter
 
 
-    companion object {
-        const val CREATE_BOARD_REQUEST_CODE = 10
+    private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            FirestoreClass().getBoardsList(this)
+        }
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,7 +74,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         binding?.fabAddBoard?.setOnClickListener {
             val intent = Intent(this, CreateBoardActivity::class.java)
             intent.putExtra(Constants.NAME, mUserName)
-            startActivityForResult(intent, CREATE_BOARD_REQUEST_CODE)
+            resultLauncher.launch(intent)
 
         }
 
@@ -153,13 +155,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == CREATE_BOARD_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            FirestoreClass().getBoardsList(this)
-        }
-    }
-
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_my_profile -> {
@@ -214,7 +209,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         builder.setTitle("Alert")
         builder.setMessage("Are you sure you want to delete ${model.name} board?")
         builder.setIcon(android.R.drawable.ic_dialog_alert)
-        builder.setPositiveButton("Yes") { dialogInterface, which ->
+        builder.setPositiveButton("Yes") { dialogInterface, _ ->
             dialogInterface.dismiss()
             mAdapter.removeItem(position)
             mAdapter.notifyItemRemoved(position)
