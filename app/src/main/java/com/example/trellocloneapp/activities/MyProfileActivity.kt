@@ -6,7 +6,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -122,8 +121,10 @@ class MyProfileActivity : BaseActivity() {
 
     private fun updateUserProfileData() {
         var anyChangesMade = false
+        hideProgressDialog()
 
-        if(mSelectedImageFileUri != null && mProfileImageUrl != mSelectedImageFileUri.toString()){
+        if(mSelectedImageFileUri != null){
+            userHashMap[Constants.IMAGE] = mProfileImageUrl
             anyChangesMade = true
         }
 
@@ -140,8 +141,6 @@ class MyProfileActivity : BaseActivity() {
         if (anyChangesMade) {
             FirestoreClass().updateUserProfileData(this, userHashMap)
         }
-
-        hideProgressDialog()
     }
 
     fun profileUpdateSuccess(){
@@ -150,37 +149,48 @@ class MyProfileActivity : BaseActivity() {
     }
 
 
-    private fun uploadUserImage(): String{
-        if(mSelectedImageFileUri != null){
+    private fun uploadUserImage(){
+        showProgressDialog(resources.getString(R.string.please_wait))
 
-            val sRef : StorageReference = FirebaseStorage.getInstance().reference.child(
-                "USER_IMAGE" + mUserDetails.id +
-                        "." + Constants.getFileExtension(this, mSelectedImageFileUri))
+        if (mSelectedImageFileUri != null) {
 
-            sRef.putFile(mSelectedImageFileUri!!).addOnSuccessListener {
-                taskSnapshot -> 
-                Log.i("Firebase Image URL", taskSnapshot.metadata!!.reference!!.downloadUrl.toString())
-                taskSnapshot.metadata!!.reference!!.downloadUrl.addOnSuccessListener {
-                    uri ->
-                    Log.i("Downloadable Image URL", uri.toString())
-                    mProfileImageUrl = uri.toString()
+            //getting the storage reference
+            val sRef: StorageReference = FirebaseStorage.getInstance().reference.child(
+                "USER_IMAGE" + System.currentTimeMillis() + "."
+                        + Constants.getFileExtension(this@MyProfileActivity, mSelectedImageFileUri)
+            )
 
+            //adding the file to reference
+            sRef.putFile(mSelectedImageFileUri!!)
+                .addOnSuccessListener { taskSnapshot ->
+                    // The image upload is success
+                    Log.e(
+                        "Firebase Image URL",
+                        taskSnapshot.metadata!!.reference!!.downloadUrl.toString()
+                    )
 
-                    //binding?.ivMyProfile?.setImageURI(uri)
+                    // Get the downloadable url from the task snapshot
+                    taskSnapshot.metadata!!.reference!!.downloadUrl
+                        .addOnSuccessListener { uri ->
+                            Log.e("Downloadable Image URL", uri.toString())
 
+                            // assign the image url to the variable.
+                            mProfileImageUrl = uri.toString()
+
+                            // Call a function to update user details in the database.
+                            updateUserProfileData()
+                        }
                 }
-            }.addOnFailureListener {
-                exception ->
-                Log.e("Firebase Image", "${exception.message}")
-                exception.printStackTrace()
-                Toast.makeText(this, "${exception.message}", Toast.LENGTH_SHORT).show()
-            }
-            updateUserProfileData()
-            Toast.makeText(this, "Updated Successfully!", Toast.LENGTH_SHORT).show()
-            hideProgressDialog()
-            
+                .addOnFailureListener { exception ->
+                    Toast.makeText(
+                        this@MyProfileActivity,
+                        exception.message,
+                        Toast.LENGTH_LONG
+                    ).show()
+
+                    hideProgressDialog()
+                }
         }
-        return mProfileImageUrl
     }
 
     private fun setupActionBar() {
@@ -192,17 +202,16 @@ class MyProfileActivity : BaseActivity() {
 
     fun setUserDataInUI(user: User) {
 
+        // Initialize the user details variable
         mUserDetails = user
 
-        Log.i("image received",user.image)
-        /*
         Glide
             .with(this@MyProfileActivity)
             .load(user.image)
             .centerCrop()
             .placeholder(R.drawable.ic_user_place_holder)
             .into(findViewById(R.id.iv_my_profile))
-        */
+
 
         binding?.etNameMyprofile?.setText(user.name)
         binding?.etEmailMyprofile?.setText(user.email)

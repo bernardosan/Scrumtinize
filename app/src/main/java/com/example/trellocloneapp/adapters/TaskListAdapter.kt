@@ -169,7 +169,7 @@ open class TaskListAdapter(private val context: Context, private var list: Array
 
         //  Creates an ItemTouchHelper that will work with the given Callback.
         val helper = ItemTouchHelper(object :
-            ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
+            ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.END) {
             /*Called when ItemTouchHelper wants to move the dragged item from its old position to
              the new position.*/
 
@@ -206,6 +206,7 @@ open class TaskListAdapter(private val context: Context, private var list: Array
                 viewHolder: RecyclerView.ViewHolder,
                 direction: Int
             ) { // remove from adapter
+
             }
 
             /*Called by the ItemTouchHelper when the user interaction with an element is over and it

@@ -9,6 +9,7 @@ import android.graphics.*
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -23,22 +24,18 @@ import com.example.trellocloneapp.models.User
 import com.example.trellocloneapp.utils.Constants
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.installations.FirebaseInstallations
-import androidx.recyclerview.widget.ItemTouchHelper
-
-import androidx.recyclerview.widget.RecyclerView
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
-import android.graphics.drawable.ColorDrawable
 import androidx.activity.result.contract.ActivityResultContracts
-
-import androidx.core.content.ContextCompat
+import com.google.firebase.storage.FirebaseStorage
 
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private var binding: ActivityMainBinding? = null
     private var mUserName: String? = null
+    private var mUserImagePathString: String = ""
     private lateinit var mSharedPreferences: SharedPreferences
     private lateinit var mAdapter: MainAdapter
 
@@ -80,7 +77,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
 
         showProgressDialog(resources.getString(R.string.please_wait))
-        FirestoreClass().updateUserData(this, true)
+        FirestoreClass().updateUserData(this@MainActivity, true)
+
 
 
     }
@@ -95,20 +93,18 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     fun boardsListToUI(boardsList: ArrayList<Board>) {
 
         if (boardsList.size > 0) {
-            val adapter = MainAdapter(boardsList, this)
+            mAdapter = MainAdapter(boardsList, this)
 
             binding?.rvBoardsList?.layoutManager = LinearLayoutManager(this)
-            binding?.rvBoardsList?.adapter = adapter
-            mAdapter = adapter
+            binding?.rvBoardsList?.adapter = mAdapter
+            mAdapter.enableItemSwipe(this, binding?.rvBoardsList!!, boardsList)
             binding?.rvBoardsList?.visibility = View.VISIBLE
             binding?.tvNoBoardsAvailable?.visibility = View.GONE
 
             binding?.rvBoardsList?.setHasFixedSize(true)
 
-            enableItemSwipe(boardsList)
 
-
-            adapter.setOnClickListener(object : MainAdapter.OnClickListener {
+            mAdapter.setOnClickListener(object : MainAdapter.OnClickListener {
                 override fun onClick(position: Int, model: Board) {
                     val intent = Intent(this@MainActivity, TaskListActivity::class.java)
                     intent.putExtra(Constants.DOCUMENT_ID, model.documentId)
@@ -116,9 +112,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 }
             })
 
-            adapter.setOnLongClickListener(object : MainAdapter.OnLongClickListener {
+            mAdapter.setOnLongClickListener(object : MainAdapter.OnLongClickListener {
                 override fun onLongClick(position: Int, model: Board) {
-                    alertDialogForDeleteBoard(model, position)
+                    alertDialogForDeleteBoard(model)
 
                 }
             })
@@ -151,7 +147,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         if (binding?.drawerLayout!!.isDrawerOpen(GravityCompat.START)) {
             binding?.drawerLayout!!.closeDrawer(GravityCompat.START)
         } else {
-            super.onBackPressed()
+            doubleBackToExit()
         }
     }
 
@@ -179,16 +175,28 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         return true
     }
 
+    fun getImagePathString(imagePath: String){
+        mUserImagePathString = imagePath
+    }
+
+
+
     fun updateNavigationUserDetails(user: User, readBoardsList: Boolean) {
 
         mUserName = user.name
 
+        hideProgressDialog()
+
+        // The instance of the user image of the navigation view.
+        val navUserImage = findViewById<ImageView>(R.id.nav_user_image)
+
+        // Load the user image in the ImageView.
         Glide
-            .with(this)
-            .load(user.image)
-            .centerCrop()
-            .placeholder(R.drawable.ic_user_place_holder)
-            .into(findViewById(R.id.nav_user_image))
+            .with(this@MainActivity)
+            .load(user.image) // URL of the image
+            .centerCrop() // Scale type of the image.
+            .placeholder(R.drawable.ic_user_place_holder) // A default place holder
+            .into(navUserImage) // the view in which the image will be loaded.
 
         findViewById<TextView>(R.id.tv_username).text = user.name
 
@@ -201,10 +209,12 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     private fun deleteBoard(boardId: String) {
+        showProgressDialog(getString(R.string.please_wait))
         FirestoreClass().deleteBoard(this, boardId)
+        FirestoreClass().getBoardsList(this)
     }
 
-    private fun alertDialogForDeleteBoard(model: Board, position: Int) {
+    fun alertDialogForDeleteBoard(model: Board) {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Alert")
         builder.setMessage("Are you sure you want to delete ${model.name} board?")
@@ -212,9 +222,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         builder.setPositiveButton("Yes") { dialogInterface, _ ->
             dialogInterface.dismiss()
             deleteBoard(model.documentId)
-            mAdapter.removeItem(position)
-            mAdapter.notifyItemRemoved(position)
-
         }
         builder.setNegativeButton("No") { dialogInterface, _ ->
             dialogInterface.dismiss()
@@ -240,6 +247,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         userHashMap[Constants.FCM_TOKEN] = token
     }
 
+    /*
     private fun enableItemSwipe(boardList: ArrayList<Board>) {
         val helper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.START) {
 
@@ -279,7 +287,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 viewHolder: RecyclerView.ViewHolder,
                 direction: Int
             ) { // remove from adapter
-                alertDialogForDeleteBoard(boardList[viewHolder.adapterPosition], viewHolder.adapterPosition)
+                alertDialogForDeleteBoard(boardList[viewHolder.adapterPosition])
             }
 
             override fun onChildDraw(c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
@@ -319,5 +327,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     attached to a RecyclerView, it will first detach from the previous one.*/
         helper.attachToRecyclerView(binding?.rvBoardsList)
     }
+
+     */
 
 }
