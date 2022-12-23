@@ -1,12 +1,14 @@
 package com.example.trellocloneapp.adapters
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
+import android.widget.LinearLayout.LayoutParams
 import android.widget.Toast
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,6 +27,7 @@ open class TaskListAdapter(private val context: Context, private var list: Array
 
     inner class MainViewHolder (val itemBinding: ItemTaskBinding) : RecyclerView.ViewHolder(itemBinding.root){
 
+        @SuppressLint("SetTextI18n")
         fun bindItem(position: Int) {
             val model = list[position]
 
@@ -143,7 +146,13 @@ open class TaskListAdapter(private val context: Context, private var list: Array
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
         val view = MainViewHolder(ItemTaskBinding.inflate(LayoutInflater.from(parent.context), parent, false))
-        val layoutParams = LinearLayout.LayoutParams((parent.width*0.7).toInt(),LinearLayout.LayoutParams.WRAP_CONTENT)
+
+        val layoutParams = if(parent.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT){
+            LayoutParams((parent.width*0.7).toInt(),LayoutParams.WRAP_CONTENT)
+        } else{
+            LayoutParams((parent.width*0.3462).toInt(),LayoutParams.WRAP_CONTENT)
+        }
+
         layoutParams.setMargins((15.toDp()).toPx(),0,(40.toDp()).toPx(),0)
 
         view.itemBinding.root.layoutParams = layoutParams
