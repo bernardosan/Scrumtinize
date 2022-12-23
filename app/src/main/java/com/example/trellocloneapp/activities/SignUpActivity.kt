@@ -1,5 +1,6 @@
 package com.example.trellocloneapp.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
@@ -13,6 +14,7 @@ import com.google.firebase.auth.FirebaseUser
 class SignUpActivity : BaseActivity() {
 
     private var binding: ActivitySignUpBinding? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +59,7 @@ class SignUpActivity : BaseActivity() {
     fun userRegisteredSuccess(){
         Toast.makeText(this, "Successfully registered", Toast.LENGTH_SHORT).show()
         hideProgressDialog()
-        FirebaseAuth.getInstance().signOut()
+        startActivity(Intent(this, MainActivity::class.java))
         finish()
     }
 

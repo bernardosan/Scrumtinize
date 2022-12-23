@@ -98,7 +98,7 @@ class FirestoreClass {
                 val loggedInUser = document.toObject(User::class.java)!!
 
                 when(activity){
-                    is SignInActivity -> activity.signInSuccess(loggedInUser)
+                    is SignInActivity -> activity.signInSuccess()
                     is MainActivity-> activity.updateNavigationUserDetails(loggedInUser, readBoardsList)
                     is MyProfileActivity -> activity.setUserDataInUI(loggedInUser)
                 }

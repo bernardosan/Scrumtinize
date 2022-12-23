@@ -7,7 +7,6 @@ import android.widget.Toast
 import com.example.trellocloneapp.R
 import com.example.trellocloneapp.databinding.ActivitySignInBinding
 import com.example.trellocloneapp.firebase.FirestoreClass
-import com.example.trellocloneapp.models.User
 import com.google.firebase.auth.FirebaseAuth
 
 class SignInActivity : BaseActivity() {
@@ -33,16 +32,16 @@ class SignInActivity : BaseActivity() {
         }
 
         binding?.btnSignIn?.setOnClickListener {
-            signInWithEmailAndPassword()
+            signInWithEmailAndPassword(
+                binding?.etEmail?.text.toString().trim{ it <= ' '},
+                binding?.etPassword?.text.toString()
+            )
         }
 
 
     }
 
-    private fun signInWithEmailAndPassword(){
-
-        val email: String = binding?.etEmail?.text.toString().trim{ it <= ' '}
-        val password: String = binding?.etPassword?.text.toString()
+    fun signInWithEmailAndPassword(email: String, password: String){
 
         showProgressDialog(getString(R.string.please_wait))
 
@@ -88,7 +87,7 @@ class SignInActivity : BaseActivity() {
         }
     }
 
-    fun signInSuccess(loggedInUser: User?) {
+    fun signInSuccess() {
         hideProgressDialog()
         startActivity(Intent(this, MainActivity::class.java))
         finish()
