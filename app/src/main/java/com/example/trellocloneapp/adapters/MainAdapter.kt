@@ -26,7 +26,7 @@ class MainAdapter(private val boardList: ArrayList<Board>, val context: Context)
         @SuppressLint("SetTextI18n")
         fun bindItem(board: Board){
             itemBinding.tvBoardName.text = board.name
-            itemBinding.tvCreateBy.text =  "created by: " + board.createdBy
+            //itemBinding.tvCreateBy.text =  "created by: " + FirestoreClass().getUserNameById(board.createdBy)
             Glide
                 .with(context)
                 .load(board.image)
@@ -90,22 +90,16 @@ class MainAdapter(private val boardList: ArrayList<Board>, val context: Context)
         notifyItemInserted(position)
     }
 
-    fun getData(): ArrayList<Board> {
-        return boardList
-    }
 
-    fun enableItemSwipe(context: MainActivity, recyclerView: RecyclerView, boardList: ArrayList<Board>) {
+    fun enableItemSwipeToDelete(context: MainActivity, recyclerView: RecyclerView, boardList: ArrayList<Board>) {
         val helper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.START) {
 
-            private val deleteIcon = ContextCompat.getDrawable(context, R.drawable.ic_delete_card)
-            private val intrinsicWidth = deleteIcon!!.intrinsicWidth
-            private val intrinsicHeight = deleteIcon!!.intrinsicHeight
             private val background = ColorDrawable()
             private val backgroundColor = Color.parseColor("#f44336")
             private val clearPaint = Paint().apply { xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR) }
+            //private val userId = FirebaseAuth.getInstance().currentUser!!.uid
 
-            /*
-            override fun getMovementFlags(
+            /*override fun getMovementFlags(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder
             ): Int {
@@ -115,10 +109,9 @@ class MainAdapter(private val boardList: ArrayList<Board>, val context: Context)
                  * if (viewHolder?.itemViewType == YourAdapter.SOME_TYPE) return 0
                  * if (viewHolder?.adapterPosition == 0) return 0
                  */
-
                 return super.getMovementFlags(recyclerView, viewHolder)
-            }
-            */
+            }*/
+
 
             override fun onMove(
                 recyclerView: RecyclerView,
@@ -133,11 +126,15 @@ class MainAdapter(private val boardList: ArrayList<Board>, val context: Context)
                 viewHolder: RecyclerView.ViewHolder,
                 direction: Int
             ) { // remove from adapter
-                context.alertDialogForDeleteBoard(boardList[viewHolder.adapterPosition])
+                context.alertDialogForRemoveMember(boardList[viewHolder.adapterPosition], viewHolder.adapterPosition)
             }
 
             override fun onChildDraw(c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
 
+                //val deleteIcon = if (boardList[viewHolder.adapterPosition].assignedTo.size == 1) ContextCompat.getDrawable(context, R.drawable.ic_delete_card) else ContextCompat.getDrawable(context, R.drawable.ic_baseline_person_remove_24)
+                val deleteIcon = ContextCompat.getDrawable(context, R.drawable.ic_delete_card)
+                val intrinsicWidth = deleteIcon!!.intrinsicWidth
+                val intrinsicHeight = deleteIcon.intrinsicHeight
                 val itemView = viewHolder.itemView
                 val itemHeight = itemView.bottom - itemView.top
                 val isCanceled = dX == 0f && !isCurrentlyActive
@@ -161,8 +158,8 @@ class MainAdapter(private val boardList: ArrayList<Board>, val context: Context)
                 val deleteIconBottom = deleteIconTop + intrinsicHeight
 
                 // Draw the delete icon
-                deleteIcon?.setBounds(deleteIconLeft, deleteIconTop, deleteIconRight, deleteIconBottom)
-                deleteIcon?.draw(c)
+                deleteIcon.setBounds(deleteIconLeft, deleteIconTop, deleteIconRight, deleteIconBottom)
+                deleteIcon.draw(c)
 
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
             }

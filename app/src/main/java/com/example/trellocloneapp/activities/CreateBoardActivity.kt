@@ -17,8 +17,8 @@ import com.example.trellocloneapp.R
 import com.example.trellocloneapp.databinding.ActivityCreateBoardBinding
 import com.example.trellocloneapp.firebase.FirestoreClass
 import com.example.trellocloneapp.models.Board
-import com.example.trellocloneapp.models.User
 import com.example.trellocloneapp.utils.Constants
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.launch
@@ -78,7 +78,7 @@ class CreateBoardActivity : BaseActivity() {
         setupActionBar()
         FirestoreClass().updateUserData(this@CreateBoardActivity)
 
-        receiveIntentData()
+        //receiveIntentData()
 
         binding?.toolbarAddBoard?.setNavigationOnClickListener {
             onBackPressed()
@@ -101,11 +101,11 @@ class CreateBoardActivity : BaseActivity() {
 
     }
 
-    private fun receiveIntentData() {
+    /*private fun receiveIntentData() {
         if (intent.hasExtra(Constants.NAME)) {
             mUserName = intent.getStringExtra(Constants.NAME).toString()
         }
-    }
+    }*/
 
     private fun setupActionBar() {
         setSupportActionBar(binding?.toolbarAddBoard)
@@ -144,7 +144,7 @@ class CreateBoardActivity : BaseActivity() {
         val board = Board(
             binding?.etBoardName?.text.toString(),
             mBoardImageURL,
-            mUserName,
+            FirebaseAuth.getInstance().uid!!,
             getCurrentDate(),
             assignedUsersArrayList
         )

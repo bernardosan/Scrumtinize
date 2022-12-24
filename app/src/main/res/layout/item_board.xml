@@ -40,7 +40,7 @@
                 android:textSize="@dimen/item_board_name_text_size"
                 tools:text="Board Name"
                 />
-
+            <!--
             <TextView
                 android:id="@+id/tv_create_by"
                 android:layout_width="match_parent"
@@ -50,7 +50,7 @@
                 android:textSize="@dimen/item_board_created_by_text_size"
                 tools:text="Create by"
                 />
-
+            -->
 
         </LinearLayout>
 

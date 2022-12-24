@@ -142,6 +142,26 @@ class FirestoreClass {
 
     }
 
+
+    /*fun getUserNameById(id: String): String{
+
+        var name = ""
+
+        mFireStore.collection(Constants.USERS)
+            .document(id)
+            .get()
+            .addOnSuccessListener {
+                val user = it.toObject(User::class.java)!!
+                name = user.name
+
+            }
+            .addOnFailureListener {
+                it.printStackTrace()
+            }
+
+        return name
+    }*/
+
     fun getCurrentUserId(): String {
 
         val currentUser = FirebaseAuth.getInstance().currentUser
@@ -264,7 +284,7 @@ class FirestoreClass {
 
     }
 
-    fun assignMemberToBoard(activity: MembersActivity, board: Board, user: User){
+    fun assignMemberToBoard(activity: Activity, board: Board, user: User? = null){
         val assignedToHashMap = HashMap<String, Any>()
         assignedToHashMap[Constants.ASSIGNED_TO] = board.assignedTo
 
@@ -272,10 +292,16 @@ class FirestoreClass {
             .document(board.documentId)
             .update(assignedToHashMap)
             .addOnSuccessListener {
-                activity.memberAssignSuccess(user)
+                if(activity is MembersActivity) {
+                    activity.memberAssignSuccess(user!!)
+                } else if (activity is MainActivity){
+                    activity.hideProgressDialog()
+                }
             }
             .addOnFailureListener {
-                activity.hideProgressDialog()
+                if(activity is MembersActivity){
+                    activity.hideProgressDialog()
+                }
                 it.printStackTrace()
             }
     }

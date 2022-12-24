@@ -54,14 +54,14 @@ class SignInActivity : BaseActivity() {
         showProgressDialog(getString(R.string.please_wait))
 
         if (validateForm(email, password)) {
-            auth.signInWithEmailAndPassword(email, password).
-            addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    FirestoreClass().updateUserData(this)
-                } else {
-                    showErrorSnackBar("${task.exception!!.message}")
+            auth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener{ task ->
+                    if (task.isSuccessful) {
+                        FirestoreClass().updateUserData(this)
+                    } else {
+                        showErrorSnackBar("${task.exception!!.message}")
+                    }
                 }
-            }
         }
     }
 

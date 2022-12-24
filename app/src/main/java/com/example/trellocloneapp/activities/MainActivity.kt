@@ -5,7 +5,6 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.*
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -24,18 +23,15 @@ import com.example.trellocloneapp.models.User
 import com.example.trellocloneapp.utils.Constants
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.installations.FirebaseInstallations
-import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import androidx.activity.result.contract.ActivityResultContracts
-import com.google.firebase.storage.FirebaseStorage
 
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private var binding: ActivityMainBinding? = null
     private var mUserName: String? = null
-    private var mUserImagePathString: String = ""
     private lateinit var mSharedPreferences: SharedPreferences
     private lateinit var mAdapter: MainAdapter
 
@@ -43,6 +39,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             FirestoreClass().getBoardsList(this)
+            binding?.rvBoardsList?.adapter?.notifyItemInserted(mAdapter.itemCount + 1)
+
         }
     }
 
@@ -97,7 +95,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
             binding?.rvBoardsList?.layoutManager = LinearLayoutManager(this)
             binding?.rvBoardsList?.adapter = mAdapter
-            mAdapter.enableItemSwipe(this, binding?.rvBoardsList!!, boardsList)
+            mAdapter.enableItemSwipeToDelete(this, binding?.rvBoardsList!!, boardsList)
             binding?.rvBoardsList?.visibility = View.VISIBLE
             binding?.tvNoBoardsAvailable?.visibility = View.GONE
 
@@ -114,7 +112,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
             mAdapter.setOnLongClickListener(object : MainAdapter.OnLongClickListener {
                 override fun onLongClick(position: Int, model: Board) {
-                    alertDialogForDeleteBoard(model)
+                    alertDialogForRemoveMember(model, position)
 
                 }
             })
@@ -175,12 +173,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         return true
     }
 
-    fun getImagePathString(imagePath: String){
-        mUserImagePathString = imagePath
-    }
-
-
-
     fun updateNavigationUserDetails(user: User, readBoardsList: Boolean) {
 
         mUserName = user.name
@@ -214,24 +206,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         FirestoreClass().getBoardsList(this)
     }
 
-    fun alertDialogForDeleteBoard(model: Board) {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Alert")
-        builder.setMessage("Are you sure you want to delete ${model.name} board?")
-        builder.setIcon(android.R.drawable.ic_dialog_alert)
-        builder.setPositiveButton("Yes") { dialogInterface, _ ->
-            dialogInterface.dismiss()
-            deleteBoard(model.documentId)
-        }
-        builder.setNegativeButton("No") { dialogInterface, _ ->
-            dialogInterface.dismiss()
-            showProgressDialog(resources.getString(R.string.please_wait))
-            FirestoreClass().getBoardsList(this)
-        }
-        val alertDialog: AlertDialog = builder.create()
-        alertDialog.setCancelable(false)
-        alertDialog.show()
-    }
 
     fun tokenUpdateSuccess() {
         hideProgressDialog()
@@ -245,6 +219,43 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     private fun updateFCMToken(token: String) {
         val userHashMap = HashMap<String, Any>()
         userHashMap[Constants.FCM_TOKEN] = token
+    }
+
+    fun alertDialogForRemoveMember(board: Board, position: Int) {
+
+        mAdapter.removeItem(position)
+
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Alert")
+        builder.setIcon(android.R.drawable.ic_dialog_alert)
+        if(board.assignedTo.size != 1) {
+            builder.setMessage("Are you sure you want to exit the board?")
+            builder.setIcon(android.R.drawable.ic_dialog_alert)
+            builder.setPositiveButton("Yes") { dialogInterface, _ ->
+                dialogInterface.dismiss()
+                if (board.assignedTo.size != 1) {
+                    board.assignedTo.remove(getCurrentUserId())
+                    FirestoreClass().assignMemberToBoard(this, board)
+                    FirestoreClass().getBoardsList(this)
+                }
+            }
+        } else {
+            builder.setMessage("Are you sure you want to delete ${board.name} board?")
+            builder.setIcon(android.R.drawable.ic_dialog_alert)
+            builder.setPositiveButton("Yes") { dialogInterface, _ ->
+                dialogInterface.dismiss()
+                deleteBoard(board.documentId)
+            }
+        }
+        builder.setNegativeButton("No") { dialogInterface, _ ->
+            dialogInterface.dismiss()
+            mAdapter.restoreItem(board, position)
+            showProgressDialog(resources.getString(R.string.please_wait))
+            FirestoreClass().getBoardsList(this)
+        }
+        val alertDialog: AlertDialog = builder.create()
+        alertDialog.setCancelable(false)
+        alertDialog.show()
     }
 
     /*
