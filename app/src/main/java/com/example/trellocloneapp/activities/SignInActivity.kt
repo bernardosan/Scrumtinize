@@ -7,6 +7,7 @@ import android.widget.Toast
 import com.example.trellocloneapp.R
 import com.example.trellocloneapp.databinding.ActivitySignInBinding
 import com.example.trellocloneapp.firebase.FirestoreClass
+import com.example.trellocloneapp.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
 
 class SignInActivity : BaseActivity() {
@@ -36,6 +37,13 @@ class SignInActivity : BaseActivity() {
                 binding?.etEmail?.text.toString().trim{ it <= ' '},
                 binding?.etPassword?.text.toString()
             )
+        }
+
+        binding?.tvForgotPassword?.setOnClickListener {
+            val intent = Intent(this, ForgotPasswordActivity::class.java)
+            val email = binding?.etEmail?.text.toString().trim{ it <= ' '}
+            intent.putExtra(Constants.EMAIL,email)
+            startActivity(intent)
         }
 
 

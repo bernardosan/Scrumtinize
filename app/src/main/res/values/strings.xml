@@ -55,4 +55,9 @@
     <string name="remove_weight">remove weight</string>
     <string name="card_details">Card Details</string>
     <string name="default_notification_channel_id">scrumtinize_notification_channel</string>
+    <string name="enter_email">Enter your email address to recover your account.</string>
+    <string name="password_recover">Password Recover</string>
+    <string name="send">SEND</string>
+    <string name="forgot_your_password">Forgot your password?</string>
+    <string name="enter_your_e_mail_and_password_to_sign_in">Enter your e-mail and password to sign in.</string>
 </resources>
