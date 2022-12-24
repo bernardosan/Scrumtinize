@@ -73,7 +73,7 @@ class MembersActivity : BaseActivity() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.dialog_search_member)
         dialog.findViewById<TextView>(R.id.tv_add).setOnClickListener {
-            val email = dialog.findViewById<EditText>(R.id.et_email_search_member).text.toString()
+            val email = dialog.findViewById<EditText>(R.id.et_email_search_member).text.toString().lowercase()
             if(email.isNotEmpty()){
                 dialog.dismiss()
                 showProgressDialog(resources.getString(R.string.please_wait))
