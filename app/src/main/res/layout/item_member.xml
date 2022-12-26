@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/item_member_marginBottom"
     android:orientation="vertical">
 
     <LinearLayout
@@ -66,6 +65,5 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/item_member_divider_height"
-        android:layout_marginTop="@dimen/item_member_divider_marginTop"
         android:background="@color/divider_color" />
 </LinearLayout>

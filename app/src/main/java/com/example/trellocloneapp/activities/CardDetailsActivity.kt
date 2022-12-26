@@ -221,11 +221,11 @@ class CardDetailsActivity : BaseActivity() {
         val colorsList: ArrayList<String> = ArrayList()
         colorsList.add("#43C86F")
         colorsList.add("#0C90F1")
-        colorsList.add("#F72400")
-        colorsList.add("#7A8089")
+        colorsList.add("#DB4437")
+        colorsList.add("#F4B400")
         colorsList.add("#D57C1D")
-        colorsList.add("#770000")
-        colorsList.add("#0022F8")
+        colorsList.add("#964B00")
+        colorsList.add("#9400D3")
         return colorsList
     }
 
