@@ -28,4 +28,12 @@
     <color name="task_list_title_view_bg_color">#F8F8F8</color>
 
     <color name="ic_launcher_background">#0C90F1</color>
+
+    <color name="dark_gray">#BDBDBD</color>
+    <color name="white_tint_1">#e5e5e5</color>
+    <color name="black_tint_2">#323232</color>
+    <color name="black_tint_2_85">#d9323232</color>
+    <color name="shutta_blue">#4c7eed</color>
+    <color name="shutta_blue_85">#d94c7eed</color>
+    <color name="shutta_blue_light">#FF9DB6ED</color>
 </resources>

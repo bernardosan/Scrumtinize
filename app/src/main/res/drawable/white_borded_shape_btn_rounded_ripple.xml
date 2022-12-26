@@ -1,19 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
     android:color="@color/shutta_blue_light">
     <item>
         <shape android:shape="rectangle">
-            <gradient
-                android:angle="360"
-                android:endColor="#0A80F5"
-                android:startColor="#0BCCEB"
-                android:type="linear">
-
-            </gradient>
+            <stroke android:color="#0C90f1" android:width="1dp"/>
+            <solid android:color="@color/white"/>
             <corners android:radius="10dp"/>
         </shape>
     </item>
 </ripple>
-
-

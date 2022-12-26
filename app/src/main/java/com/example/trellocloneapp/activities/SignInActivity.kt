@@ -46,14 +46,18 @@ class SignInActivity : BaseActivity() {
             startActivity(intent)
         }
 
+        binding?.llSignup?.setOnClickListener {
+            startActivity(Intent(this, SignUpActivity::class.java))
+            finish()
+        }
+
 
     }
 
     fun signInWithEmailAndPassword(email: String, password: String){
 
-        showProgressDialog(getString(R.string.please_wait))
-
         if (validateForm(email, password)) {
+            showProgressDialog(getString(R.string.please_wait))
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener{ task ->
                     if (task.isSuccessful) {

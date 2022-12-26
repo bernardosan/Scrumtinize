@@ -57,7 +57,9 @@
         android:textSize="16sp"
         android:background="@drawable/shape_btn_rounded"
         android:layout_marginHorizontal="20dp"
-        android:layout_marginBottom="15dp"/>
+        android:layout_marginBottom="15dp"
+        android:clickable="true"
+        android:focusable="true"/>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_sign_up"
@@ -68,7 +70,9 @@
         android:textColor="@color/colorPrimary"
         android:textSize="16sp"
         android:background="@drawable/white_borded_shape_btn_rounded"
-        android:layout_marginHorizontal="20dp"/>
+        android:layout_marginHorizontal="20dp"
+        android:clickable="true"
+        android:focusable="true"/>
 
 
 

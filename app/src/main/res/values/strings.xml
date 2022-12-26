@@ -60,4 +60,9 @@
     <string name="send">SEND</string>
     <string name="forgot_your_password">Forgot your password?</string>
     <string name="enter_your_e_mail_and_password_to_sign_in">Enter your e-mail and password to sign in.</string>
+    <string name="continue_with_facebook">CONTINUE WITH FACEBOOK</string>
+    <string name="continue_with_google">CONTINUE WITH GOOGLE</string>
+    <string name="need_an_account">Need an account?</string>
+    <string name="or">OR</string>
+    <string name="sign_up_underline"><u>SIGN UP</u></string>
 </resources>

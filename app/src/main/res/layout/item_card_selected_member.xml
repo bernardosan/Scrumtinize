@@ -15,6 +15,7 @@
         android:contentDescription="@string/image_contentDescription"
         android:src="@drawable/ic_user_place_holder"
         android:visibility="visible"
+        android:background="?attr/selectableItemBackgroundBorderless"
         app:civ_border_color="@color/primary_text_color"
         app:civ_border_width="@dimen/item_member_image_circular_width_size"
         tools:visibility="gone" />
@@ -26,6 +27,7 @@
         android:contentDescription="@string/image_contentDescription"
         android:src="@drawable/ic_add_member"
         android:visibility="visible"
+        android:background="?attr/selectableItemBackgroundBorderless"
         app:civ_border_color="@color/colorAccent"
         app:civ_border_width="2dp"
         tools:visibility="visible" />
