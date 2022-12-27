@@ -9,8 +9,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.example.trellocloneapp.R
 import com.example.trellocloneapp.databinding.ActivitySignInBinding
 import com.example.trellocloneapp.firebase.FirestoreClass
+import com.example.trellocloneapp.models.User
 import com.example.trellocloneapp.utils.Constants
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -84,6 +86,7 @@ class SignInActivity : BaseActivity() {
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener{ task ->
                     if (task.isSuccessful) {
+
                         FirestoreClass().updateUserData(this)
                     } else {
                         showErrorSnackBar("${task.exception!!.message}")
@@ -145,18 +148,20 @@ class SignInActivity : BaseActivity() {
             try{
                 val account = task.getResult(ApiException::class.java)
                 showProgressDialog(getString(R.string.please_wait))
-                loginWithGoogle(account.idToken)
+                loginWithGoogle(account)
             } catch (e: ApiException){
                 e.printStackTrace()
             }
         }
     }
 
-    private fun loginWithGoogle(token: String?) {
-        val credentials = GoogleAuthProvider.getCredential(token, null)
+    private fun loginWithGoogle(account: GoogleSignInAccount) {
+        val credentials = GoogleAuthProvider.getCredential(account.idToken, null)
         auth.signInWithCredential(credentials).addOnCompleteListener {
             task : Task<AuthResult> ->
             if (task.isSuccessful) {
+                val user = User(account.id!!, account.displayName!!, account.email!!, account.photoUrl.toString())
+                FirestoreClass().registerUser(this, user)
                 FirestoreClass().updateUserData(this)
             } else {
                 showErrorSnackBar("${task.exception!!.message}")

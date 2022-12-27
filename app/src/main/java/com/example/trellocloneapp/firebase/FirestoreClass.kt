@@ -15,15 +15,18 @@ class FirestoreClass {
 
     private val mFireStore = FirebaseFirestore.getInstance()
 
-    fun registerUser(activity: SignUpActivity, userInfo: User){
+    fun registerUser(activity: Activity, userInfo: User){
         mFireStore.collection(Constants.USERS)
             .document(getCurrentUserId())
             .set(userInfo, SetOptions.merge())
             .addOnSuccessListener {
-                activity.userRegisteredSuccess()
+                if(activity is SignUpActivity) {
+                    activity.userRegisteredSuccess()
+                }
             }
             .addOnFailureListener {
                 Log.e(activity.javaClass.simpleName,"Error writing document")
+                it.printStackTrace()
             }
     }
 
@@ -105,7 +108,7 @@ class FirestoreClass {
 
             }
             .addOnFailureListener { e ->
-
+                e.printStackTrace()
                 when(activity){
                     is SignInActivity -> activity.hideProgressDialog()
                     is MainActivity -> activity.hideProgressDialog()
