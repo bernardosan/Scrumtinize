@@ -80,8 +80,10 @@ class SignUpActivity : BaseActivity() {
                         FirestoreClass().registerUser(this, user)
                     } else {
                         showErrorSnackBar("${task.exception!!.message}")
+                        hideProgressDialog()
                     }
                 }
+
         }
 
     }

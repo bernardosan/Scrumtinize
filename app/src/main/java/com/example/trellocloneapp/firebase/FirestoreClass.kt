@@ -15,13 +15,15 @@ class FirestoreClass {
 
     private val mFireStore = FirebaseFirestore.getInstance()
 
-    fun registerUser(activity: Activity, userInfo: User){
+    fun registerUser(activity: Activity, user: User){
         mFireStore.collection(Constants.USERS)
             .document(getCurrentUserId())
-            .set(userInfo, SetOptions.merge())
+            .set(user, SetOptions.merge())
             .addOnSuccessListener {
                 if(activity is SignUpActivity) {
                     activity.userRegisteredSuccess()
+                } else if (activity is SignInActivity){
+
                 }
             }
             .addOnFailureListener {

@@ -18,7 +18,6 @@ import com.example.trellocloneapp.databinding.ActivityCreateBoardBinding
 import com.example.trellocloneapp.firebase.FirestoreClass
 import com.example.trellocloneapp.models.Board
 import com.example.trellocloneapp.utils.Constants
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.launch
@@ -29,8 +28,6 @@ class CreateBoardActivity : BaseActivity() {
     private var binding: ActivityCreateBoardBinding? = null
     private var mSelectedImageFileUri: Uri? = null
     private var mBoardImageURL: String = ""
-
-    private lateinit var mUserName: String
 
     private val openGalleryLauncher: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()){
@@ -144,7 +141,7 @@ class CreateBoardActivity : BaseActivity() {
         val board = Board(
             binding?.etBoardName?.text.toString(),
             mBoardImageURL,
-            FirebaseAuth.getInstance().uid!!,
+            getCurrentUserId(),
             getCurrentDate(),
             assignedUsersArrayList
         )
@@ -158,7 +155,7 @@ class CreateBoardActivity : BaseActivity() {
         if(mSelectedImageFileUri != null){
 
             val sRef : StorageReference = FirebaseStorage.getInstance().reference.child(
-                "BOARD_IMAGE" + mUserName + System.currentTimeMillis() +
+                "BOARD_IMAGE" + getCurrentUserId() + System.currentTimeMillis() +
                         "." + Constants.getFileExtension(this, mSelectedImageFileUri))
 
             sRef.putFile(mSelectedImageFileUri!!).addOnSuccessListener {
@@ -186,6 +183,7 @@ class CreateBoardActivity : BaseActivity() {
         hideProgressDialog()
 
         setResult(Activity.RESULT_OK)
+        FirestoreClass().updateUserData(this, true)
         finish()
     }
 

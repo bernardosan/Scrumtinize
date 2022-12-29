@@ -28,7 +28,7 @@ import kotlin.collections.HashMap
 import androidx.activity.result.contract.ActivityResultContracts
 
 
-class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
+open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private var binding: ActivityMainBinding? = null
     private var mUserName: String? = null

@@ -8,7 +8,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.trellocloneapp.R
@@ -74,12 +73,14 @@ class MembersActivity : BaseActivity() {
         dialog.setContentView(R.layout.dialog_search_member)
         dialog.findViewById<TextView>(R.id.tv_add).setOnClickListener {
             val email = dialog.findViewById<EditText>(R.id.et_email_search_member).text.toString().lowercase()
-            if(email.isNotEmpty()){
+            if(email.isNotEmpty() && !checkIfUserAlreadyAssigned(mAssignedMemberList, email)){
                 dialog.dismiss()
                 showProgressDialog(resources.getString(R.string.please_wait))
                 FirestoreClass().getMemberDetails(this, email)
-            }else{
-                Toast.makeText(this, "Please enter email address.", Toast.LENGTH_SHORT).show()
+            } else if ( checkIfUserAlreadyAssigned(mAssignedMemberList, email)) {
+                showErrorSnackBar("Member already assigned!")
+            } else{
+                showErrorSnackBar("Please enter email address.")
             }
         }
         dialog.findViewById<TextView>(R.id.tv_cancel).setOnClickListener {
@@ -215,6 +216,15 @@ class MembersActivity : BaseActivity() {
 
             Log.i("JSON RESPONSE RESULT", result.toString())
         }
+    }
+
+    private fun checkIfUserAlreadyAssigned(assignedto: ArrayList<User>, email: String): Boolean{
+        for(i in assignedto.indices){
+            if(assignedto[i].email.lowercase() == email.lowercase()){
+                return true
+            }
+        }
+        return false
     }
 
 }

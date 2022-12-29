@@ -27,6 +27,7 @@
         android:textSize="@dimen/nav_user_name_text_size"
         android:layout_gravity="center"
         android:layout_marginBottom="10dp"
+        android:layout_marginHorizontal="10dp"
         />
 
     <View

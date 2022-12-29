@@ -67,6 +67,8 @@ class MyProfileActivity : BaseActivity() {
 
         setupActionBar()
 
+
+        showProgressDialog(resources.getString(R.string.please_wait))
         FirestoreClass().updateUserData(this@MyProfileActivity)
 
         binding?.toolbarMyProfile?.setNavigationOnClickListener {
@@ -78,11 +80,11 @@ class MyProfileActivity : BaseActivity() {
             if(mSelectedImageFileUri != null){
                 showProgressDialog(resources.getString(R.string.please_wait))
                 uploadUserImage()
-                updateUserProfileData()
             } else{
                 showProgressDialog(resources.getString(R.string.please_wait))
                 updateUserProfileData()
             }
+
 
             FirestoreClass().updateUserData(this)
 
@@ -121,7 +123,6 @@ class MyProfileActivity : BaseActivity() {
 
     private fun updateUserProfileData() {
         var anyChangesMade = false
-        hideProgressDialog()
 
         if(mSelectedImageFileUri != null){
             userHashMap[Constants.IMAGE] = mProfileImageUrl
@@ -140,6 +141,8 @@ class MyProfileActivity : BaseActivity() {
 
         if (anyChangesMade) {
             FirestoreClass().updateUserProfileData(this, userHashMap)
+        } else {
+            hideProgressDialog()
         }
     }
 
@@ -150,7 +153,6 @@ class MyProfileActivity : BaseActivity() {
 
 
     private fun uploadUserImage(){
-        showProgressDialog(resources.getString(R.string.please_wait))
 
         if (mSelectedImageFileUri != null) {
 
@@ -218,6 +220,8 @@ class MyProfileActivity : BaseActivity() {
         if(user.mobile != 0L){
             binding?.etMobileMyprofile?.setText(user.mobile.toString())
         }
+
+        hideProgressDialog()
     }
 
 
