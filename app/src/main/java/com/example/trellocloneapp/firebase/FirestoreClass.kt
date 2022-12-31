@@ -22,8 +22,8 @@ class FirestoreClass {
             .addOnSuccessListener {
                 if(activity is SignUpActivity) {
                     activity.userRegisteredSuccess()
-                } else if (activity is SignInActivity){
-
+                } else if (activity is SignInActivity && user.email == "null"){
+                    activity.requestEmailUpdateSignIn()
                 }
             }
             .addOnFailureListener {
@@ -100,12 +100,12 @@ class FirestoreClass {
             .document(getCurrentUserId())
             .get()
             .addOnSuccessListener { document ->
-                val loggedInUser = document.toObject(User::class.java)!!
+                val loggedInUser = document.toObject(User::class.java)
 
                 when(activity){
                     is SignInActivity -> activity.signInSuccess()
-                    is MainActivity-> activity.updateNavigationUserDetails(loggedInUser, readBoardsList)
-                    is MyProfileActivity -> activity.setUserDataInUI(loggedInUser)
+                    is MainActivity-> activity.updateNavigationUserDetails(loggedInUser!!, readBoardsList)
+                    is MyProfileActivity -> activity.setUserDataInUI(loggedInUser!!)
                 }
 
             }

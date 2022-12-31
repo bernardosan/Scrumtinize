@@ -3,9 +3,11 @@ package com.example.trellocloneapp.activities
 import android.Manifest
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -17,10 +19,12 @@ import com.example.trellocloneapp.databinding.ActivityMyProfileBinding
 import com.example.trellocloneapp.firebase.FirestoreClass
 import com.example.trellocloneapp.models.User
 import com.example.trellocloneapp.utils.Constants
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.launch
 import java.io.IOException
+
 
 class MyProfileActivity : BaseActivity() {
 
@@ -67,6 +71,10 @@ class MyProfileActivity : BaseActivity() {
 
         setupActionBar()
 
+        if(intent.getBooleanExtra(Constants.UPDATE_EMAIL_FLAG, false)){
+            requestEmailUpdate()
+        }
+
 
         showProgressDialog(resources.getString(R.string.please_wait))
         FirestoreClass().updateUserData(this@MyProfileActivity)
@@ -77,16 +85,21 @@ class MyProfileActivity : BaseActivity() {
 
         binding?.btnUpdate?.setOnClickListener {
 
-            if(mSelectedImageFileUri != null){
-                showProgressDialog(resources.getString(R.string.please_wait))
-                uploadUserImage()
-            } else{
-                showProgressDialog(resources.getString(R.string.please_wait))
-                updateUserProfileData()
-            }
+            if (isValidEmail(binding?.etEmailMyprofile?.text.toString())) {
 
+                if (mSelectedImageFileUri != null) {
+                    showProgressDialog(resources.getString(R.string.please_wait))
+                    uploadUserImage()
+                } else {
+                    showProgressDialog(resources.getString(R.string.please_wait))
+                    updateUserProfileData()
+                }
 
             FirestoreClass().updateUserData(this)
+
+            } else {
+                showErrorSnackBar("Insert a valid email")
+            }
 
         }
 
@@ -94,7 +107,23 @@ class MyProfileActivity : BaseActivity() {
             updateImageView()
         }
 
-        // TODO: FIX BUG ON IMAGE UPDATE
+    }
+
+    override fun onBackPressed() {
+        if (isValidEmail(binding?.etEmailMyprofile?.text.toString())){
+            super.onBackPressed()
+        } else {
+            showErrorSnackBar("Insert a valid email")
+        }
+    }
+
+    private fun requestEmailUpdate() {
+        binding?.etEmailMyprofile?.setText("")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            binding?.etEmailMyprofile?.focusable = View.NOT_FOCUSABLE
+        }
+        binding?.etEmailMyprofile?.isFocusableInTouchMode = true
+        Toast.makeText(this, "Please add an valid email address.", Toast.LENGTH_LONG).show()
 
     }
 
@@ -134,7 +163,26 @@ class MyProfileActivity : BaseActivity() {
             anyChangesMade = true
         }
 
-        if(binding?.etMobileMyprofile?.text.toString() != mUserDetails.mobile.toString()){
+        if(intent.getBooleanExtra(Constants.UPDATE_EMAIL_FLAG, false)) {
+            val email = binding?.etEmailMyprofile?.text.toString()
+            if (isValidEmail(email)){
+                userHashMap[Constants.EMAIL] = binding?.etEmailMyprofile?.text.toString()
+                FirebaseAuth.getInstance().currentUser!!.updateEmail(email)
+                    .addOnSuccessListener {
+                        Toast.makeText(this, "Email successfully updated!", Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnFailureListener {
+                        it.printStackTrace()
+                        if(it.message != null) {
+                            showErrorSnackBar(it.message!!)
+                        }
+                    }
+                anyChangesMade = true
+            } else {
+                showErrorSnackBar("Insert a valid email")
+            }
+        }
+        if(binding?.etMobileMyprofile?.text.toString() != mUserDetails.mobile.toString() && !binding?.etMobileMyprofile?.text.isNullOrEmpty()){
             userHashMap[Constants.MOBILE] = binding?.etMobileMyprofile?.text.toString().toLong()
             anyChangesMade = true
         }

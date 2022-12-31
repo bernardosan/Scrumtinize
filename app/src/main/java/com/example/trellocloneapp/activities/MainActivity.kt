@@ -26,6 +26,7 @@ import com.google.firebase.installations.FirebaseInstallations
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import androidx.activity.result.contract.ActivityResultContracts
+import com.google.firebase.auth.FirebaseAuth
 
 
 open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -54,6 +55,12 @@ open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelecte
             this.getSharedPreferences(Constants.SCRUMTINIZE_PREFERENCES, Context.MODE_PRIVATE)
 
         val tokenUpdated = mSharedPreferences.getBoolean(Constants.FCM_TOKEN_UPDATED, false)
+
+        if(!isValidEmail(FirebaseAuth.getInstance().currentUser!!.email.toString())){
+            intent = Intent(this, MyProfileActivity::class.java)
+            intent.putExtra(Constants.UPDATE_EMAIL_FLAG, true)
+            startActivity(intent)
+        }
 
         if (!tokenUpdated) {
             FirebaseInstallations

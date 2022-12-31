@@ -6,6 +6,8 @@ import android.icu.text.SimpleDateFormat
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Handler
+import android.text.TextUtils
+import android.util.Patterns
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -72,5 +74,13 @@ abstract class BaseActivity : AppCompatActivity() {
         val snackBarView = snackBar.view
         snackBarView.setBackgroundColor(ContextCompat.getColor(this, R.color.snackbar_error))
         snackBar.show()
+    }
+
+    fun isValidEmail(target: String): Boolean {
+        return if (TextUtils.isEmpty(target) || target.isBlank() || target == "null") {
+            false
+        } else {
+            Patterns.EMAIL_ADDRESS.matcher(target).matches()
+        }
     }
 }

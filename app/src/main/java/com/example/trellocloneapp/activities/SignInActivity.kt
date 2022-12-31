@@ -1,6 +1,5 @@
 package com.example.trellocloneapp.activities
 
-import android.content.ContentValues
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
@@ -46,7 +45,6 @@ class SignInActivity : BaseActivity() {
 
         auth = FirebaseAuth.getInstance()
 
-        FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create()
 
 
@@ -226,12 +224,15 @@ class SignInActivity : BaseActivity() {
 
                 if (task.isSuccessful) {
                     val account = task.result.user!!
-                    val user = User(
-                        account.uid, account.displayName.toString(), account.email.toString(),
-                        account.photoUrl.toString()
-                    )
-                    FirestoreClass().registerUser(this, user)
-                    FirestoreClass().updateUserData(this)
+                    if(account.email != null){
+                        FirestoreClass().updateUserData(this)
+                    } else {
+                        val user = User(
+                            account.uid, account.displayName.toString(), account.email.toString(),
+                            account.photoUrl.toString(), 0L
+                        )
+                        FirestoreClass().registerUser(this, user)
+                    }
                 } else {
                     // If sign in fails, display a message to the user.
                     task.exception?.printStackTrace()
@@ -240,5 +241,14 @@ class SignInActivity : BaseActivity() {
                 }
             }
     }
+
+    fun requestEmailUpdateSignIn() {
+        intent = Intent(this, MyProfileActivity::class.java)
+        intent.putExtra(Constants.UPDATE_EMAIL_FLAG, true)
+        startActivity(intent)
+        hideProgressDialog()
+        finish()
+    }
+
 
 }

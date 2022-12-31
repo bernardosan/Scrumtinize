@@ -56,6 +56,8 @@ object Constants {
     const val FCM_KEY_DATA: String = "data"
     const val FCM_KEY_TO: String = "to"
 
+    const val UPDATE_EMAIL_FLAG: String = "update_email_flag"
+
 
     // get files extensions from Uri
     fun getFileExtension(activity: Activity, uri: Uri?): String?{
