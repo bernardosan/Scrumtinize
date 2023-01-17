@@ -40,7 +40,7 @@ class CreateBoardActivity : BaseActivity() {
                     .with(this)
                     .load(mSelectedImageFileUri)
                     .centerCrop()
-                    .placeholder(R.drawable.ic_createboard_image)
+                    .placeholder(R.drawable.circle_colored_border_add_image)
                     .into(findViewById(R.id.iv_add_board))
             }catch (e: IOException){
                 e.printStackTrace()

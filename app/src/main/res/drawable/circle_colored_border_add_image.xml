@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/shutta_blue_light">
+
+    <item android:drawable="@drawable/ic_add_image_file"/>
+
+    <item>
+        <shape android:shape="oval">
+            <stroke android:color="#0C90f1" android:width="4dp"/>
+            <corners android:radius="100dp"/>
+        </shape>
+    </item>
+</ripple>
