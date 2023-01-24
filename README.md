@@ -53,7 +53,7 @@
 
 ## 📖 About
 
-The app proposal is to be a project managment tool, users can sign up, create boards, add lists to a board and finally add cards to a list. An user can add members to a specific board and atribute members to cards, so that everybody knows who does what!
+The app proposal is to be a project managment tool, users can sign up, create boards, add lists to a board and add cards to a list. An user can add members to a specific board and atribute members to cards, so that everybody knows who does what!
 
 This project its on closed-beta, and its actual version only functions with a proper internet connection.
 
