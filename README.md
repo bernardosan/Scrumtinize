@@ -10,18 +10,14 @@
 <div align="center">
 </div>
 
-## 📋 Índice
+## 📋 Index
 
 - [Preview](#-Preview)
-- [Sobre](#-Sobre)
-- [Tecnologias utilizadas](#-Ferramentas-utilizadas)
-- [Biliotecas utilizadas](#-Biliotecas-utilizadas)
+- [Sobre](#-About)
+- [Tecnologias utilizadas](#-Tools)
+- [Biliotecas utilizadas](#-Librarys)
 
 ---
-
-
-
-
 
 
 ## 🖥 Preview
@@ -55,7 +51,7 @@
 
 ---
 
-## 📖 Sobre
+## 📖 About
 
 The app proposal is to be a project managment tool, users can sign up, create boards, add lists to a board and finally add cards to a list. An user can add members to a specific board and atribute members to cards, so that everybody knows who does what!
 
@@ -65,23 +61,27 @@ This project its on closed-beta, and its actual version only functions with a pr
 
 ## :lock_with_ink_pen: Account Managment
 
-All account management and authentication its made by Firebase Authetication
+- All account management and authentication its made by Firebase Authetication.
+- All snackbar text related to errors of authetication are managed by Firebase.
+- Back-end user doesn't have access to the user password.
+- The system counts with access buttons to both Google and Facebook users.
+- Facebook users with account were created purelly with their phone will be asked to add an valid e-mail as well.
+
 
 
 ---
 
 
-## 🚀 Ferramentas utilizadas
+## 🚀 Tools
 
-O projeto foi desenvolvido utilizando as seguintes Ferramentas:
+The project used the following tools:
 
 - Android Studio
 - Java
 - XML
 - Intents
 - Bundle
-- Navegação e dados entre Activities
-- Navegação e dados entre Fragments
+- Navegation between Activities
 - CardView
 - Lógica de Programação
 - Pogramação Orientada a Objetos
@@ -99,13 +99,12 @@ O projeto foi desenvolvido utilizando as seguintes Ferramentas:
 - Dots Indicator
 
 
-
 ---
 
 
-## 🚀 Biliotecas utilizadas
+## 🚀 Library
 
-O projeto foi desenvolvido utilizando as seguintes bibliotecas:
+The project used the following implementations:
 
 - Glide: https://github.com/bumptech/glide
 - Circle ImageView: https://github.com/hdodenhof/CircleImageView
@@ -115,4 +114,4 @@ O projeto foi desenvolvido utilizando as seguintes bibliotecas:
 
 ---
 
-Desenvolvido por Bernardo Santiago de Souza.
+Developed by Bernardo Santiago de Souza.
