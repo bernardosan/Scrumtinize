@@ -86,7 +86,7 @@ This project its on closed-beta, and its actual version only functions with a pr
 The project used the following tools:
 
 - Android Studio
-- Java
+- Kotlin
 - XML
 - Intents
 - Bundle
