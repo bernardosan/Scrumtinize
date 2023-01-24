@@ -13,9 +13,9 @@
 ## 📋 Index
 
 - [Preview](#-Preview)
-- [Sobre](#-About)
-- [Tecnologias utilizadas](#-Tools)
-- [Biliotecas utilizadas](#-Librarys)
+- [About](#-About)
+- [Tools](#-Tools)
+- [Librarys](#-Librarys)
 
 ---
 
