@@ -74,7 +74,7 @@ This project its on closed-beta, and its actual version only functions with a pr
 - All snackbar text related to errors of authetication are managed by Firebase.
 - Back-end user doesn't have access to the user password.
 - The system counts with access buttons to both Google and Facebook users.
-- Facebook users with account were created purelly with their phone will be asked to add an valid e-mail as well.
+- Facebook users with accounts that were created purelly with their phone numbers will be asked to add an valid e-mail as well.
 
 
 
