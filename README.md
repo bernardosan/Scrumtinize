@@ -92,8 +92,6 @@ The project used the following tools:
 - Bundle
 - Navegation between Activities
 - CardView
-- Lógica de Programação
-- Pogramação Orientada a Objetos
 - Alert Dialog
 - RecyclerView
 - Coroutines
