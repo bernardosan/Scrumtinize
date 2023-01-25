@@ -95,7 +95,7 @@ The project used the following tools:
 - Alert Dialog
 - RecyclerView
 - Coroutines
-- Banco de Dados
+- Database
 - Firebase (Realtime, Storage and Messaging)
 - Sqlite
 - Swipe
