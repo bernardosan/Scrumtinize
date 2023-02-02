@@ -4,15 +4,17 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:foreground="?attr/selectableItemBackground"
     android:orientation="vertical"
     tools:ignore="UnusedAttribute">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginTop="4dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
+        android:background="@drawable/shape_btn_rounded_ripple"
         android:padding="16dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
