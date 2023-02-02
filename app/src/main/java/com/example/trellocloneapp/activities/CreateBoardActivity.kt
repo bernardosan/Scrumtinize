@@ -28,21 +28,22 @@ class CreateBoardActivity : BaseActivity() {
     private var binding: ActivityCreateBoardBinding? = null
     private var mSelectedImageFileUri: Uri? = null
     private var mBoardImageURL: String = ""
+    private var mBoardDetails: Board? = null
 
     private val openGalleryLauncher: ActivityResultLauncher<Intent> = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()){
-            result ->
-        if(result.resultCode == RESULT_OK && result.data!=null){
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK && result.data != null) {
             mSelectedImageFileUri = result.data?.data
 
-            try{
+            try {
                 Glide
                     .with(this)
                     .load(mSelectedImageFileUri)
                     .centerCrop()
                     .placeholder(R.drawable.circle_colored_border_add_image)
                     .into(findViewById(R.id.iv_add_board))
-            }catch (e: IOException){
+            } catch (e: IOException) {
                 e.printStackTrace()
             }
         }
@@ -53,18 +54,19 @@ class CreateBoardActivity : BaseActivity() {
             permissions.entries
         }
 
-    private val localStorageLauncher : ActivityResultLauncher<String> = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()) {
-            isGranted ->
-        if(isGranted){
-        val pickIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        try {
-            openGalleryLauncher.launch(pickIntent)
-        } catch (e: IOException){
-            e.printStackTrace()
-        }
+    private val localStorageLauncher: ActivityResultLauncher<String> = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            val pickIntent =
+                Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            try {
+                openGalleryLauncher.launch(pickIntent)
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
         } else {
-        Toast.makeText(this, "Denied Permission of storage", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Denied Permission of storage", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -75,7 +77,7 @@ class CreateBoardActivity : BaseActivity() {
         setupActionBar()
         FirestoreClass().updateUserData(this@CreateBoardActivity)
 
-        //receiveIntentData()
+        receiveIntentData()
 
         binding?.toolbarAddBoard?.setNavigationOnClickListener {
             onBackPressed()
@@ -86,23 +88,42 @@ class CreateBoardActivity : BaseActivity() {
         }
 
         binding?.btnCreateBoard?.setOnClickListener {
-            if(mSelectedImageFileUri != null) {
+
+            if (mSelectedImageFileUri != null){
+                showProgressDialog(getString(R.string.please_wait))
                 uploadBoardImage()
                 finish()
-                FirestoreClass().updateUserData(this, true)
-            } else {
+            } else{
                 showProgressDialog(getString(R.string.please_wait))
                 createBoard()
             }
+
         }
 
     }
 
-    /*private fun receiveIntentData() {
-        if (intent.hasExtra(Constants.NAME)) {
-            mUserName = intent.getStringExtra(Constants.NAME).toString()
+    private fun receiveIntentData() {
+        if(intent.hasExtra(Constants.BOARD_DETAIL))
+        {
+            mBoardDetails = intent.getParcelableExtra(Constants.BOARD_DETAIL) as Board?
         }
-    }*/
+
+        if(mBoardDetails != null)
+        {
+            supportActionBar?.title = "Edit Board"
+            binding?.btnCreateBoard?.setText(R.string.update)
+            binding?.etBoardName?.setText(mBoardDetails!!.name)
+
+            mBoardImageURL = mBoardDetails!!.image
+
+            Glide
+                .with(this)
+                .load(mBoardDetails!!.image)
+                .centerCrop()
+                .placeholder(R.drawable.circle_colored_border_add_image)
+                .into(findViewById(R.id.iv_add_board))
+        }
+    }
 
     private fun setupActionBar() {
         setSupportActionBar(binding?.toolbarAddBoard)
@@ -150,8 +171,25 @@ class CreateBoardActivity : BaseActivity() {
 
     }
 
+    private fun updateBoard(){
+
+        val board = Board(
+            binding?.etBoardName?.text.toString(),
+            mBoardImageURL,
+            mBoardDetails!!.createdBy,
+            mBoardDetails!!.date,
+            mBoardDetails!!.assignedTo,
+            mBoardDetails!!.documentId,
+            mBoardDetails!!.taskList,
+            mBoardDetails!!.weight
+        )
+
+        FirestoreClass().updateBoard(this@CreateBoardActivity, board)
+
+    }
+
     private fun uploadBoardImage(){
-        showProgressDialog(getString(R.string.please_wait))
+
         if(mSelectedImageFileUri != null){
 
             val sRef : StorageReference = FirebaseStorage.getInstance().reference.child(
@@ -165,8 +203,14 @@ class CreateBoardActivity : BaseActivity() {
                         uri ->
                     Log.i("Downloadable Image URL", uri.toString())
                     mBoardImageURL = uri.toString()
-                    createBoard()
-                    Toast.makeText(this, "Created board successfully", Toast.LENGTH_SHORT).show()
+
+                    if(mBoardDetails != null){
+                        updateBoard()
+                        Toast.makeText(this, "Board updated successfully", Toast.LENGTH_SHORT).show()
+                    } else {
+                        createBoard()
+                        Toast.makeText(this, "Created board successfully", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }.addOnFailureListener {
                     exception ->

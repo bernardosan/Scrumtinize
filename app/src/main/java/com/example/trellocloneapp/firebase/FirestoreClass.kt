@@ -82,6 +82,23 @@ class FirestoreClass {
             }
     }
 
+    fun updateBoard(activity: CreateBoardActivity, boardInfo: Board){
+
+        val boardHashMap = HashMap<String, Any>()
+        boardHashMap[Constants.NAME] = boardInfo.name
+        boardHashMap[Constants.IMAGE] = boardInfo.image
+
+        mFireStore.collection(Constants.BOARDS)
+            .document(boardInfo.documentId)
+            .update(boardHashMap)
+            .addOnSuccessListener {
+                activity.boardCreatedSuccessfully()
+            }
+            .addOnFailureListener {
+                Log.e(activity.javaClass.simpleName,"Error writing document")
+            }
+    }
+
     fun deleteBoard(activity: MainActivity, boardId: String){
         mFireStore.collection(Constants.BOARDS)
             .document(boardId)

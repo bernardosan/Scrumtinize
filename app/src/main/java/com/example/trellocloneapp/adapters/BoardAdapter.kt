@@ -72,10 +72,10 @@ class BoardAdapter(private val boardList: ArrayList<Board>, val context: Context
                 onClickListener!!.onClick(position, board)
             }
         }
-        holder.itemView.setOnLongClickListener {
+        /*holder.itemView.setOnLongClickListener {
             onLongClickListener!!.onLongClick(position, board)
             true
-        }
+        }*/
 
     }
 
