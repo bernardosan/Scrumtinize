@@ -31,6 +31,13 @@
             android:src="@drawable/ic_user_place_holder"
             />
 
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="@dimen/board_image_size"
+            android:layout_height="@dimen/board_image_size"
+            android:progressTint="@color/primaryDarkColor"
+            android:visibility="gone"/>
+
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

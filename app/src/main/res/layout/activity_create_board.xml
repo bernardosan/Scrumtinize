@@ -25,6 +25,14 @@
         app:civ_border_color="@color/white"
         app:civ_border_width="2dp" />
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="@dimen/board_image_size"
+        android:layout_height="@dimen/board_image_size"
+        android:progressTint="@color/primaryDarkColor"
+        android:background="@drawable/shape_circular_backgroud"
+        android:visibility="gone"/>
+
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/et_board_name"
         android:layout_width="match_parent"

@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="200dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/nav_header_main_backgroud"
-    android:gravity="bottom"
+    android:background="@drawable/nav_header_main_background"
     android:orientation="vertical"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
@@ -14,10 +13,28 @@
         android:layout_height="@dimen/nav_image_size"
         android:layout_marginBottom="@dimen/nav_content_margin_bottom"
         android:layout_gravity="center"
+        android:src="@color/white"
+        android:visibility="invisible"
         app:civ_border_color="@color/white"
         app:civ_border_width="2dp"
-        android:src="@drawable/ic_user_place_holder"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         />
+
+    <ProgressBar
+        android:id="@+id/progressBarNavHeader"
+        android:layout_width="@dimen/nav_image_size"
+        android:layout_height="@dimen/nav_image_size"
+        android:layout_marginBottom="@dimen/nav_content_margin_bottom"
+        android:layout_gravity="center"
+        android:background="@drawable/shape_circular_backgroud"
+        android:visibility="visible"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <TextView
         android:id="@+id/tv_username"
@@ -25,13 +42,25 @@
         android:layout_height="wrap_content"
         android:text="@string/app_name"
         android:textSize="@dimen/nav_user_name_text_size"
+        android:textStyle="bold"
+        android:textColor="@color/primary_text_color"
+        android:maxLines="2"
+        android:maxEms="50"
         android:layout_gravity="center"
-        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
         android:layout_marginHorizontal="10dp"
+        app:layout_constraintTop_toBottomOf="@id/nav_user_image"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/nav_divider_height"
-        android:background="@color/colorPrimary"/>
-</LinearLayout>
+        android:background="@color/dark_gray"
+        android:layout_marginTop="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

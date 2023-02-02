@@ -1,11 +1,15 @@
 package com.example.trellocloneapp.adapters
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
 import com.example.trellocloneapp.R
 import com.example.trellocloneapp.activities.TaskListActivity
 import com.example.trellocloneapp.databinding.ItemCardSelectedMemberBinding
@@ -23,23 +27,53 @@ open class CardMemberListItemsAdapter (
 
         fun bindItem(position: Int) {
             val item = list[position]
+            var load_image = false
 
-            if(position == list.size - 1 && assignMembers){
+            if (position == list.size - 1 && assignMembers) {
                 itemBinding.ivAddMember.visibility = View.VISIBLE
                 itemBinding.ivSelectedMemberImage.visibility = View.GONE
-            } else{
+                itemBinding.progressBar.visibility = View.GONE
+            } else {
                 itemBinding.ivAddMember.visibility = View.GONE
-                itemBinding.ivSelectedMemberImage.visibility = View.VISIBLE
+                itemBinding.ivSelectedMemberImage.visibility = View.GONE
+                itemBinding.progressBar.visibility = View.VISIBLE
+                load_image = true
             }
 
-            Glide
-                .with(context)
-                .load(item.image)
-                .centerCrop()
-                .placeholder(R.drawable.ic_user_place_holder)
-                .into(itemBinding.ivSelectedMemberImage)
+            if (load_image) {
+                Glide
+                    .with(context)
+                    .load(item.image)
+                    .centerCrop()
+                    .listener(object : RequestListener<Drawable?> {
+                        override fun onLoadFailed(
+                            e: GlideException?,
+                            model: Any?,
+                            target: com.bumptech.glide.request.target.Target<Drawable?>?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            itemBinding.progressBar.visibility = View.GONE
+                            itemBinding.ivSelectedMemberImage.visibility = View.VISIBLE
+                            return false
+                        }
 
+                        override fun onResourceReady(
+                            resource: Drawable?,
+                            model: Any?,
+                            target: com.bumptech.glide.request.target.Target<Drawable?>?,
+                            dataSource: DataSource?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            itemBinding.progressBar.visibility = View.GONE
+                            itemBinding.ivSelectedMemberImage.visibility = View.VISIBLE
+                            return false
+                        }
 
+                    })
+                    .placeholder(R.drawable.ic_user_place_holder)
+                    .into(itemBinding.ivSelectedMemberImage)
+
+            }
         }
     }
 

@@ -12,12 +12,20 @@ import com.example.trellocloneapp.databinding.ItemBoardBinding
 import com.example.trellocloneapp.models.Board
 import android.graphics.*
 import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
+import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.request.RequestListener
 import com.example.trellocloneapp.activities.CreateBoardActivity
 import com.example.trellocloneapp.activities.MainActivity
 import com.example.trellocloneapp.utils.Constants
 import kotlin.collections.ArrayList
+import com.bumptech.glide.load.engine.GlideException
+
+
+
 
 
 class BoardAdapter(private val boardList: ArrayList<Board>, val context: Context):RecyclerView.Adapter<BoardAdapter.MainViewHolder>() {
@@ -30,12 +38,43 @@ class BoardAdapter(private val boardList: ArrayList<Board>, val context: Context
         fun bindItem(board: Board){
             itemBinding.tvBoardName.text = board.name
             //itemBinding.tvCreateBy.text =  "created by: " + FirestoreClass().getUserNameById(board.createdBy)
+
+
+            itemBinding.progressBar.visibility = View.VISIBLE
+            itemBinding.ivBoardImage.visibility = View.GONE
+
             Glide
                 .with(context)
                 .load(board.image)
                 .centerCrop()
+                .listener(object : RequestListener<Drawable?>{
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: com.bumptech.glide.request.target.Target<Drawable?>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        itemBinding.progressBar.visibility = View.GONE
+                        itemBinding.ivBoardImage.visibility = View.VISIBLE
+                        return false
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable?,
+                        model: Any?,
+                        target: com.bumptech.glide.request.target.Target<Drawable?>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        itemBinding.progressBar.visibility = View.GONE
+                        itemBinding.ivBoardImage.visibility = View.VISIBLE
+                        return false
+                    }
+
+                })
                 .placeholder(R.drawable.ic_board_place_holder)
                 .into(itemBinding.ivBoardImage)
+
         }
 
     }

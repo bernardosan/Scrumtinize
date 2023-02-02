@@ -5,10 +5,11 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -26,7 +27,11 @@ import com.google.firebase.installations.FirebaseInstallations
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import androidx.activity.result.contract.ActivityResultContracts
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
 import com.google.firebase.auth.FirebaseAuth
+import de.hdodenhof.circleimageview.CircleImageView
 
 
 open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -183,17 +188,47 @@ open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelecte
 
         mUserName = user.name
 
+        val tvUserName = findViewById<TextView>(R.id.tv_username)
+        val navUserImage = findViewById<CircleImageView>(R.id.nav_user_image)
+        val progressBar = findViewById<ProgressBar>(R.id.progressBarNavHeader)
+
         hideProgressDialog()
 
+        progressBar?.visibility = View.VISIBLE
+        navUserImage?.visibility = View.INVISIBLE
+        tvUserName?.text = user.name
         // Load the user image in the ImageView.
         Glide
             .with(this@MainActivity)
             .load(user.image) // URL of the image
             .centerCrop() // Scale type of the image.
-            .placeholder(R.drawable.ic_user_place_holder) // A default place holder
-            .into(findViewById(R.id.nav_user_image)) // the view in which the image will be loaded.
+            .listener(object : RequestListener<Drawable?> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: com.bumptech.glide.request.target.Target<Drawable?>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    progressBar?.visibility = View.INVISIBLE
+                    navUserImage?.visibility = View.VISIBLE
+                    return false
+                }
 
-        findViewById<TextView>(R.id.tv_username).text = user.name
+                override fun onResourceReady(
+                    resource: Drawable?,
+                    model: Any?,
+                    target: com.bumptech.glide.request.target.Target<Drawable?>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    progressBar?.visibility = View.INVISIBLE
+                    navUserImage?.visibility =  View.VISIBLE
+                    return false
+                }
+        })
+            .placeholder(R.drawable.ic_board_place_holder) // A default place holder
+            .into(navUserImage) // the view in which the image will be loaded.
+
 
         if (readBoardsList) {
             FirestoreClass().getBoardsList(this)

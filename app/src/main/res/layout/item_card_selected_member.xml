@@ -20,6 +20,17 @@
         app:civ_border_width="@dimen/item_member_image_circular_width_size"
         tools:visibility="gone" />
 
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="@dimen/item_selected_member_image_size"
+        android:layout_height="@dimen/item_selected_member_image_size"
+        android:layout_gravity="center"
+        android:background="@drawable/shape_circular_backgroud"
+        android:progressTint="@color/white"
+        android:visibility="gone"/>
+
+
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/iv_add_member"
         android:layout_width="@dimen/item_selected_member_image_size"

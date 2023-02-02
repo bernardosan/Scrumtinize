@@ -1,5 +1,6 @@
 package com.example.trellocloneapp.fcm
 
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -63,6 +64,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         editor.apply()
     }
 
+    @SuppressLint("UnspecifiedImmutableFlag")
     private fun sendNotification(title: String, message: String){
         val intent = if(FirestoreClass().getCurrentUserId().isNotEmpty()) {
             Intent(this, MainActivity::class.java)
@@ -92,6 +94,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         }
 
         notificationManager.notify(0, notificationBuilder.build())
+        notificationBuilder.build()
 
     }
 
