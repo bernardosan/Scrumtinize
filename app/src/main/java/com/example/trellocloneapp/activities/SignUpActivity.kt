@@ -1,6 +1,8 @@
 package com.example.trellocloneapp.activities
 
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
@@ -10,6 +12,9 @@ import com.example.trellocloneapp.firebase.FirestoreClass
 import com.example.trellocloneapp.models.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+
+
+
 
 class SignUpActivity : BaseActivity() {
 
@@ -38,16 +43,46 @@ class SignUpActivity : BaseActivity() {
     }
 
     private fun validateForm(name: String, email: String, password: String): Boolean {
+
+
+        val states = arrayOf(
+            intArrayOf(android.R.attr.state_enabled), // enabled
+            intArrayOf(-android.R.attr.state_enabled), // disabled
+            intArrayOf(-android.R.attr.state_checked), // unchecked
+            intArrayOf(android.R.attr.state_pressed)  // pressed
+        )
+
+        val colors = intArrayOf(
+            Color.RED,
+            Color.RED,
+            Color.RED,
+            Color.RED,
+        )
+
+        val myList = ColorStateList(states, colors)
+
         return when{
             TextUtils.isEmpty(name)->{
+                binding?.etName?.error = "Enter a name"
+                binding?.tilName?.boxStrokeColor = Color.parseColor("#F72400")
+                binding?.tilName?.setHelperTextColor(myList)
+                binding?.tilName?.hintTextColor = myList
                 showErrorSnackBar("Please enter a name.")
                 false
             }
-            TextUtils.isEmpty(email)->{
+            TextUtils.isEmpty(email) ->{
+                binding?.etEmail?.error = "Enter an valid email"
+                binding?.tilEmail?.boxStrokeColor = Color.parseColor("#F72400")
+                binding?.tilEmail?.setHelperTextColor( myList)
+                binding?.tilEmail?.hintTextColor = myList
                 showErrorSnackBar("Please enter an email address.")
                 false
             }
             TextUtils.isEmpty(password)->{
+                binding?.etPassword?.error = "Enter an password"
+                binding?.tilPassword?.setHelperTextColor(myList)
+                binding?.tilPassword?.boxStrokeColor = Color.parseColor("#F72400")
+                binding?.tilPassword?.hintTextColor = myList
                 showErrorSnackBar(getString(R.string.please_enter_password))
                 false
             } else -> {

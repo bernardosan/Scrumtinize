@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:elevation="@dimen/task_item_cv_elevation"
+    android:layout_marginHorizontal="5dp"
     android:orientation="vertical"
     tools:context=".activities.TaskListActivity">
 
