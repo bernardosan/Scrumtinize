@@ -160,7 +160,7 @@ open class TaskListAdapter(private val context: Context, private var list: Array
         return view
     }
 
-    override fun onBindViewHolder(holder: MainViewHolder, taskPosition: Int) {
+    override fun onBindViewHolder(holder: MainViewHolder, @SuppressLint("RecyclerView") taskPosition: Int) {
         holder.bindItem(taskPosition)
 
         val adapter = CardListAdapter(context, list[holder.adapterPosition].cardList)
@@ -178,7 +178,7 @@ open class TaskListAdapter(private val context: Context, private var list: Array
 
         //  Creates an ItemTouchHelper that will work with the given Callback.
         val helper = ItemTouchHelper(object :
-            ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.END) {
+            ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.START or ItemTouchHelper.END) {
             /*Called when ItemTouchHelper wants to move the dragged item from its old position to
              the new position.*/
 

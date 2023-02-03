@@ -72,4 +72,6 @@
     <string name="facebook_app_id">717500726337438</string>
     <string name="fb_login_protocol_scheme">fb717500726337438</string>
     <string name="facebook_client_token">f4357a5c9368b9c73581c65aece0be6f</string>
+    <string name="finish_cart">Finished</string>
+    <string name="unfinish_cart">Unfinish</string>
 </resources>

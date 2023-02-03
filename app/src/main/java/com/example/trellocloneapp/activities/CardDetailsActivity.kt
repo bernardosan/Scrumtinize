@@ -1,13 +1,16 @@
 package com.example.trellocloneapp.activities
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.trellocloneapp.R
 import com.example.trellocloneapp.adapters.CardMemberListItemsAdapter
@@ -32,10 +35,12 @@ class CardDetailsActivity : BaseActivity() {
     private lateinit var mMembersDetailList: ArrayList<User>
     private var mSelectedDueDate: Long = 0L
     private var mWeight: Int = 0
+    private var mState: Int = 0
 
     private var anyChangesMade = false
 
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCardDetailsBinding.inflate(layoutInflater)
@@ -45,8 +50,12 @@ class CardDetailsActivity : BaseActivity() {
         populatingCardDetailsUI()
         setupSelectedMembersList()
 
+
         binding?.toolbarCardDetailsActivity?.setOnMenuItemClickListener {
-            alertDialogForDeleteList(mCardPosition,mTaskListPosition)
+            when(it.itemId){
+                R.id.action_delete_card -> alertDialogForDeleteList(mCardPosition,mTaskListPosition)
+                R.id.action_change_status -> updateCardStatus()
+            }
            true
         }
 
@@ -85,11 +94,30 @@ class CardDetailsActivity : BaseActivity() {
             if(binding?.etNameCardDetails?.text?.isNotEmpty()!!){
                 updateCardDetails()
             } else {
-                Toast.makeText(this, "Please enter a Card Name", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Enter a valid card name", Toast.LENGTH_SHORT).show()
             }
         }
 
 
+    }
+
+    private fun updateCardStatus() {
+
+        if(mState == 1 && !anyChangesMade){
+            mBoardDetails
+                .taskList[mTaskListPosition]
+                .cardList[mCardPosition].state = 0
+            binding?.toolbarCardDetailsActivity?.menu?.findItem(R.id.action_change_status)?.setIcon(R.drawable.ic_baseline_check_box_24)
+            updateCardDetails()
+        } else if (anyChangesMade) {
+            Toast.makeText(this, "Update card before finishing it", Toast.LENGTH_SHORT).show()
+        } else {
+            mBoardDetails
+                .taskList[mTaskListPosition]
+                .cardList[mCardPosition].state = 1
+            binding?.toolbarCardDetailsActivity?.menu?.findItem(R.id.action_change_status)?.setIcon(R.drawable.ic_baseline_check_box_outline_blank_24)
+            updateCardDetails()
+        }
     }
 
     private fun setupActionBar() {
@@ -106,7 +134,13 @@ class CardDetailsActivity : BaseActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_delete_card, menu)
+        menuInflater.inflate(R.menu.menu_card, menu)
+        if(mState == 1) {
+            menu.findItem(R.id.action_change_status)?.setIcon(R.drawable.ic_baseline_check_box_24)
+        } else {
+            menu.findItem(R.id.action_change_status)?.setIcon(R.drawable.ic_baseline_check_box_outline_blank_24)
+
+        }
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -114,6 +148,7 @@ class CardDetailsActivity : BaseActivity() {
     private fun getIntentData(){
         if(intent.hasExtra(Constants.BOARD_DETAIL)){
             mBoardDetails = intent.getParcelableExtra(Constants.BOARD_DETAIL)!!
+
         }
         if(intent.hasExtra(Constants.TASK_LIST_ITEM_POSITION)){
             mTaskListPosition = intent.getIntExtra(Constants.TASK_LIST_ITEM_POSITION, -1)
@@ -128,8 +163,10 @@ class CardDetailsActivity : BaseActivity() {
         mSelectedColor = mBoardDetails.taskList[mTaskListPosition].cardList[mCardPosition].labelColor
         mSelectedDueDate = mBoardDetails.taskList[mTaskListPosition].cardList[mCardPosition].dueDate
         mWeight = mBoardDetails.taskList[mTaskListPosition].cardList[mCardPosition].weight
+        mState = mBoardDetails.taskList[mTaskListPosition].cardList[mCardPosition].state
     }
 
+    @SuppressLint("SetTextI18n")
     private fun populatingCardDetailsUI(){
 
         binding?.etNameCardDetails?.setText(
@@ -175,7 +212,8 @@ class CardDetailsActivity : BaseActivity() {
             mBoardDetails.taskList[mTaskListPosition].cardList[mCardPosition].assignedTo,
             mSelectedColor,
             mSelectedDueDate,
-            mWeight)
+            mWeight,
+            mBoardDetails.taskList[mTaskListPosition].cardList[mCardPosition].state)
 
         //val taskList: ArrayList<Task> = mBoardDetails.taskList
         //taskList.removeAt(taskList.size - 1)
@@ -340,7 +378,7 @@ class CardDetailsActivity : BaseActivity() {
         val day = c.get(Calendar.DAY_OF_MONTH)
         val dpd = DatePickerDialog(
             this,
-            DatePickerDialog.OnDateSetListener {
+            {
                 _, mYear, monthOfYear, dayOfMonth ->
                 val sDayOfMonth = if (dayOfMonth < 10) "0$dayOfMonth" else "$dayOfMonth"
                 val sMonthOfYear = if ((monthOfYear + 1)< 10) "0${monthOfYear + 1}" else "$monthOfYear"

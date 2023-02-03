@@ -1,19 +1,15 @@
 package com.example.trellocloneapp.adapters
 
-import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
+import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.GridLayout
-import android.widget.ImageButton
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.trellocloneapp.R
 import com.example.trellocloneapp.activities.TaskListActivity
 import com.example.trellocloneapp.databinding.ItemCardBinding
-import com.example.trellocloneapp.models.Board
 import com.example.trellocloneapp.models.Card
 import com.example.trellocloneapp.models.SelectedMembers
 
@@ -29,6 +25,19 @@ open class CardListAdapter(private val context: Context, private var cardList: A
 
             itemBinding.tvCardName.text = model.title
             itemBinding.tvCardWeight.text = model.weight.toString()
+
+
+            if(model.state == 1){
+                itemBinding.tvCardName.apply {
+                    paintFlags = Paint.STRIKE_THRU_TEXT_FLAG or itemBinding.tvCardName.paintFlags
+                    text = itemBinding.tvCardName.text
+                }
+            } else if (model.state == 0) {
+                itemBinding.tvCardName.apply {
+                    paintFlags = Paint.LINEAR_TEXT_FLAG or itemBinding.tvCardName.paintFlags
+                    text = itemBinding.tvCardName.text
+                }
+            }
 
             if(model.labelColor.isNotEmpty()){
                 itemBinding.viewLabelColor.visibility = View.VISIBLE
