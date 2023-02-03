@@ -229,7 +229,7 @@ class SignInActivity : BaseActivity() {
                     } else {
                         val user = User(
                             account.uid, account.displayName.toString(), account.email.toString(),
-                            account.photoUrl.toString(), 0L
+                            account.photoUrl.toString(), "",0L
                         )
                         FirestoreClass().registerUser(this, user)
                     }

@@ -65,6 +65,16 @@
                     android:autofillHints="" />
 
                 <EditText
+                    android:id="@+id/et_description_myprofile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:hint="@string/description"
+                    android:inputType="text"
+                    android:autofillHints="" />
+
+                <EditText
                     android:id="@+id/et_email_myprofile"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

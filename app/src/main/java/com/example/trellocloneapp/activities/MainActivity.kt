@@ -177,6 +177,11 @@ open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelecte
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                 finish()
             }
+
+            R.id.nav_about ->{
+                val intent = Intent(this, AboutActivity::class.java)
+                startActivity(intent)
+            }
         }
 
         binding?.drawerLayout!!.closeDrawer(GravityCompat.START)
@@ -189,6 +194,7 @@ open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelecte
         mUserName = user.name
 
         val tvUserName = findViewById<TextView>(R.id.tv_username)
+        val tvUserDescription = findViewById<TextView>(R.id.tv_user_description)
         val navUserImage = findViewById<CircleImageView>(R.id.nav_user_image)
         val progressBar = findViewById<ProgressBar>(R.id.progressBarNavHeader)
 
@@ -197,6 +203,12 @@ open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelecte
         progressBar?.visibility = View.VISIBLE
         navUserImage?.visibility = View.INVISIBLE
         tvUserName?.text = user.name
+
+        if (user.description.isNotEmpty() || user.description.isNotBlank()) {
+            tvUserDescription?.text = user.description
+        } else {
+            tvUserDescription?.visibility = View.INVISIBLE
+        }
         // Load the user image in the ImageView.
         Glide
             .with(this@MainActivity)

@@ -163,6 +163,11 @@ class MyProfileActivity : BaseActivity() {
             anyChangesMade = true
         }
 
+        if(binding?.etDescriptionMyprofile?.text.toString() != mUserDetails.description){
+            userHashMap[Constants.DESCRIPTION] = binding?.etDescriptionMyprofile?.text.toString()
+            anyChangesMade = true
+        }
+
         if(intent.getBooleanExtra(Constants.UPDATE_EMAIL_FLAG, false)) {
             val email = binding?.etEmailMyprofile?.text.toString()
             if (isValidEmail(email)){
@@ -265,6 +270,7 @@ class MyProfileActivity : BaseActivity() {
 
         binding?.etNameMyprofile?.setText(user.name)
         binding?.etEmailMyprofile?.setText(user.email)
+        binding?.etDescriptionMyprofile?.setText(user.description)
         if(user.mobile != 0L){
             binding?.etMobileMyprofile?.setText(user.mobile.toString())
         }
