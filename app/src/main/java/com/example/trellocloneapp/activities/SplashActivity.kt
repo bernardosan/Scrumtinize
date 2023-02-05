@@ -33,7 +33,7 @@ class SplashActivity : BaseActivity() {
             } else{
                 startActivity(Intent(this, IntroActivity::class.java))
             }
-            finish() }, 2500)
+            finish() }, 1000)
 
     }
 }
