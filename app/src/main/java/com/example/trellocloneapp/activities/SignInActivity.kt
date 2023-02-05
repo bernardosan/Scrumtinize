@@ -14,6 +14,7 @@ import com.example.trellocloneapp.firebase.FirestoreClass
 import com.example.trellocloneapp.models.User
 import com.example.trellocloneapp.utils.Constants
 import com.facebook.*
+import com.facebook.appevents.AppEventsLogger
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -27,6 +28,14 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.facebook.login.LoginResult
 import com.facebook.login.LoginManager
 import java.util.*
+import android.content.pm.PackageManager
+
+import android.content.pm.PackageInfo
+import android.util.Base64.DEFAULT
+import android.util.Base64.encodeToString
+import java.security.MessageDigest
+import java.security.NoSuchAlgorithmException
+
 
 class SignInActivity : BaseActivity() {
 
@@ -45,8 +54,22 @@ class SignInActivity : BaseActivity() {
 
         auth = FirebaseAuth.getInstance()
 
-        callbackManager = CallbackManager.Factory.create()
+        try {
+            val info = packageManager.getPackageInfo(
+                "com.example.trellocloneapp",
+                PackageManager.GET_SIGNATURES
+            )
+            for (signature in info.signatures) {
+                val md: MessageDigest = MessageDigest.getInstance("SHA")
+                md.update(signature.toByteArray())
+               // Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT))
+            }
+        } catch (e: PackageManager.NameNotFoundException) {
+        } catch (e: NoSuchAlgorithmException) {
+        }
 
+        callbackManager = CallbackManager.Factory.create()
+        AppEventsLogger.activateApp(application);
 
         val gso = GoogleSignInOptions
             .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -99,6 +122,7 @@ class SignInActivity : BaseActivity() {
     }
 
     private fun loginWithFacebook() {
+
         LoginManager.getInstance()
             .logInWithReadPermissions(this@SignInActivity, Arrays.asList("public_profile"))
         LoginManager.getInstance()

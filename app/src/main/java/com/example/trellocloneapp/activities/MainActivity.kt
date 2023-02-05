@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.text.method.LinkMovementMethod
 import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
@@ -77,6 +78,8 @@ open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         binding?.navView?.setNavigationItemSelectedListener(this)
+
+        binding?.dev?.setMovementMethod(LinkMovementMethod.getInstance());
 
         binding?.fabAddBoard?.setOnClickListener {
             val intent = Intent(this, CreateBoardActivity::class.java)

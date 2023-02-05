@@ -18,6 +18,10 @@ import com.example.trellocloneapp.databinding.ItemTaskBinding
 import com.example.trellocloneapp.models.Task
 import java.util.*
 import kotlin.collections.ArrayList
+import android.view.MotionEvent
+import android.view.View.OnTouchListener
+import androidx.core.view.MotionEventCompat.getActionMasked
+
 
 open class TaskListAdapter(private val context: Context, private var list: ArrayList<Task>) :
     RecyclerView.Adapter<TaskListAdapter.MainViewHolder>(){
@@ -176,6 +180,7 @@ open class TaskListAdapter(private val context: Context, private var list: Array
         )
 
 
+
         //  Creates an ItemTouchHelper that will work with the given Callback.
         val helper = ItemTouchHelper(object :
             ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.START or ItemTouchHelper.END) {
@@ -241,6 +246,8 @@ open class TaskListAdapter(private val context: Context, private var list: Array
         attached to a RecyclerView, it will first detach from the previous one.*/
         helper.attachToRecyclerView(holder.itemBinding.rvCardList)
     }
+
+
 
     override fun getItemCount(): Int {
         return list.size

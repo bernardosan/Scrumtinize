@@ -24,7 +24,7 @@
         <item name="colorControlNormal">@color/white</item>
     </style>
 
-    <style name="ToolBarMyProfile" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+    <style name="ToolbarAccentBackground" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:textColorSecondary">@android:color/white</item>
         <item name="actionMenuTextColor">@android:color/white</item>

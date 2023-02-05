@@ -76,6 +76,7 @@
         <entry key="..\:/Users/habbo/OneDrive/Documentos/GitHub/TrelloCloneApp/app/src/main/res/drawable/shape_btn_rounded.xml" value="0.11388888888888889" />
         <entry key="..\:/Users/habbo/OneDrive/Documentos/GitHub/TrelloCloneApp/app/src/main/res/drawable/shape_btn_rounded_ripple.xml" value="0.21302083333333333" />
         <entry key="..\:/Users/habbo/OneDrive/Documentos/GitHub/TrelloCloneApp/app/src/main/res/drawable/shape_circular_backgroud.xml" value="0.11388888888888889" />
+        <entry key="..\:/Users/habbo/OneDrive/Documentos/GitHub/TrelloCloneApp/app/src/main/res/drawable/shape_title_semi_rounded.xml" value="0.209375" />
         <entry key="..\:/Users/habbo/OneDrive/Documentos/GitHub/TrelloCloneApp/app/src/main/res/drawable/signup_cardview_rounded_shape.xml" value="0.11388888888888889" />
         <entry key="..\:/Users/habbo/OneDrive/Documentos/GitHub/TrelloCloneApp/app/src/main/res/drawable/signup_title_rounded_shape.xml" value="0.11388888888888889" />
         <entry key="..\:/Users/habbo/OneDrive/Documentos/GitHub/TrelloCloneApp/app/src/main/res/drawable/white_borded_shape_btn_rounded.xml" value="0.11388888888888889" />
@@ -84,7 +85,7 @@
         <entry key="..\:/Users/habbo/OneDrive/Documentos/GitHub/TrelloCloneApp/app/src/main/res/layout/activity_card_details.xml" value="0.25" />
         <entry key="..\:/Users/habbo/OneDrive/Documentos/GitHub/TrelloCloneApp/app/src/main/res/layout/activity_create_board.xml" value="0.9556451612903226" />
         <entry key="..\:/Users/habbo/OneDrive/Documentos/GitHub/TrelloCloneApp/app/src/main/res/layout/activity_facebook_auth.xml" value="0.196875" />
-        <entry key="..\:/Users/habbo/OneDrive/Documentos/GitHub/TrelloCloneApp/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/Users/habbo/OneDrive/Documentos/GitHub/TrelloCloneApp/app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="..\:/Users/habbo/OneDrive/Documentos/GitHub/TrelloCloneApp/app/src/main/res/layout/activity_splash.xml" value="0.196875" />
         <entry key="..\:/Users/habbo/OneDrive/Documentos/GitHub/TrelloCloneApp/app/src/main/res/layout/activity_task_list.xml" value="0.20052083333333334" />
         <entry key="..\:/Users/habbo/OneDrive/Documentos/GitHub/TrelloCloneApp/app/src/main/res/layout/dialog_list.xml" value="0.2046875" />

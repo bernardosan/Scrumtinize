@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
         android:background="@color/colorPrimary"
-        android:theme="@style/ToolBarMyProfile" />
+        android:theme="@style/ToolbarAccentBackground" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/iv_add_board"

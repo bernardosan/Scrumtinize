@@ -89,13 +89,15 @@ class CreateBoardActivity : BaseActivity() {
 
         binding?.btnCreateBoard?.setOnClickListener {
 
-            if (mSelectedImageFileUri != null){
+            if (mSelectedImageFileUri != null || mBoardDetails != null){
                 showProgressDialog(getString(R.string.please_wait))
                 uploadBoardImage()
                 finish()
-            } else{
+            } else if (mBoardDetails == null){
                 showProgressDialog(getString(R.string.please_wait))
                 createBoard()
+            } else {
+                finish()
             }
 
         }

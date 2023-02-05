@@ -67,14 +67,15 @@
     <string name="sign_up_underline"><u>SIGN UP</u></string>
     <string name="title_activity_main2">MainActivity2</string>
     <string name="action_settings">Settings</string>
-    <string name="your_web_client_id">" AIzaSyBxweVTiR7XWtsKw8q1u5uF2GPsA3TKVWk"</string>
-    <string name="oauth_google_cloud_key">298232093304-amcasoqfm6q944kfa72k3dv98kthukhr.apps.googleusercontent.com</string>
+    <string name="your_web_client_id">"AIzaSyBxweVTiR7XWtsKw8q1u5uF2GPsA3TKVWk"</string>
+    <string name="oauth_google_cloud_key">298232093304-7cgfjj3950vi1popgb0vitc86bchn8q4.apps.googleusercontent.com</string>
     <string name="facebook_app_id">717500726337438</string>
     <string name="fb_login_protocol_scheme">fb717500726337438</string>
-    <string name="facebook_client_token">f4357a5c9368b9c73581c65aece0be6f</string>
+    <string name="facebook_client_token">7526d1d801ac72acc242ba2075f96913</string>
     <string name="finish_cart">Finished</string>
     <string name="unfinish_cart">Unfinish</string>
     <string name="description">Description</string>
     <string name="about">About</string>
     <string name="standard_about_text">\ Scrumtineze App is an project management tool based on Agile Development concepts. \n Users can sign up, create boards, add lists to a board and add cards to a list. An user can add members to a specific board and attribute members to cards, so that everybody knows who does what! \n This project its on closed-beta, and its actual version only functions with a proper internet connection.</string>
+    <string name="developer">Developed by <a href="https://github.com/bernardosan">@bernardosan</a></string>
 </resources>
