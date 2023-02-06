@@ -79,4 +79,5 @@
     <string name="standard_about_text">"Welcome to <b>Scrumtineze App</b>, our project management tool! We are excited to bring you our beta version, designed to streamline your work processes and increase productivity. This application offers a user-friendly interface that allows you to manage your projects, tasks, and team members with ease. With features such as task assignment, deadline tracking, and progress monitoring, you can stay on top of your work and ensure that everything gets done on time. We are constantly working to improve our app and welcome your feedback. \n Join us in our journey to revolutionize the way work gets done!" \n This project its on beta version and its functionalities requires proper internet connection.</string>
     <string name="developer">Developed by <a href="https://github.com/bernardosan">@bernardosan</a></string>
     <string name="groups">Groups</string>
+    <string name="add_group">Add Group</string>
 </resources>

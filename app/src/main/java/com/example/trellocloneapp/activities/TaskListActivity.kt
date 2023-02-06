@@ -8,6 +8,7 @@ import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.trellocloneapp.R
 import com.example.trellocloneapp.adapters.TaskListAdapter
 import com.example.trellocloneapp.databinding.ActivityTaskListBinding
@@ -182,7 +183,7 @@ class TaskListActivity :BaseActivity() {
         binding?.rvTaskList?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding?.rvTaskList?.setHasFixedSize(true)
         binding?.rvTaskList?.adapter = adapter
-        val itemTouchHelper = ItemTouchHelper(ItemMoveCallback(adapter))
+        val itemTouchHelper = ItemTouchHelper(ItemMoveCallback(adapter = adapter as RecyclerView.Adapter<RecyclerView.ViewHolder>))
         itemTouchHelper.attachToRecyclerView(binding?.rvTaskList)
     }
 

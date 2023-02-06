@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="8dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="@dimen/board_image_size"
+            android:layout_height="@dimen/board_image_size"
+            android:progressTint="@color/white"
+            android:background="@drawable/shape_circular_backgroud"
+            android:backgroundTint="@color/colorAccent"
+            android:visibility="gone"/>
+
+        <LinearLayout
+            android:id="@+id/ll_group_item"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@drawable/shape_btn_rounded"
+            android:backgroundTint="@color/colorAccent"
+            android:visibility="gone"
+            android:clickable="true"
+            android:focusable="true"
+            >
+
+            <TextView
+                android:id="@+id/tv_group_name"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:gravity="center"
+                tools:text="Group Name"
+
+                />
+            <!--
+            <TextView
+                android:id="@+id/tv_create_by"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/item_board_name_layout_marginStart"
+                android:textColor="@color/primary_text_color"
+                android:textSize="@dimen/item_board_created_by_text_size"
+                tools:text="Create by"
+                />
+            -->
+
+        </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_add_group"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@drawable/white_borded_shape_btn_rounded_ripple"
+        android:clickable="true"
+        android:focusable="true"
+        >
+
+        <TextView
+            android:id="@+id/tv_add_group"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColor="@color/colorAccent"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:text="Add Group"
+
+            />
+        <!--
+        <TextView
+            android:id="@+id/tv_create_by"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/item_board_name_layout_marginStart"
+            android:textColor="@color/primary_text_color"
+            android:textSize="@dimen/item_board_created_by_text_size"
+            tools:text="Create by"
+            />
+        -->
+
+    </LinearLayout>
+
+</LinearLayout>
