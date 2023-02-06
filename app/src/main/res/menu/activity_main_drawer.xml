@@ -7,9 +7,14 @@
             android:icon="@drawable/ic_nav_user"
             android:title="@string/nav_my_profile"/>
         <item
+            android:id="@+id/nav_groups"
+            android:icon="@drawable/ic_baseline_groups_24"
+            android:title="@string/groups"/>
+        <item
             android:id="@+id/nav_about"
             android:icon="@drawable/ic_baseline_info_24"
             android:title="@string/about"/>
+
         <item
             android:id="@+id/nav_sign_out"
             android:icon="@drawable/ic_nav_sign_out"
