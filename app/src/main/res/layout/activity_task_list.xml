@@ -39,11 +39,12 @@
                 android:id="@+id/rv_task_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:listitem="@layout/item_board"
-                android:padding="5dp"
-                app:reverseLayout="false"
                 android:nestedScrollingEnabled="false"
-                app:layout_constraintStart_toStartOf="parent"/>
+                android:padding="5dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:reverseLayout="false"
+                tools:layout_editor_absoluteY="16dp"
+                tools:listitem="@layout/item_task" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

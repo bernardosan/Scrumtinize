@@ -79,7 +79,7 @@ open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelecte
 
         binding?.navView?.setNavigationItemSelectedListener(this)
 
-        binding?.dev?.setMovementMethod(LinkMovementMethod.getInstance());
+        binding?.dev?.movementMethod = LinkMovementMethod.getInstance();
 
         binding?.fabAddBoard?.setOnClickListener {
             val intent = Intent(this, CreateBoardActivity::class.java)

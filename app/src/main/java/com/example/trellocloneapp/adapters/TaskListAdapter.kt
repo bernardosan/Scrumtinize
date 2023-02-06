@@ -18,18 +18,20 @@ import com.example.trellocloneapp.databinding.ItemTaskBinding
 import com.example.trellocloneapp.models.Task
 import java.util.*
 import kotlin.collections.ArrayList
-import android.view.MotionEvent
-import android.view.View.OnTouchListener
-import androidx.core.view.MotionEventCompat.getActionMasked
+import com.example.trellocloneapp.utils.ItemMoveCallback
 
 
 open class TaskListAdapter(private val context: Context, private var list: ArrayList<Task>) :
-    RecyclerView.Adapter<TaskListAdapter.MainViewHolder>(){
+    RecyclerView.Adapter<TaskListAdapter.TaskViewHolder>(), ItemMoveCallback.ItemTouchHelperAdapter{
 
     private var mPositionDraggedFrom = -1
     private var mPositionDraggedTo = -1
 
-    inner class MainViewHolder (val itemBinding: ItemTaskBinding) : RecyclerView.ViewHolder(itemBinding.root){
+    inner class TaskViewHolder (val itemBinding: ItemTaskBinding) : RecyclerView.ViewHolder(itemBinding.root){
+
+        val mList = list
+
+
 
         @SuppressLint("SetTextI18n")
         fun bindItem(position: Int) {
@@ -148,8 +150,8 @@ open class TaskListAdapter(private val context: Context, private var list: Array
 
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
-        val view = MainViewHolder(ItemTaskBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
+        val view = TaskViewHolder(ItemTaskBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
         val layoutParams = if(parent.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT){
             LayoutParams((parent.width*0.7).toInt(),LayoutParams.WRAP_CONTENT)
@@ -164,7 +166,7 @@ open class TaskListAdapter(private val context: Context, private var list: Array
         return view
     }
 
-    override fun onBindViewHolder(holder: MainViewHolder, @SuppressLint("RecyclerView") taskPosition: Int) {
+    override fun onBindViewHolder(holder: TaskViewHolder, @SuppressLint("RecyclerView") taskPosition: Int) {
         holder.bindItem(taskPosition)
 
         val adapter = CardListAdapter(context, list[holder.adapterPosition].cardList)
@@ -186,6 +188,10 @@ open class TaskListAdapter(private val context: Context, private var list: Array
             ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.START or ItemTouchHelper.END) {
             /*Called when ItemTouchHelper wants to move the dragged item from its old position to
              the new position.*/
+
+            override fun isLongPressDragEnabled(): Boolean {
+                return true
+            }
 
             override fun onMove(
                 recyclerView: RecyclerView,
@@ -286,5 +292,17 @@ open class TaskListAdapter(private val context: Context, private var list: Array
 
     private fun Int.toPx(): Int =
         (this * Resources.getSystem().displayMetrics.density).toInt()
+
+    override fun onItemMove(fromPosition: Int, toPosition: Int) {
+        if(toPosition < itemCount-1) {
+            Collections.swap(list, fromPosition, toPosition)
+            notifyItemMoved(fromPosition, toPosition)
+        }
+    }
+
+    override fun onItemDismiss(position: Int) {
+        list.removeAt(position)
+        notifyItemRemoved(position)
+    }
 
 }

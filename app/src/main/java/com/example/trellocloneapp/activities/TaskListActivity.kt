@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.trellocloneapp.R
 import com.example.trellocloneapp.adapters.TaskListAdapter
@@ -16,6 +17,7 @@ import com.example.trellocloneapp.models.Card
 import com.example.trellocloneapp.models.Task
 import com.example.trellocloneapp.models.User
 import com.example.trellocloneapp.utils.Constants
+import com.example.trellocloneapp.utils.ItemMoveCallback
 
 class TaskListActivity :BaseActivity() {
 
@@ -176,9 +178,12 @@ class TaskListActivity :BaseActivity() {
         val addTaskList = Task(resources.getString(R.string.add_list))
         mBoardDetails.taskList.add(addTaskList)
 
+        val adapter = TaskListAdapter(this, mBoardDetails.taskList)
         binding?.rvTaskList?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding?.rvTaskList?.setHasFixedSize(true)
-        binding?.rvTaskList?.adapter = TaskListAdapter(this, mBoardDetails.taskList)
+        binding?.rvTaskList?.adapter = adapter
+        val itemTouchHelper = ItemTouchHelper(ItemMoveCallback(adapter))
+        itemTouchHelper.attachToRecyclerView(binding?.rvTaskList)
     }
 
     private fun countBoardWeight(): Int{

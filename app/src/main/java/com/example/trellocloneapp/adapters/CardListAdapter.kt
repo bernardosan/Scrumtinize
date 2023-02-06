@@ -3,7 +3,9 @@ package com.example.trellocloneapp.adapters
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Paint
+import android.os.Build
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
@@ -14,14 +16,23 @@ import com.example.trellocloneapp.models.Card
 import com.example.trellocloneapp.models.SelectedMembers
 
 open class CardListAdapter(private val context: Context, private var cardList: ArrayList<Card>) :
-    RecyclerView.Adapter<CardListAdapter.MainViewHolder>(){
+    RecyclerView.Adapter<CardListAdapter.CardViewHolder>(){
 
     private var onClickListener: OnClickListener? = null
 
-    inner class MainViewHolder (private val itemBinding: ItemCardBinding) : RecyclerView.ViewHolder(itemBinding.root) {
+    inner class CardViewHolder (private val itemBinding: ItemCardBinding) : RecyclerView.ViewHolder(itemBinding.root){
+
+        fun getCardList(): ArrayList<Card> {
+            return cardList
+        }
+
+        fun updateList(list: ArrayList<Card>){
+            cardList = list
+        }
 
         fun bindItem(cardPosition: Int) {
             val model = cardList[cardPosition]
+
 
             itemBinding.tvCardName.text = model.title
             itemBinding.tvCardWeight.text = model.weight.toString()
@@ -127,6 +138,7 @@ open class CardListAdapter(private val context: Context, private var cardList: A
 
 
         }
+
     }
 
     interface  OnClickListener {
@@ -138,14 +150,13 @@ open class CardListAdapter(private val context: Context, private var cardList: A
     }
 
 
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
-        return MainViewHolder(ItemCardBinding.inflate(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardViewHolder {
+        return CardViewHolder(ItemCardBinding.inflate(
             LayoutInflater.from(parent.context),
             parent, false)
         ) }
 
-    override fun onBindViewHolder(holder: MainViewHolder, cardPosition: Int) {
+    override fun onBindViewHolder(holder: CardViewHolder, cardPosition: Int) {
         holder.bindItem(cardPosition)
 
         holder.itemView.setOnClickListener {
@@ -154,9 +165,16 @@ open class CardListAdapter(private val context: Context, private var cardList: A
             }
         }
 
+
     }
 
     override fun getItemCount(): Int {
         return cardList.size
     }
+
+    fun getCard(position: Int): Card {
+        return cardList[position]
+    }
+
+
 }

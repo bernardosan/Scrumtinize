@@ -8,6 +8,12 @@
     android:orientation="vertical"
     >
 
+    <FrameLayout
+        android:id="@+id/fl_card"
+        android:background="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     <LinearLayout
         android:id="@+id/ll_card"
         android:layout_width="match_parent"
@@ -59,5 +65,7 @@
             android:visibility="gone"
             tools:visibility="visible" />
     </LinearLayout>
+
+    </FrameLayout>
 
 </androidx.cardview.widget.CardView>
