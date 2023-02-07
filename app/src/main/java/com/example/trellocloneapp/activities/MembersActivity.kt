@@ -15,6 +15,7 @@ import com.example.trellocloneapp.adapters.MembersListAdapter
 import com.example.trellocloneapp.databinding.ActivityMembersBinding
 import com.example.trellocloneapp.firebase.FirestoreClass
 import com.example.trellocloneapp.models.Board
+import com.example.trellocloneapp.models.Group
 import com.example.trellocloneapp.models.User
 import com.example.trellocloneapp.utils.Constants
 import kotlinx.coroutines.Dispatchers
@@ -31,7 +32,8 @@ import java.net.URL
 class MembersActivity : BaseActivity() {
 
     private lateinit var mAssignedMemberList: ArrayList<User>
-    private lateinit var mBoardDetails: Board
+    private var mBoardDetails: Board = Board()
+    private var mGroup: Group = Group()
     private var binding: ActivityMembersBinding? = null
     private var anyChangesMade: Boolean = false
 
@@ -39,18 +41,23 @@ class MembersActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMembersBinding.inflate(layoutInflater)
         setContentView(binding?.root)
-        setupActionBar()
 
         if(intent.hasExtra(Constants.BOARD_DETAIL)){
             mBoardDetails = intent.getParcelableExtra(Constants.BOARD_DETAIL)!!
+            showProgressDialog(resources.getString(R.string.please_wait))
+            FirestoreClass().getAssignedMembersList(this,mBoardDetails.assignedTo, false)
+        } else if(intent.hasExtra(Constants.GROUPS)){
+            mGroup = intent.getParcelableExtra(Constants.GROUPS)!!
+            showProgressDialog(resources.getString(R.string.please_wait))
+            FirestoreClass().getAssignedMembersList(this,mGroup.groupMembersId, true)
         }
+
+        setupActionBar()
 
         binding?.toolbarMembersActivity?.setNavigationOnClickListener {
             onBackPressed()
         }
 
-        showProgressDialog(resources.getString(R.string.please_wait))
-        FirestoreClass().getAssignedMembersList(this,mBoardDetails.assignedTo)
 
     }
 
@@ -98,8 +105,11 @@ class MembersActivity : BaseActivity() {
     }
 
     fun memberDetails(user: User){
-        mBoardDetails.assignedTo.add(user.id)
-        FirestoreClass().assignMemberToBoard(this,mBoardDetails,user)
+
+        if(intent.hasExtra(Constants.BOARD_DETAIL)) {
+            mBoardDetails.assignedTo.add(user.id)
+            FirestoreClass().assignMemberToBoard(this, mBoardDetails, user)
+        }
     }
 
     fun memberAssignSuccess(user: User){
@@ -124,7 +134,11 @@ class MembersActivity : BaseActivity() {
     private fun setupActionBar() {
         setSupportActionBar(binding?.toolbarMembersActivity)
         binding?.toolbarMembersActivity?.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
-        binding?.toolbarMembersActivity?.title = resources.getString(R.string.members)
+        if(intent.hasExtra(Constants.BOARD_DETAIL)) {
+            binding?.toolbarMembersActivity?.title = resources.getString(R.string.members)
+        } else {
+            binding?.toolbarMembersActivity?.title = mGroup.title
+        }
     }
 
     private inner class SendNotificationToUserAsyncTask( private val boardName: String, private val token: String) {

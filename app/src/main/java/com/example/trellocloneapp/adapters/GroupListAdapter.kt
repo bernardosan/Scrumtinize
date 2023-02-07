@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.trellocloneapp.activities.TaskListActivity
 import com.example.trellocloneapp.databinding.ItemGroupBinding
+import com.example.trellocloneapp.models.Board
 import com.example.trellocloneapp.models.Group
 import java.util.*
 import kotlin.collections.ArrayList
@@ -25,6 +26,7 @@ open class GroupListAdapter(private val context: Context, private var list: Arra
     private var mPositionDraggedFrom = -1
     private var mPositionDraggedTo = -1
     private var onClickListener: GroupListAdapter.OnClickListener? = null
+
 
     inner class GroupViewHolder(val itemBinding: ItemGroupBinding) :
         RecyclerView.ViewHolder(itemBinding.root) {
@@ -65,7 +67,22 @@ open class GroupListAdapter(private val context: Context, private var list: Arra
 
     override fun onBindViewHolder(holder: GroupViewHolder, position: Int) {
         holder.bindItem(position)
+
+        holder.itemBinding.llGroupItem.setOnClickListener {
+            if (onClickListener != null) {
+                onClickListener!!.onClick(position, list[position])
+            }
+        }
     }
+
+    interface  OnClickListener{
+        fun onClick(position: Int, group: Group)
+    }
+
+    fun setOnClickListener(onClickListener: GroupListAdapter.OnClickListener){
+        this.onClickListener = onClickListener
+    }
+
 
     override fun getItemCount(): Int {
         return list.size
@@ -102,14 +119,6 @@ open class GroupListAdapter(private val context: Context, private var list: Arra
         val alertDialog: AlertDialog = builder.create()
         alertDialog.setCancelable(false)
         alertDialog.show()
-    }
-
-    interface  OnClickListener {
-        fun onClick(position: Int)
-    }
-
-    fun setOnClickListener(onClickListener: GroupListAdapter.OnClickListener){
-        this.onClickListener = onClickListener
     }
 
 

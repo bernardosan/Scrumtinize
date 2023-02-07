@@ -257,7 +257,8 @@ class FirestoreClass {
             }
     }
 
-    fun getAssignedMembersList(activity: Activity, assignedTo: ArrayList<String>){
+    fun getAssignedMembersList(activity: Activity, assignedTo: ArrayList<String>, searchInGroup: Boolean = false){
+
         mFireStore.collection(Constants.USERS)
             .whereIn(Constants.ID, assignedTo)
             .get()

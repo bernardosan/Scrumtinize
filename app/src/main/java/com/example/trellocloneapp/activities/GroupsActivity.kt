@@ -1,5 +1,6 @@
 package com.example.trellocloneapp.activities
 
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.recyclerview.widget.GridLayoutManager
@@ -10,6 +11,7 @@ import com.example.trellocloneapp.R
 import com.example.trellocloneapp.adapters.GroupListAdapter
 import com.example.trellocloneapp.databinding.ActivityGroupsBinding
 import com.example.trellocloneapp.models.Group
+import com.example.trellocloneapp.utils.Constants
 import com.example.trellocloneapp.utils.ItemMoveCallback
 
 class GroupsActivity : BaseActivity() {
@@ -36,28 +38,43 @@ class GroupsActivity : BaseActivity() {
         toolbar.title = resources.getString(R.string.groups)
     }
 
-    fun setupGroupList(list: ArrayList<Group>){
+    private fun setupGroupList(list: ArrayList<Group>) {
         mAssignedGroupList = list
 
         val addGroup = Group("Add Group")
+        val arrayString = ArrayList<String>()
+        arrayString.add("mKyGoTiT0ledklrDAzBE2irTQwo1")
+        mAssignedGroupList.add(Group("Android Devs","", arrayString))
+        mAssignedGroupList.add(Group("IOS Devs", "", arrayString))
+        mAssignedGroupList.add(Group("Managers","", arrayString))
         mAssignedGroupList.add(addGroup)
-        mAssignedGroupList.add(addGroup)
-        mAssignedGroupList.add(addGroup)
-        mAssignedGroupList.add(addGroup)
+
 
         val adapter = GroupListAdapter(this, mAssignedGroupList)
 
         binding?.rvGroupsList?.layoutManager =
-            GridLayoutManager(this,
-                if(resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) 2 else 4,
+            GridLayoutManager(
+                this,
+                if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) 2 else 4,
                 GridLayoutManager.VERTICAL,
-                false)
+                false
+            )
         binding?.rvGroupsList?.setHasFixedSize(true)
         binding?.rvGroupsList?.adapter = adapter
-        val itemTouchHelper = ItemTouchHelper(ItemMoveCallback(adapter as RecyclerView.Adapter<RecyclerView.ViewHolder>))
-        itemTouchHelper.attachToRecyclerView(binding?.rvGroupsList)
-    }
 
+        adapter.setOnClickListener(object : GroupListAdapter.OnClickListener{
+            override fun onClick(position: Int, group: Group) {
+                val intent = Intent(this@GroupsActivity, MembersActivity::class.java)
+                intent.putExtra(Constants.GROUPS, group)
+                startActivity(intent)
+            }
+        })
+
+        val itemTouchHelper =
+            ItemTouchHelper(ItemMoveCallback(adapter as RecyclerView.Adapter<RecyclerView.ViewHolder>))
+        itemTouchHelper.attachToRecyclerView(binding?.rvGroupsList)
+
+    }
 
 
 }
