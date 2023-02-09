@@ -26,6 +26,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TrelloCloneApp">
         <activity
+            android:name=".activities.CreateGroupActivity"
+            android:exported="true"
+            android:screenOrientation="fullSensor"
+            android:theme="@style/Theme.TrelloCloneApp.NoActionBar"/>
+        <activity
             android:name=".activities.GroupsActivity"
             android:exported="true"
             android:label="Groups"

@@ -66,15 +66,22 @@ open class GroupListAdapter(private var list: ArrayList<Group>) :
         holder.bindItem(position)
 
         holder.itemBinding.llGroupItem.setOnClickListener {
-            if (onClickListener != null ) {
-                onClickListener!!.onClick(list[position])
+            if (onClickListener != null) {
+                onClickListener!!.onClick(position)
             }
         }
+
+        holder.itemBinding.llAddGroup.setOnClickListener {
+            if (onClickListener != null) {
+                onClickListener!!.onClick(position)
+            }
+        }
+
 
     }
 
     interface  OnClickListener{
-        fun onClick(group: Group)
+        fun onClick(position: Int)
     }
 
     fun setOnClickListener(onClickListener: OnClickListener){

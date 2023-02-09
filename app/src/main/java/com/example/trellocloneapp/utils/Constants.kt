@@ -25,6 +25,7 @@ object Constants {
     //const val CARD_LIST: String = "cardList"
     const val STATE: String = "state"
     const val GROUPS: String = "groups"
+    const val GROUPS_MEMBERS_ID: String = "groupMembersId"
 
     const val BOARD_DETAIL: String = "board_detail"
     const val ID: String = "id"

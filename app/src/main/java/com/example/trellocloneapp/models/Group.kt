@@ -5,10 +5,12 @@ import android.os.Parcelable
 
 data class Group(
     var title: String = "",
+    val image: String = "",
     val createdBy: String = "",
     var groupMembersId: ArrayList<String> = ArrayList()
 ): Parcelable {
     constructor(parcel: Parcel) : this(
+        parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.createStringArrayList()!!
@@ -17,6 +19,7 @@ data class Group(
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(title)
+        parcel.writeString(image)
         parcel.writeString(createdBy)
         parcel.writeStringList(groupMembersId)
     }

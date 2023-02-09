@@ -5,6 +5,7 @@ import android.util.Log
 import android.widget.Toast
 import com.example.trellocloneapp.activities.*
 import com.example.trellocloneapp.models.Board
+import com.example.trellocloneapp.models.Group
 import com.example.trellocloneapp.models.User
 import com.example.trellocloneapp.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
@@ -326,6 +327,46 @@ class FirestoreClass {
                     activity.hideProgressDialog()
                 }
                 it.printStackTrace()
+            }
+    }
+
+    fun getGroupsAssigned(activity: GroupsActivity){
+        val groupList = ArrayList<Group>()
+
+        mFireStore.collection(Constants.GROUPS)
+            .whereArrayContains(Constants.GROUPS_MEMBERS_ID,getCurrentUserId())
+            .get()
+            .addOnSuccessListener {
+                if(it.documents.size > 0){
+                    Log.d("GROUPS", it.documents.toString())
+                    for(i in it.documents) {
+                        val group = i.toObject(Group::class.java)!!
+                        Log.d("GROUPS", "ADDED: "+ it.documents.toString())
+                        groupList.add(group)
+                    }
+                    Log.d("GROUPS", "GROUPLIST: $groupList")
+                    activity.getAssignedGroupList(groupList)
+                } else {
+                    activity.hideProgressDialog()
+                }
+            }
+            .addOnFailureListener {
+                activity.hideProgressDialog()
+                activity.showErrorSnackBar("Error while updating group list")
+                it.printStackTrace()
+            }
+
+    }
+
+    fun createGroup(activity: CreateGroupActivity, group: Group){
+        mFireStore.collection(Constants.GROUPS)
+            .document()
+            .set(group, SetOptions.merge())
+            .addOnSuccessListener {
+                activity.groupCreatedSuccessfully()
+            }
+            .addOnFailureListener {
+                Log.e(activity.javaClass.simpleName,"Error writing document")
             }
     }
 
