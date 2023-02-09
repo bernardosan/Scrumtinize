@@ -28,7 +28,7 @@ class TaskListActivity :BaseActivity() {
     lateinit var mAssignedMemberDetailList: ArrayList<User>
 
     private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
+        if (result.resultCode == RESULT_OK) {
             // val data: Intent? = result.data
             showProgressDialog(resources.getString(R.string.please_wait))
             FirestoreClass().getBoardDetails(this, mBoardDetails.documentId)

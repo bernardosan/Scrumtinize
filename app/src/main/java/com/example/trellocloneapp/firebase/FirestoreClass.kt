@@ -340,7 +340,11 @@ class FirestoreClass {
                 if(it.documents.size > 0){
                     Log.d("GROUPS", it.documents.toString())
                     for(i in it.documents) {
+                        i.id
                         val group = i.toObject(Group::class.java)!!
+                        if(group.documentId == ""){
+                            group.documentId = i.id
+                        }
                         Log.d("GROUPS", "ADDED: "+ it.documents.toString())
                         groupList.add(group)
                     }
@@ -363,10 +367,58 @@ class FirestoreClass {
             .document()
             .set(group, SetOptions.merge())
             .addOnSuccessListener {
-                activity.groupCreatedSuccessfully()
+                activity.groupCreatedSuccessfully(group)
             }
             .addOnFailureListener {
                 Log.e(activity.javaClass.simpleName,"Error writing document")
+            }
+    }
+
+    fun deleteGroup(activity: Activity, groupId: String){
+        mFireStore.collection(Constants.BOARDS)
+            .document(groupId)
+            .delete()
+            .addOnSuccessListener {
+                Toast.makeText(activity, "Group deleted.", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener {
+                it.printStackTrace()
+                Toast.makeText(activity, "Failed to delete group.", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+
+    fun updateGroup(activity: CreateGroupActivity, group: Group){
+        val groupHashMap = HashMap<String, Any>()
+
+        groupHashMap[Constants.NAME] = group.title
+        groupHashMap[Constants.IMAGE] = group.image
+        groupHashMap[Constants.GROUPS_MEMBERS_ID] = group.image
+
+        mFireStore.collection(Constants.BOARDS)
+            .document(group.documentId)
+            .update(groupHashMap)
+            .addOnSuccessListener {
+                activity.groupCreatedSuccessfully(group)
+            }
+            .addOnFailureListener {
+                Log.e(activity.javaClass.simpleName,"Error writing document")
+            }
+    }
+
+    fun assignMemberToGroup(activity: MembersActivity, group: Group, user: User? = null){
+        val assignedToHashMap = HashMap<String, Any>()
+        assignedToHashMap[Constants.GROUPS_MEMBERS_ID] = group.groupMembersId
+
+        mFireStore.collection(Constants.GROUPS)
+            .document(group.documentId)
+            .update(assignedToHashMap)
+            .addOnSuccessListener {
+                activity.memberAssignSuccess(user!!)
+            }
+            .addOnFailureListener {
+                activity.hideProgressDialog()
+                it.printStackTrace()
             }
     }
 

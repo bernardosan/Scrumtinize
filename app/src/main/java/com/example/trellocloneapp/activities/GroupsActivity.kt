@@ -1,10 +1,17 @@
 package com.example.trellocloneapp.activities
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.ActivityResultRegistry
+import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,19 +24,29 @@ import com.example.trellocloneapp.models.Group
 import com.example.trellocloneapp.utils.Constants
 import com.example.trellocloneapp.utils.ItemMoveCallback
 
+import androidx.activity.result.ActivityResultLauncher
+
+
+
+
 class GroupsActivity : BaseActivity() {
 
     private var mAssignedGroupList: ArrayList<Group> = ArrayList()
     private var binding: ActivityGroupsBinding? = null
 
-    private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            mAssignedGroupList.clear()
-            FirestoreClass().getGroupsAssigned(this)
-            binding?.rvGroupsList?.adapter?.notifyDataSetChanged()
-
+    var resultLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if(result.resultCode  == RESULT_OK) {
+            Toast.makeText(this, "Group Updated!", Toast.LENGTH_SHORT).show()
+            val group: Group = result.data!!.getParcelableExtra(Constants.GROUPS)!!
+            mAssignedGroupList.find { it.documentId == group.documentId }?.groupMembersId =
+                group.groupMembersId
+            callForGroupList()
         }
     }
+
+    @SuppressLint("NotifyDataSetChanged")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,7 +92,7 @@ class GroupsActivity : BaseActivity() {
                     false
                 )
             }
-            resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT -> {
+            adapter.itemCount < 2 || resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT -> {
                 LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
             }
             else -> {

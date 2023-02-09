@@ -2,6 +2,7 @@ package com.example.trellocloneapp.activities
 
 import android.app.Activity
 import android.app.Dialog
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -99,7 +100,8 @@ class MembersActivity : BaseActivity() {
 
     override fun onBackPressed() {
         if(anyChangesMade){
-            setResult(Activity.RESULT_OK)
+            setResult(RESULT_OK)
+            finish()
         }
         super.onBackPressed()
     }
@@ -109,6 +111,10 @@ class MembersActivity : BaseActivity() {
         if(intent.hasExtra(Constants.BOARD_DETAIL)) {
             mBoardDetails.assignedTo.add(user.id)
             FirestoreClass().assignMemberToBoard(this, mBoardDetails, user)
+        } else {
+            mGroup.groupMembersId.add(user.id)
+            binding?.rvMembersList?.adapter?.notifyItemInserted(binding?.rvMembersList?.adapter!!.itemCount)
+            FirestoreClass().assignMemberToGroup(this, mGroup, user)
         }
     }
 

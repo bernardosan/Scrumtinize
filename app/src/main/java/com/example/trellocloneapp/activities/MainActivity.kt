@@ -12,6 +12,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -44,10 +45,10 @@ open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelecte
 
 
     private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
+        if (result.resultCode == RESULT_OK) {
+            Toast.makeText(this, "Boards list updated!", Toast.LENGTH_SHORT).show()
+            binding?.rvBoardsList?.adapter?.notifyDataSetChanged()
             FirestoreClass().updateUserData(this,readBoardsList = true)
-            binding?.rvBoardsList?.adapter?.notifyItemInserted(mAdapter.itemCount + 1)
-
         }
     }
 
@@ -61,6 +62,7 @@ open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelecte
             this.getSharedPreferences(Constants.SCRUMTINIZE_PREFERENCES, Context.MODE_PRIVATE)
 
         val tokenUpdated = mSharedPreferences.getBoolean(Constants.FCM_TOKEN_UPDATED, false)
+
 
         if(!isValidEmail(FirebaseAuth.getInstance().currentUser!!.email.toString())){
             intent = Intent(this, MyProfileActivity::class.java)
@@ -79,22 +81,21 @@ open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelecte
 
         binding?.navView?.setNavigationItemSelectedListener(this)
 
-        binding?.dev?.movementMethod = LinkMovementMethod.getInstance();
+        binding?.dev?.movementMethod = LinkMovementMethod.getInstance()
 
         binding?.fabAddBoard?.setOnClickListener {
             val intent = Intent(this, CreateBoardActivity::class.java)
             intent.putExtra(Constants.NAME, mUserName)
             resultLauncher.launch(intent)
-
         }
-
 
     }
 
     override fun onResume() {
-        super.onResume()
         showProgressDialog(resources.getString(R.string.please_wait))
         FirestoreClass().updateUserData(this, true)
+        super.onResume()
+
     }
 
 
@@ -103,7 +104,7 @@ open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelecte
         if (boardsList.size > 0) {
             mAdapter = BoardAdapter(boardsList, this)
 
-            binding?.rvBoardsList?.layoutManager = LinearLayoutManager(this)
+            binding?.rvBoardsList?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
             binding?.rvBoardsList?.adapter = mAdapter
 
             binding?.rvBoardsList?.visibility = View.VISIBLE

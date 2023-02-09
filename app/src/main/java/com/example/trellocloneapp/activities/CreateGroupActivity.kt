@@ -88,7 +88,6 @@ class CreateGroupActivity : BaseActivity() {
             if (mSelectedImageFileUri != null){
                 showProgressDialog(getString(R.string.please_wait))
                 uploadBoardImage()
-                finish()
             } else{
                 showProgressDialog(getString(R.string.please_wait))
                 createGroup()
@@ -143,7 +142,7 @@ class CreateGroupActivity : BaseActivity() {
                     mGroupImageURL = uri.toString()
 
                     createGroup()
-                    Toast.makeText(this, "Created board successfully", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Created group successfully", Toast.LENGTH_SHORT).show()
 
                 }
             }.addOnFailureListener {
@@ -157,12 +156,13 @@ class CreateGroupActivity : BaseActivity() {
         }
     }
 
-    fun createGroup(){
+    private fun createGroup(){
 
         val assignedUsersArrayList: ArrayList<String> = ArrayList()
         assignedUsersArrayList.add(getCurrentUserId())
 
         val group = Group(
+            "",
             binding?.etGroupName?.text.toString(),
             mGroupImageURL,
             getCurrentUserId(),
@@ -172,9 +172,9 @@ class CreateGroupActivity : BaseActivity() {
         FirestoreClass().createGroup(this, group)
     }
 
-    fun groupCreatedSuccessfully(){
+    fun groupCreatedSuccessfully(group: Group){
         hideProgressDialog()
-        setResult(Activity.RESULT_OK)
+        setResult(RESULT_OK, intent.putExtra(Constants.GROUPS, group))
         finish()
     }
 }

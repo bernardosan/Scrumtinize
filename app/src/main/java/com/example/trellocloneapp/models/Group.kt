@@ -4,6 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 
 data class Group(
+    var documentId: String = "",
     var title: String = "",
     val image: String = "",
     val createdBy: String = "",
@@ -13,11 +14,13 @@ data class Group(
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
+        parcel.readString()!!,
         parcel.createStringArrayList()!!
     ) {
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(documentId)
         parcel.writeString(title)
         parcel.writeString(image)
         parcel.writeString(createdBy)
