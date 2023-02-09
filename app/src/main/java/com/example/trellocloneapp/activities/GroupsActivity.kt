@@ -50,31 +50,56 @@ class GroupsActivity : BaseActivity() {
         mAssignedGroupList.add(addGroup)
 
 
-        val adapter = GroupListAdapter(this, mAssignedGroupList)
+        val adapter = GroupListAdapter(mAssignedGroupList)
 
-        binding?.rvGroupsList?.layoutManager =
-            GridLayoutManager(
-                this,
-                if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) 2 else 4,
-                GridLayoutManager.VERTICAL,
-                false
-            )
+        binding?.rvGroupsList?.layoutManager = when {
+            adapter.itemCount > 5 -> {
+                GridLayoutManager(
+                    this,
+                    if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) 2 else 4,
+                    GridLayoutManager.VERTICAL,
+                    false
+                )
+            }
+            resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT -> {
+                LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+            }
+            else -> {
+                GridLayoutManager(
+                    this,
+                    2,
+                    GridLayoutManager.VERTICAL,
+                    false
+                )
+            }
+        }
+
         binding?.rvGroupsList?.setHasFixedSize(true)
         binding?.rvGroupsList?.adapter = adapter
 
-        adapter.setOnClickListener(object : GroupListAdapter.OnClickListener{
-            override fun onClick(position: Int, group: Group) {
-                val intent = Intent(this@GroupsActivity, MembersActivity::class.java)
-                intent.putExtra(Constants.GROUPS, group)
-                startActivity(intent)
+
+        adapter.setOnClickListener(
+            object:GroupListAdapter.OnClickListener{
+                override fun onClick(group: Group) {
+                    startMembersActivity(group)
+                }
+
             }
-        })
+        )
 
         val itemTouchHelper =
             ItemTouchHelper(ItemMoveCallback(adapter as RecyclerView.Adapter<RecyclerView.ViewHolder>))
         itemTouchHelper.attachToRecyclerView(binding?.rvGroupsList)
 
     }
+
+    fun startMembersActivity(group: Group){
+        val intent = Intent(this, MembersActivity::class.java)
+        intent.putExtra(Constants.GROUPS, group)
+        startActivity(intent)
+    }
+
+
 
 
 }

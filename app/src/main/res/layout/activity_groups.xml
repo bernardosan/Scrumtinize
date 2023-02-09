@@ -18,7 +18,7 @@
         android:id="@+id/rv_groups_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="20dp"
+        android:paddingVertical="20dp"
         tools:listitem="@layout/item_group" />
 
 </LinearLayout>

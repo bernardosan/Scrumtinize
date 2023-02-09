@@ -94,11 +94,12 @@
         <entry key="..\:/Users/habbo/OneDrive/Documentos/GitHub/TrelloCloneApp/app/src/main/res/layout/dialog_progress.xml" value="0.196875" />
         <entry key="..\:/Users/habbo/OneDrive/Documentos/GitHub/TrelloCloneApp/app/src/main/res/layout/dialog_search_member.xml" value="0.21354166666666666" />
         <entry key="..\:/Users/habbo/OneDrive/Documentos/GitHub/TrelloCloneApp/app/src/main/res/layout/drawable_radio_group_tab_backgroud.xml" value="0.19635416666666666" />
-        <entry key="..\:/Users/habbo/OneDrive/Documentos/GitHub/TrelloCloneApp/app/src/main/res/layout/item_board.xml" value="0.2046875" />
+        <entry key="..\:/Users/habbo/OneDrive/Documentos/GitHub/TrelloCloneApp/app/src/main/res/layout/item_board.xml" value="0.33" />
         <entry key="..\:/Users/habbo/OneDrive/Documentos/GitHub/TrelloCloneApp/app/src/main/res/layout/item_card.xml" value="0.2046875" />
         <entry key="..\:/Users/habbo/OneDrive/Documentos/GitHub/TrelloCloneApp/app/src/main/res/layout/item_card_selected_member.xml" value="0.196875" />
         <entry key="..\:/Users/habbo/OneDrive/Documentos/GitHub/TrelloCloneApp/app/src/main/res/layout/item_group.xml" value="0.25" />
         <entry key="..\:/Users/habbo/OneDrive/Documentos/GitHub/TrelloCloneApp/app/src/main/res/layout/item_intro.xml" value="0.1890625" />
+        <entry key="..\:/Users/habbo/OneDrive/Documentos/GitHub/TrelloCloneApp/app/src/main/res/layout/item_label_color.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/habbo/OneDrive/Documentos/GitHub/TrelloCloneApp/app/src/main/res/layout/item_member.xml" value="0.196875" />
         <entry key="..\:/Users/habbo/OneDrive/Documentos/GitHub/TrelloCloneApp/app/src/main/res/layout/item_task.xml" value="0.1" />
         <entry key="..\:/Users/habbo/OneDrive/Documentos/GitHub/TrelloCloneApp/app/src/main/res/layout/nav_header_main.xml" value="0.2046875" />

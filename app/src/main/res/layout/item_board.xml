@@ -4,6 +4,9 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/shape_btn_rounded_ripple"
+    android:clickable="false"
+    android:gravity="center"
     android:orientation="vertical"
     tools:ignore="UnusedAttribute">
 
@@ -11,9 +14,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginVertical="2dp"
         android:orientation="horizontal"
-        android:gravity="center_vertical"
+        android:gravity="center"
         android:background="@drawable/shape_btn_rounded_ripple"
         android:padding="16dp">
 
@@ -22,8 +25,8 @@
             android:layout_width="@dimen/board_image_size"
             android:layout_height="@dimen/board_image_size"
             android:src="@drawable/ic_board_place_holder"
-            app:civ_border_color="@color/primary_text_color"
-            app:civ_border_width="0.5dp"
+            app:civ_border_color="@color/white"
+            app:civ_border_width="1dp"
             android:visibility="visible"
             />
 
@@ -68,10 +71,12 @@
 
     </LinearLayout>
 
+    <!--
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:layout_marginTop="2dp"
         android:background="@color/divider_color"/>
+        -->
 
 </LinearLayout>

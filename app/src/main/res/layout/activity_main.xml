@@ -41,6 +41,8 @@
                 android:id="@+id/rv_boards_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:paddingVertical="5dp"
+                android:paddingHorizontal="5dp"
                 android:visibility="visible"
                 tools:listitem="@layout/item_board"/>
 
@@ -102,7 +104,6 @@
                 android:gravity="center"
                 android:textStyle="bold"
                 android:text= "@string/developer"
-                android:foreground="?attr/selectableItemBackground"
                 />
 
         </LinearLayout>
