@@ -1,22 +1,16 @@
 package com.example.trellocloneapp.adapters
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.res.ColorStateList
 import android.content.res.Resources
-import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.trellocloneapp.R
 import com.example.trellocloneapp.databinding.ItemGroupBinding
-import com.example.trellocloneapp.models.Board
 import com.example.trellocloneapp.models.Group
 import java.util.*
 import kotlin.collections.ArrayList
 import com.example.trellocloneapp.utils.ItemMoveCallback
-import kotlinx.coroutines.NonDisposableHandle.parent
 
 
 open class GroupListAdapter(private var list: ArrayList<Group>) :
@@ -128,8 +122,8 @@ open class GroupListAdapter(private var list: ArrayList<Group>) :
         notifyItemRemoved(position)
     }
 
-    fun removeItem(position: Int) {
-        list.removeAt(position)
+    fun removeItem(group: Group, position: Int) {
+        list.remove(group)
         notifyItemRemoved(position)
     }
 

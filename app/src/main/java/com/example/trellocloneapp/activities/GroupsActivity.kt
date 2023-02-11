@@ -151,7 +151,9 @@ class GroupsActivity : BaseActivity() {
     }
 
     fun alertDialogForRemoveGroup(group: Group, position: Int) {
-        mAdapter.removeItem(position)
+        binding?.rvGroupsList?.adapter?.notifyItemRemoved(position)
+        mAssignedGroupList.remove(group)
+        mAdapter.removeItem(group, position)
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Alert")
         builder.setIcon(android.R.drawable.ic_dialog_alert)

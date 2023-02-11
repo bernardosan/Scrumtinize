@@ -375,7 +375,7 @@ class FirestoreClass {
     }
 
     fun deleteGroup(activity: Activity, groupId: String){
-        mFireStore.collection(Constants.BOARDS)
+        mFireStore.collection(Constants.GROUPS)
             .document(groupId)
             .delete()
             .addOnSuccessListener {
