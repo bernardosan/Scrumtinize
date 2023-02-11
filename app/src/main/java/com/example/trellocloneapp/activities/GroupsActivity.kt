@@ -2,6 +2,7 @@ package com.example.trellocloneapp.activities
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
@@ -25,14 +26,14 @@ import com.example.trellocloneapp.utils.Constants
 import com.example.trellocloneapp.utils.ItemMoveCallback
 
 import androidx.activity.result.ActivityResultLauncher
-
-
+import com.example.trellocloneapp.models.Board
 
 
 class GroupsActivity : BaseActivity() {
 
     private var mAssignedGroupList: ArrayList<Group> = ArrayList()
     private var binding: ActivityGroupsBinding? = null
+    private lateinit var mAdapter: GroupListAdapter
 
     var resultLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -81,10 +82,10 @@ class GroupsActivity : BaseActivity() {
         mAssignedGroupList.add(addGroup)
 
 
-        val adapter = GroupListAdapter(mAssignedGroupList)
+        mAdapter = GroupListAdapter(mAssignedGroupList)
 
         binding?.rvGroupsList?.layoutManager = when {
-            adapter.itemCount > 5 -> {
+            mAdapter.itemCount > 5 -> {
                 GridLayoutManager(
                     this,
                     if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) 2 else 4,
@@ -92,7 +93,7 @@ class GroupsActivity : BaseActivity() {
                     false
                 )
             }
-            adapter.itemCount < 2 || resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT -> {
+            mAdapter.itemCount < 2 || resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT -> {
                 LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
             }
             else -> {
@@ -105,14 +106,14 @@ class GroupsActivity : BaseActivity() {
             }
         }
 
-        binding?.rvGroupsList?.adapter = adapter
+        binding?.rvGroupsList?.adapter = mAdapter
         binding?.rvGroupsList?.setHasFixedSize(true)
 
 
-        adapter.setOnClickListener(
+        mAdapter.setOnClickListener(
             object:GroupListAdapter.OnClickListener{
                 override fun onClick(position: Int) {
-                    if(position != adapter.itemCount -1) {
+                    if(position != mAdapter.itemCount -1) {
                         startMembersActivity(mAssignedGroupList[position])
                     } else {
                        startCreateGroupActivity()
@@ -121,7 +122,15 @@ class GroupsActivity : BaseActivity() {
             }
         )
 
-        val itemTouchHelper = ItemTouchHelper(ItemMoveCallback(adapter as RecyclerView.Adapter<RecyclerView.ViewHolder>))
+        mAdapter.setOnLongClickListener(
+            object:GroupListAdapter.OnLongClickListener{
+                override fun onLongClick(position: Int) {
+                    alertDialogForRemoveGroup(mAssignedGroupList[position], position)
+                }
+            }
+        )
+
+        val itemTouchHelper = ItemTouchHelper(ItemMoveCallback(mAdapter as RecyclerView.Adapter<RecyclerView.ViewHolder>))
         itemTouchHelper.attachToRecyclerView(binding?.rvGroupsList)
     }
 
@@ -139,6 +148,36 @@ class GroupsActivity : BaseActivity() {
         mAssignedGroupList = groupList
         hideProgressDialog()
         setupGroupRecyclerView()
+    }
+
+    fun alertDialogForRemoveGroup(group: Group, position: Int) {
+        mAdapter.removeItem(position)
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Alert")
+        builder.setIcon(android.R.drawable.ic_dialog_alert)
+        if(group.groupMembersId.size != 1) {
+            builder.setMessage("Are you sure you want to exit the group?")
+            builder.setIcon(android.R.drawable.ic_dialog_alert)
+            builder.setPositiveButton("Yes") { dialogInterface, _ ->
+                dialogInterface.dismiss()
+                group.groupMembersId.remove(getCurrentUserId())
+                FirestoreClass().assignMemberToGroup(this, group)
+            }
+        } else {
+            builder.setMessage("Are you sure you want to delete ${group.title} group?")
+            builder.setIcon(android.R.drawable.ic_dialog_alert)
+            builder.setPositiveButton("Yes") { dialogInterface, _ ->
+                dialogInterface.dismiss()
+                FirestoreClass().deleteGroup(this,group.documentId)
+            }
+        }
+        builder.setNegativeButton("No") { dialogInterface, _ ->
+            dialogInterface.dismiss()
+            mAdapter.restoreItem(group, position)
+        }
+        val alertDialog: AlertDialog = builder.create()
+        alertDialog.setCancelable(false)
+        alertDialog.show()
     }
 
 

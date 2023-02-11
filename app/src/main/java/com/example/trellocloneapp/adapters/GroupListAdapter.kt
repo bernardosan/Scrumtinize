@@ -1,22 +1,29 @@
 package com.example.trellocloneapp.adapters
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.res.ColorStateList
 import android.content.res.Resources
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.trellocloneapp.R
 import com.example.trellocloneapp.databinding.ItemGroupBinding
+import com.example.trellocloneapp.models.Board
 import com.example.trellocloneapp.models.Group
 import java.util.*
 import kotlin.collections.ArrayList
 import com.example.trellocloneapp.utils.ItemMoveCallback
+import kotlinx.coroutines.NonDisposableHandle.parent
 
 
 open class GroupListAdapter(private var list: ArrayList<Group>) :
     RecyclerView.Adapter<GroupListAdapter.GroupViewHolder>(), ItemMoveCallback.ItemTouchHelperAdapter {
 
     private var onClickListener: OnClickListener? = null
+    private var onLongClickListener: OnLongClickListener? = null
 
 
     inner class GroupViewHolder(val itemBinding: ItemGroupBinding) :
@@ -38,8 +45,6 @@ open class GroupListAdapter(private var list: ArrayList<Group>) :
                 itemBinding.llAddGroup.visibility = View.GONE
                 itemBinding.llGroupItem.visibility = View.VISIBLE
             }
-
-
 
         }
 
@@ -71,12 +76,19 @@ open class GroupListAdapter(private var list: ArrayList<Group>) :
             }
         }
 
+        holder.itemBinding.llGroupItem.setOnLongClickListener {
+            if (onLongClickListener != null) {
+                onLongClickListener!!.onLongClick(position)
+            }
+            true
+        }
+
+
         holder.itemBinding.llAddGroup.setOnClickListener {
             if (onClickListener != null) {
                 onClickListener!!.onClick(position)
             }
         }
-
 
     }
 
@@ -84,15 +96,23 @@ open class GroupListAdapter(private var list: ArrayList<Group>) :
         fun onClick(position: Int)
     }
 
+    interface  OnLongClickListener{
+        fun onLongClick(position: Int)
+    }
+
     fun setOnClickListener(onClickListener: OnClickListener){
         this.onClickListener = onClickListener
+    }
+
+
+    fun setOnLongClickListener(onLongClickListener: OnLongClickListener){
+        this.onLongClickListener = onLongClickListener
     }
 
 
     override fun getItemCount(): Int {
         return list.size
     }
-
 
     override fun onItemMove(fromPosition: Int, toPosition: Int) {
         if (toPosition < itemCount - 1) {
@@ -106,6 +126,16 @@ open class GroupListAdapter(private var list: ArrayList<Group>) :
     override fun onItemDismiss(position: Int) {
         list.removeAt(position)
         notifyItemRemoved(position)
+    }
+
+    fun removeItem(position: Int) {
+        list.removeAt(position)
+        notifyItemRemoved(position)
+    }
+
+    fun restoreItem(group: Group, position: Int) {
+        list.add(position, group)
+        notifyItemInserted(position)
     }
 
     private fun Int.toDp(): Int =

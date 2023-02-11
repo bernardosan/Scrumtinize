@@ -33,6 +33,7 @@
     <color name="white_tint_1">#e5e5e5</color>
     <color name="black_tint_2">#323232</color>
     <color name="black_tint_2_85">#d9323232</color>
+    <color name="select_color_shutta">#55A3EF</color>
     <color name="shutta_blue">#4c7eed</color>
     <color name="shutta_blue_85">#d94c7eed</color>
     <color name="shutta_blue_light">#FF9DB6ED</color>

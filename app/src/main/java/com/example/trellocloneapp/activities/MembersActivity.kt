@@ -127,6 +127,7 @@ class MembersActivity : BaseActivity() {
         SendNotificationToUserAsyncTask(mBoardDetails.name, user.fcmToken).execute()
     }
 
+
     fun setupMembersList(list: ArrayList<User>){
         hideProgressDialog()
 

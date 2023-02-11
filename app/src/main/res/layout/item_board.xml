@@ -18,7 +18,7 @@
         android:orientation="horizontal"
         android:gravity="center"
         android:background="@drawable/shape_btn_rounded_ripple"
-        android:padding="16dp">
+        android:padding="8dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/iv_board_image"
@@ -71,12 +71,11 @@
 
     </LinearLayout>
 
-    <!--
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:layout_marginTop="2dp"
         android:background="@color/divider_color"/>
-        -->
+
 
 </LinearLayout>

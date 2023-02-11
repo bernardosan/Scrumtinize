@@ -379,9 +379,15 @@ class FirestoreClass {
             .document(groupId)
             .delete()
             .addOnSuccessListener {
-                Toast.makeText(activity, "Group deleted.", Toast.LENGTH_SHORT).show()
+                if (activity is GroupsActivity){
+                    activity.hideProgressDialog()
+                    Toast.makeText(activity, "Group deleted.", Toast.LENGTH_SHORT).show()
+                }
             }
             .addOnFailureListener {
+                if (activity is GroupsActivity){
+                    activity.hideProgressDialog()
+                }
                 it.printStackTrace()
                 Toast.makeText(activity, "Failed to delete group.", Toast.LENGTH_SHORT).show()
             }
@@ -406,7 +412,7 @@ class FirestoreClass {
             }
     }
 
-    fun assignMemberToGroup(activity: MembersActivity, group: Group, user: User? = null){
+    fun assignMemberToGroup(activity: Activity, group: Group, user: User? = null){
         val assignedToHashMap = HashMap<String, Any>()
         assignedToHashMap[Constants.GROUPS_MEMBERS_ID] = group.groupMembersId
 
@@ -414,10 +420,20 @@ class FirestoreClass {
             .document(group.documentId)
             .update(assignedToHashMap)
             .addOnSuccessListener {
-                activity.memberAssignSuccess(user!!)
+                if(activity is MembersActivity) {
+                    activity.memberAssignSuccess(user!!)
+                } else if (activity is GroupsActivity){
+                    activity.hideProgressDialog()
+                    Toast.makeText(activity, "Group removed", Toast.LENGTH_SHORT).show()
+                }
             }
             .addOnFailureListener {
-                activity.hideProgressDialog()
+                if(activity is MembersActivity) {
+                    activity.hideProgressDialog()
+                } else if(activity is GroupsActivity){
+                    activity.hideProgressDialog()
+                }
+
                 it.printStackTrace()
             }
     }

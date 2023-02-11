@@ -13,6 +13,7 @@
         <item name="android:statusBarColor">@color/colorPrimary</item>
         <item name="android:textColorSecondary">@color/primary_text_color</item>
         <!-- Customize your theme here. -->
+        <item name="android:navigationBarColor">@color/colorAccent</item>
     </style>
 
     <style name="Theme.TrelloCloneApp.NoActionBar" parent="Theme.TrelloCloneApp">
@@ -22,6 +23,7 @@
 
     <style name="ToolbarTheme" parent="@style/ThemeOverlay.MaterialComponents.ActionBar" >
         <item name="colorControlNormal">@color/white</item>
+        <item name="android:navigationBarColor">@color/colorAccent</item>
     </style>
 
     <style name="ToolbarAccentBackground" parent="ThemeOverlay.AppCompat.Dark.ActionBar">

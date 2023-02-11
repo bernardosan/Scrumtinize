@@ -290,12 +290,10 @@ open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelecte
             builder.setIcon(android.R.drawable.ic_dialog_alert)
             builder.setPositiveButton("Yes") { dialogInterface, _ ->
                 dialogInterface.dismiss()
-                if (board.assignedTo.size != 1) {
-                    //mAdapter.removeItem(position)
-                    board.assignedTo.remove(getCurrentUserId())
-                    FirestoreClass().assignMemberToBoard(this, board)
-                    FirestoreClass().getBoardsList(this)
-                }
+                //mAdapter.removeItem(position)
+                board.assignedTo.remove(getCurrentUserId())
+                FirestoreClass().assignMemberToBoard(this, board)
+                FirestoreClass().getBoardsList(this)
             }
         } else {
             builder.setMessage("Are you sure you want to delete ${board.name} board?")
