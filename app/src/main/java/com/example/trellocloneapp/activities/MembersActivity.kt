@@ -46,11 +46,11 @@ class MembersActivity : BaseActivity() {
         if(intent.hasExtra(Constants.BOARD_DETAIL)){
             mBoardDetails = intent.getParcelableExtra(Constants.BOARD_DETAIL)!!
             showProgressDialog(resources.getString(R.string.please_wait))
-            FirestoreClass().getAssignedMembersList(this,mBoardDetails.assignedTo, false)
+            FirestoreClass().getAssignedMembersList(this,mBoardDetails.assignedTo)
         } else if(intent.hasExtra(Constants.GROUPS)){
             mGroup = intent.getParcelableExtra(Constants.GROUPS)!!
             showProgressDialog(resources.getString(R.string.please_wait))
-            FirestoreClass().getAssignedMembersList(this,mGroup.groupMembersId, true)
+            FirestoreClass().getAssignedMembersList(this,mGroup.groupMembersId)
         }
 
         setupActionBar()

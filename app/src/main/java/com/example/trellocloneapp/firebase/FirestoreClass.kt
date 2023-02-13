@@ -10,11 +10,25 @@ import com.example.trellocloneapp.models.User
 import com.example.trellocloneapp.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.ktx.firestoreSettings
+import com.google.firebase.ktx.Firebase
 
 class FirestoreClass {
 
     private val mFireStore = FirebaseFirestore.getInstance()
+
+    private val settings = firestoreSettings {
+        isPersistenceEnabled = true
+        cacheSizeBytes = FirebaseFirestoreSettings.CACHE_SIZE_UNLIMITED
+        build()
+    }
+
+    init{
+        mFireStore.firestoreSettings = settings
+    }
+
 
     fun registerUser(activity: Activity, user: User){
         mFireStore.collection(Constants.USERS)
