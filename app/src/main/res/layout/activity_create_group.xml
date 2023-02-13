@@ -12,7 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
         android:background="@color/colorPrimary"
-        android:theme="@style/ToolbarAccentBackground" />
+        app:titleTextColor="@color/white"
+        android:theme="@style/ToolbarTheme" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/iv_add_group"
@@ -22,6 +23,7 @@
         android:layout_marginTop="50dp"
         android:layout_marginBottom="20dp"
         android:background="@drawable/circle_colored_border_add_image"
+        android:visibility="gone"
         app:civ_border_color="@color/white"
         app:civ_border_width="2dp" />
 
@@ -33,15 +35,45 @@
         android:background="@drawable/shape_circular_backgroud"
         android:visibility="gone"/>
 
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/et_group_name"
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_group_name"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginVertical="20dp"
+        android:textCursorDrawable="@null"
+        android:visibility="visible">
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/et_group_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/group_name"
+            android:inputType="text"
+            android:textColorHint="#7A8089"
+            android:textCursorDrawable="@null"
+            android:textIsSelectable="false" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="30dp"
+        android:text="@string/members"
+        android:textColor="@color/secondary_text_color"
+        android:textSize="@dimen/card_details_label_text_size" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_selected_members_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="30dp"
         android:layout_marginBottom="20dp"
-        android:autofillHints=""
-        android:hint="@string/group_name"
-        android:inputType="text" />
+        tools:listitem="@layout/item_selected_member"
+        tools:itemCount="1"/>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_create_board"

@@ -1,29 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="@color/bgColor"
     tools:context=".activities.MyProfileActivity">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar_my_profile"
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize"
             android:background="@color/colorPrimary"
+            app:titleTextColor="@color/white"
             android:theme="@style/ToolbarAccentBackground"/>
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/iv_my_profile"
-            android:layout_width="@dimen/nav_image_size"
-            android:layout_height="@dimen/nav_image_size"
-            android:layout_marginTop="50dp"
+            android:layout_width="@dimen/iv_myprofile_image_size"
+            android:layout_height="@dimen/iv_myprofile_image_size"
+            android:layout_marginTop="30dp"
             android:layout_marginBottom="20dp"
             android:layout_gravity="center"
             app:civ_border_color="@color/white"
@@ -33,8 +30,8 @@
 
         <ProgressBar
             android:id="@+id/progressBar"
-            android:layout_width="@dimen/board_image_size"
-            android:layout_height="@dimen/board_image_size"
+            android:layout_width="@dimen/iv_myprofile_image_size"
+            android:layout_height="@dimen/iv_myprofile_image_size"
             android:progressTint="@color/primaryDarkColor"
             android:visibility="gone"/>
 
@@ -44,6 +41,7 @@
             android:layout_gravity="center"
             android:background="@drawable/signup_cardview_rounded_shape"
             android:layout_marginHorizontal="30dp"
+            app:cardElevation="10dp"
             app:cardCornerRadius="10dp"
             >
 
@@ -53,49 +51,96 @@
                 android:orientation="vertical"
                 >
 
-                <EditText
-                    android:id="@+id/et_name_myprofile"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_name_myprofile"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="20dp"
                     android:layout_marginTop="20dp"
-                    android:layout_marginBottom="20dp"
-                    android:layout_marginHorizontal="20dp"
-                    android:hint="@string/name"
-                    android:inputType="text"
-                    android:autofillHints="" />
+                    android:layout_marginBottom="10dp"
+                    android:textCursorDrawable="@null"
+                    android:visibility="visible">
 
-                <EditText
-                    android:id="@+id/et_description_myprofile"
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/et_name_myprofile"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/name"
+                        android:inputType="textEmailAddress"
+                        android:textColorHint="#7A8089"
+                        android:textCursorDrawable="@null" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_description_myprofile"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dp"
                     android:layout_marginHorizontal="20dp"
-                    android:hint="@string/description"
-                    android:inputType="text"
-                    android:autofillHints="" />
+                    android:layout_marginVertical="10dp"
+                    android:textCursorDrawable="@null"
+                    android:visibility="visible">
 
-                <EditText
-                    android:id="@+id/et_email_myprofile"
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/et_description_myprofile"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/description"
+                        android:inputType="text"
+                        android:textColorHint="#7A8089"
+                        android:textCursorDrawable="@null" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_email_myprofile"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dp"
                     android:layout_marginHorizontal="20dp"
-                    android:hint="@string/e_mail"
-                    android:inputType="textEmailAddress"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"
-                    android:autofillHints="" />
+                    android:layout_marginVertical="10dp"
+                    android:textCursorDrawable="@null"
+                    android:visibility="visible">
 
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/et_email_myprofile"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/description"
+                        android:inputType="textEmailAddress"
+                        android:textColorHint="#7A8089"
+                        android:textCursorDrawable="@null"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:textIsSelectable="false" />
 
-                <EditText
-                    android:id="@+id/et_mobile_myprofile"
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_mobile_myprofile"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dp"
                     android:layout_marginHorizontal="20dp"
-                    android:hint="@string/mobile"
-                    android:inputType="phone"
-                    android:autofillHints="" />
+                    android:layout_marginVertical="10dp"
+                    android:textCursorDrawable="@null"
+                    android:visibility="visible">
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/et_mobile_myprofile"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/mobile"
+                        android:inputType="phone"
+                        android:textColorHint="#7A8089"
+                        android:textCursorDrawable="@null"
+                        android:textIsSelectable="false" />
+
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_update"
@@ -107,13 +152,13 @@
                     android:textSize="16sp"
                     android:background="@drawable/shape_btn_rounded"
                     android:layout_marginHorizontal="20dp"
-                    android:layout_marginBottom="15dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="20dp"
                     android:clickable="true"
                     android:focusable="true"/>
 
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
-    </LinearLayout>
 
-</ScrollView>
+</LinearLayout>
