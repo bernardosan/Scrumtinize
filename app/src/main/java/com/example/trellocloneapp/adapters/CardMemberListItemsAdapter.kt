@@ -2,17 +2,18 @@ package com.example.trellocloneapp.adapters
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.example.trellocloneapp.R
-import com.example.trellocloneapp.activities.TaskListActivity
-import com.example.trellocloneapp.databinding.ItemCardSelectedMemberBinding
+import com.example.trellocloneapp.databinding.ItemSelectedMemberBinding
 import com.example.trellocloneapp.models.SelectedMembers
 
 open class CardMemberListItemsAdapter (
@@ -23,7 +24,7 @@ open class CardMemberListItemsAdapter (
 
     private var onClickListener: OnClickListener? = null
 
-    inner class MainViewHolder (private val itemBinding: ItemCardSelectedMemberBinding) : RecyclerView.ViewHolder(itemBinding.root) {
+    inner class MainViewHolder (private val itemBinding: ItemSelectedMemberBinding) : RecyclerView.ViewHolder(itemBinding.root) {
 
         fun bindItem(position: Int) {
             val item = list[position]
@@ -37,6 +38,7 @@ open class CardMemberListItemsAdapter (
                 itemBinding.ivAddMember.visibility = View.GONE
                 itemBinding.ivSelectedMemberImage.visibility = View.GONE
                 itemBinding.progressBar.visibility = View.VISIBLE
+                Log.d("MEMBERS",item.image)
                 load_image = true
             }
 
@@ -88,7 +90,7 @@ open class CardMemberListItemsAdapter (
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
         return MainViewHolder(
-            ItemCardSelectedMemberBinding.inflate(
+            ItemSelectedMemberBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent, false)
         ) }
@@ -105,6 +107,10 @@ open class CardMemberListItemsAdapter (
 
     override fun getItemCount(): Int {
         return list.size
+    }
+
+    fun addItem(selectedMembers: SelectedMembers){
+        list.add(selectedMembers)
     }
 
 }

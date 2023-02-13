@@ -78,7 +78,7 @@
     <dimen name="task_item_add_item_text_padding">12dp</dimen>
     <dimen name="task_item_add_item_text_size">18sp</dimen>
     <dimen name="task_item_cv_margin">5dp</dimen>
-    <dimen name="task_item_cv_corner_radius">5dp</dimen>
+    <dimen name="task_item_cv_corner_radius">10dp</dimen>
     <dimen name="task_item_image_buttons_padding">10dp</dimen>
     <dimen name="task_item_title_view_elevation">10dp</dimen>
     <dimen name="task_item_title_text_padding">10dp</dimen>
@@ -145,5 +145,6 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="iv_myprofile_image_size">120dp</dimen>
 
 </resources>

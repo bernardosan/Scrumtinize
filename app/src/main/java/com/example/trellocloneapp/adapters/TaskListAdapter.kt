@@ -22,7 +22,7 @@ import com.example.trellocloneapp.utils.ItemMoveCallback
 
 
 open class TaskListAdapter(private val context: Context, private var list: ArrayList<Task>) :
-    RecyclerView.Adapter<TaskListAdapter.TaskViewHolder>(), ItemMoveCallback.ItemTouchHelperAdapter{
+    RecyclerView.Adapter<TaskListAdapter.TaskViewHolder>(){
 
     private var mPositionDraggedFrom = -1
     private var mPositionDraggedTo = -1
@@ -159,7 +159,7 @@ open class TaskListAdapter(private val context: Context, private var list: Array
             LayoutParams((parent.width*0.3462).toInt(),LayoutParams.WRAP_CONTENT)
         }
 
-        layoutParams.setMargins((15.toDp()).toPx(),0,(40.toDp()).toPx(),0)
+        layoutParams.setMargins((15.toDp()).toPx(),(15.toDp()).toPx(),(40.toDp()).toPx(),(40.toDp()).toPx())
 
         view.itemBinding.root.layoutParams = layoutParams
 
@@ -185,7 +185,7 @@ open class TaskListAdapter(private val context: Context, private var list: Array
 
         //  Creates an ItemTouchHelper that will work with the given Callback.
         val helper = ItemTouchHelper(object :
-            ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.START or ItemTouchHelper.END) {
+            ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
             /*Called when ItemTouchHelper wants to move the dragged item from its old position to
              the new position.*/
 
@@ -293,16 +293,12 @@ open class TaskListAdapter(private val context: Context, private var list: Array
     private fun Int.toPx(): Int =
         (this * Resources.getSystem().displayMetrics.density).toInt()
 
-    override fun onItemMove(fromPosition: Int, toPosition: Int) {
+    fun onItemMove(fromPosition: Int, toPosition: Int) {
         if(toPosition < itemCount-1) {
             Collections.swap(list, fromPosition, toPosition)
             notifyItemMoved(fromPosition, toPosition)
         }
     }
 
-    override fun onItemDismiss(position: Int) {
-        list.removeAt(position)
-        notifyItemRemoved(position)
-    }
 
 }

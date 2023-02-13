@@ -248,7 +248,7 @@ open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelecte
                     return false
                 }
         })
-            .placeholder(R.drawable.ic_board_place_holder) // A default place holder
+            .placeholder(R.drawable.ic_user_place_holder) // A default place holder
             .into(navUserImage) // the view in which the image will be loaded.
 
 
