@@ -1,5 +1,6 @@
 package com.example.trellocloneapp.activities
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
@@ -9,6 +10,7 @@ import android.widget.TextView
 import com.example.trellocloneapp.R
 import com.example.trellocloneapp.firebase.FirestoreClass
 
+@SuppressLint("CustomSplashScreen")
 class SplashActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,7 +28,7 @@ class SplashActivity : BaseActivity() {
 
         Handler().postDelayed({
 
-            var currentUserID = FirestoreClass().getCurrentUserId()
+            val currentUserID = FirestoreClass().getCurrentUserId()
 
             if (currentUserID.isNotEmpty()){
                 startActivity(Intent(this, MainActivity::class.java))

@@ -3,9 +3,7 @@ package com.example.trellocloneapp.adapters
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Paint
-import android.os.Build
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
@@ -38,12 +36,12 @@ open class CardListAdapter(private val context: Context, private var cardList: A
             itemBinding.tvCardWeight.text = model.weight.toString()
 
 
-            if(model.state == 1){
+            if(model.finished == 1){
                 itemBinding.tvCardName.apply {
                     paintFlags = Paint.STRIKE_THRU_TEXT_FLAG or itemBinding.tvCardName.paintFlags
                     text = itemBinding.tvCardName.text
                 }
-            } else if (model.state == 0) {
+            } else if (model.finished == 0) {
                 itemBinding.tvCardName.apply {
                     paintFlags = Paint.LINEAR_TEXT_FLAG or itemBinding.tvCardName.paintFlags
                     text = itemBinding.tvCardName.text

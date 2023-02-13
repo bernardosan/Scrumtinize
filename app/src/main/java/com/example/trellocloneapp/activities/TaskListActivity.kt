@@ -32,7 +32,8 @@ class TaskListActivity :BaseActivity() {
             // val data: Intent? = result.data
             showProgressDialog(resources.getString(R.string.please_wait))
             FirestoreClass().getBoardDetails(this, mBoardDetails.documentId)
-
+        } else if(result.resultCode == RESULT_CANCELED){
+            finish()
         }
     }
 

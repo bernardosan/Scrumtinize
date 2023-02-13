@@ -68,7 +68,7 @@
     <string name="title_activity_main2">MainActivity2</string>
     <string name="action_settings">Settings</string>
     <string name="your_web_client_id">"AIzaSyBxweVTiR7XWtsKw8q1u5uF2GPsA3TKVWk"</string>
-    <string name="oauth_google_cloud_key">298232093304-7cgfjj3950vi1popgb0vitc86bchn8q4.apps.googleusercontent.com</string>
+    <string name="oauth_google_cloud_key" tools:ignore="TypographyDashes">298232093304-7cgfjj3950vi1popgb0vitc86bchn8q4.apps.googleusercontent.com</string>
     <string name="facebook_app_id">717500726337438</string>
     <string name="fb_login_protocol_scheme">fb717500726337438</string>
     <string name="facebook_client_token">7526d1d801ac72acc242ba2075f96913</string>
@@ -81,4 +81,5 @@
     <string name="groups">Groups</string>
     <string name="add_group">Add Group</string>
     <string name="group_name">Group Name</string>
+    <string name="exit_group">Exit</string>
 </resources>

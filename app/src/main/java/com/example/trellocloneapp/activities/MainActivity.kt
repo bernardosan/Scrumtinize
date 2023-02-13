@@ -1,6 +1,6 @@
 package com.example.trellocloneapp.activities
 
-import android.app.Activity
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
@@ -44,6 +44,7 @@ open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var mAdapter: BoardAdapter
 
 
+    @SuppressLint("NotifyDataSetChanged")
     private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
             Toast.makeText(this, "Boards list updated!", Toast.LENGTH_SHORT).show()

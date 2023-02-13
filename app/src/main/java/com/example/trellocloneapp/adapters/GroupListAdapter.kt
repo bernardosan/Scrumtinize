@@ -31,7 +31,12 @@ open class GroupListAdapter(private var list: ArrayList<Group>) :
             itemBinding.tvGroupName.text = model.title
 
 
-            if(position == list.size -1) {
+            itemBinding.llGroupItem.setOnLongClickListener {
+                it.isSelected = true
+                true
+            }
+
+            if(position == list.lastIndex || list.size == 1) {
                 itemBinding.llAddGroup.visibility = View.VISIBLE
                 itemBinding.llGroupItem.visibility = View.GONE
 
@@ -122,8 +127,8 @@ open class GroupListAdapter(private var list: ArrayList<Group>) :
         notifyItemRemoved(position)
     }
 
-    fun removeItem(group: Group, position: Int) {
-        list.remove(group)
+    fun removeItem(position: Int) {
+        list.removeAt(position)
         notifyItemRemoved(position)
     }
 

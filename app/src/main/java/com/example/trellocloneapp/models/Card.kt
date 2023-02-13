@@ -10,7 +10,7 @@ data class Card(
     val labelColor: String = "",
     val dueDate: Long = 0L,
     val weight: Int = 0,
-    var state: Int = 0
+    var finished: Int = 0
 ): Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
@@ -30,7 +30,7 @@ data class Card(
         parcel.writeString(labelColor)
         parcel.writeLong(dueDate)
         parcel.writeInt(weight)
-        parcel.writeInt(state)
+        parcel.writeInt(finished)
     }
 
     override fun describeContents(): Int {

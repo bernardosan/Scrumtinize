@@ -1,18 +1,14 @@
 package com.example.trellocloneapp.activities
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultCallback
-import androidx.activity.result.ActivityResultRegistry
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,9 +21,6 @@ import com.example.trellocloneapp.models.Group
 import com.example.trellocloneapp.utils.Constants
 import com.example.trellocloneapp.utils.ItemMoveCallback
 
-import androidx.activity.result.ActivityResultLauncher
-import com.example.trellocloneapp.models.Board
-
 
 class GroupsActivity : BaseActivity() {
 
@@ -35,14 +28,18 @@ class GroupsActivity : BaseActivity() {
     private var binding: ActivityGroupsBinding? = null
     private lateinit var mAdapter: GroupListAdapter
 
-    var resultLauncher = registerForActivityResult(
+    private var resultLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if(result.resultCode  == RESULT_OK) {
-            Toast.makeText(this, "Group Updated!", Toast.LENGTH_SHORT).show()
-            val group: Group = result.data!!.getParcelableExtra(Constants.GROUPS)!!
-            mAssignedGroupList.find { it.documentId == group.documentId }?.groupMembersId =
-                group.groupMembersId
+            Toast.makeText(this, "GroupList Updated!", Toast.LENGTH_SHORT).show()
+            if(result.data?.hasExtra(Constants.GROUPS) == true) {
+                val group: Group = result.data!!.getParcelableExtra(Constants.GROUPS)!!
+                mAssignedGroupList.find { it.documentId == group.documentId }?.groupMembersId =
+                    group.groupMembersId
+            }
+            callForGroupList()
+        } else if(result.resultCode == RESULT_CANCELED) {
             callForGroupList()
         }
     }
@@ -61,6 +58,20 @@ class GroupsActivity : BaseActivity() {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_group, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.action_add_group ->{
+                startCreateGroupActivity()
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     private fun setupActionBar() {
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar_groups)
         setSupportActionBar(findViewById(R.id.toolbar_groups))
@@ -74,11 +85,7 @@ class GroupsActivity : BaseActivity() {
     }
 
     private fun setupGroupRecyclerView(){
-        val arrayList = ArrayList<String>()
-        arrayList.add(getCurrentUserId())
-        // val addGroup1 = Group(title = "Android", groupMembersId = arrayList)
         val addGroup = Group("Add Group")
-        // mAssignedGroupList.add(addGroup1)
         mAssignedGroupList.add(addGroup)
 
 
@@ -122,14 +129,6 @@ class GroupsActivity : BaseActivity() {
             }
         )
 
-        mAdapter.setOnLongClickListener(
-            object:GroupListAdapter.OnLongClickListener{
-                override fun onLongClick(position: Int) {
-                    alertDialogForRemoveGroup(mAssignedGroupList[position], position)
-                }
-            }
-        )
-
         val itemTouchHelper = ItemTouchHelper(ItemMoveCallback(mAdapter as RecyclerView.Adapter<RecyclerView.ViewHolder>))
         itemTouchHelper.attachToRecyclerView(binding?.rvGroupsList)
     }
@@ -137,7 +136,7 @@ class GroupsActivity : BaseActivity() {
     private fun startMembersActivity(group: Group){
         val intent = Intent(this, MembersActivity::class.java)
         intent.putExtra(Constants.GROUPS, group)
-        startActivity(intent)
+        resultLauncher.launch(intent)
     }
 
     private fun startCreateGroupActivity(){
@@ -149,38 +148,5 @@ class GroupsActivity : BaseActivity() {
         hideProgressDialog()
         setupGroupRecyclerView()
     }
-
-    fun alertDialogForRemoveGroup(group: Group, position: Int) {
-        binding?.rvGroupsList?.adapter?.notifyItemRemoved(position)
-        mAssignedGroupList.remove(group)
-        mAdapter.removeItem(group, position)
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Alert")
-        builder.setIcon(android.R.drawable.ic_dialog_alert)
-        if(group.groupMembersId.size != 1) {
-            builder.setMessage("Are you sure you want to exit the group?")
-            builder.setIcon(android.R.drawable.ic_dialog_alert)
-            builder.setPositiveButton("Yes") { dialogInterface, _ ->
-                dialogInterface.dismiss()
-                group.groupMembersId.remove(getCurrentUserId())
-                FirestoreClass().assignMemberToGroup(this, group)
-            }
-        } else {
-            builder.setMessage("Are you sure you want to delete ${group.title} group?")
-            builder.setIcon(android.R.drawable.ic_dialog_alert)
-            builder.setPositiveButton("Yes") { dialogInterface, _ ->
-                dialogInterface.dismiss()
-                FirestoreClass().deleteGroup(this,group.documentId)
-            }
-        }
-        builder.setNegativeButton("No") { dialogInterface, _ ->
-            dialogInterface.dismiss()
-            mAdapter.restoreItem(group, position)
-        }
-        val alertDialog: AlertDialog = builder.create()
-        alertDialog.setCancelable(false)
-        alertDialog.show()
-    }
-
 
 }

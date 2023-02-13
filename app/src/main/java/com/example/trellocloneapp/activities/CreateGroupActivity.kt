@@ -1,7 +1,6 @@
 package com.example.trellocloneapp.activities
 
 import android.Manifest
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -41,7 +40,7 @@ class CreateGroupActivity : BaseActivity() {
                     .load(mSelectedImageFileUri)
                     .centerCrop()
                     .placeholder(R.drawable.circle_colored_border_add_image)
-                    .into(findViewById(R.id.iv_add_board))
+                    .into(findViewById(R.id.iv_add_group))
             } catch (e: IOException) {
                 e.printStackTrace()
             }
@@ -142,7 +141,6 @@ class CreateGroupActivity : BaseActivity() {
                     mGroupImageURL = uri.toString()
 
                     createGroup()
-                    Toast.makeText(this, "Created group successfully", Toast.LENGTH_SHORT).show()
 
                 }
             }.addOnFailureListener {

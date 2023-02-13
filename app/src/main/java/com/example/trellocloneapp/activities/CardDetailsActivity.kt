@@ -5,12 +5,10 @@ import android.app.Activity
 import android.app.DatePickerDialog
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.trellocloneapp.R
 import com.example.trellocloneapp.adapters.CardMemberListItemsAdapter
@@ -106,7 +104,7 @@ class CardDetailsActivity : BaseActivity() {
         if(mState == 1 && !anyChangesMade){
             mBoardDetails
                 .taskList[mTaskListPosition]
-                .cardList[mCardPosition].state = 0
+                .cardList[mCardPosition].finished = 0
             binding?.toolbarCardDetailsActivity?.menu?.findItem(R.id.action_change_status)?.setIcon(R.drawable.ic_baseline_check_box_24)
             updateCardDetails()
         } else if (anyChangesMade) {
@@ -114,7 +112,7 @@ class CardDetailsActivity : BaseActivity() {
         } else {
             mBoardDetails
                 .taskList[mTaskListPosition]
-                .cardList[mCardPosition].state = 1
+                .cardList[mCardPosition].finished = 1
             binding?.toolbarCardDetailsActivity?.menu?.findItem(R.id.action_change_status)?.setIcon(R.drawable.ic_baseline_check_box_outline_blank_24)
             updateCardDetails()
         }
@@ -163,7 +161,7 @@ class CardDetailsActivity : BaseActivity() {
         mSelectedColor = mBoardDetails.taskList[mTaskListPosition].cardList[mCardPosition].labelColor
         mSelectedDueDate = mBoardDetails.taskList[mTaskListPosition].cardList[mCardPosition].dueDate
         mWeight = mBoardDetails.taskList[mTaskListPosition].cardList[mCardPosition].weight
-        mState = mBoardDetails.taskList[mTaskListPosition].cardList[mCardPosition].state
+        mState = mBoardDetails.taskList[mTaskListPosition].cardList[mCardPosition].finished
     }
 
     @SuppressLint("SetTextI18n")
@@ -213,7 +211,7 @@ class CardDetailsActivity : BaseActivity() {
             mSelectedColor,
             mSelectedDueDate,
             mWeight,
-            mBoardDetails.taskList[mTaskListPosition].cardList[mCardPosition].state)
+            mBoardDetails.taskList[mTaskListPosition].cardList[mCardPosition].finished)
 
         //val taskList: ArrayList<Task> = mBoardDetails.taskList
         //taskList.removeAt(taskList.size - 1)

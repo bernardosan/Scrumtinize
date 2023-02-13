@@ -14,6 +14,7 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.example.trellocloneapp.R
 import com.example.trellocloneapp.databinding.ItemMemberBinding
+import com.example.trellocloneapp.models.Group
 import com.example.trellocloneapp.models.User
 import com.example.trellocloneapp.utils.Constants
 import de.hdodenhof.circleimageview.CircleImageView
@@ -109,6 +110,12 @@ open class MembersListAdapter(private val context: Context, private var membersL
     override fun getItemCount(): Int {
         return membersList.size
     }
+
+    fun removeItem(position: Int) {
+        membersList.removeAt(position)
+        notifyItemRemoved(position)
+    }
+
 
 
 }

@@ -100,7 +100,7 @@ class FirestoreClass {
             }
     }
 
-    fun deleteBoard(activity: MainActivity, boardId: String){
+    fun deleteBoard(activity: Activity, boardId: String){
         mFireStore.collection(Constants.BOARDS)
             .document(boardId)
             .delete()
@@ -258,7 +258,7 @@ class FirestoreClass {
             }
     }
 
-    fun getAssignedMembersList(activity: Activity, assignedTo: ArrayList<String>, searchInGroup: Boolean = false){
+    fun getAssignedMembersList(activity: Activity, assignedTo: ArrayList<String>){
 
         mFireStore.collection(Constants.USERS)
             .whereIn(Constants.ID, assignedTo)
@@ -337,7 +337,8 @@ class FirestoreClass {
             .whereArrayContains(Constants.GROUPS_MEMBERS_ID,getCurrentUserId())
             .get()
             .addOnSuccessListener {
-                if(it.documents.size > 0){
+                Log.d("groups", it.documents.toString())
+                if(it.documents.size >= 0){
                     Log.d("GROUPS", it.documents.toString())
                     for(i in it.documents) {
                         i.id
@@ -351,6 +352,7 @@ class FirestoreClass {
                     Log.d("GROUPS", "GROUPLIST: $groupList")
                     activity.getAssignedGroupList(groupList)
                 } else {
+                    activity.showErrorSnackBar("No group found")
                     activity.hideProgressDialog()
                 }
             }
@@ -401,7 +403,7 @@ class FirestoreClass {
         groupHashMap[Constants.IMAGE] = group.image
         groupHashMap[Constants.GROUPS_MEMBERS_ID] = group.image
 
-        mFireStore.collection(Constants.BOARDS)
+        mFireStore.collection(Constants.GROUPS)
             .document(group.documentId)
             .update(groupHashMap)
             .addOnSuccessListener {
@@ -420,8 +422,8 @@ class FirestoreClass {
             .document(group.documentId)
             .update(assignedToHashMap)
             .addOnSuccessListener {
-                if(activity is MembersActivity) {
-                    activity.memberAssignSuccess(user!!)
+                if(activity is MembersActivity && user != null) {
+                    activity.memberAssignSuccess(user)
                 } else if (activity is GroupsActivity){
                     activity.hideProgressDialog()
                     Toast.makeText(activity, "Group removed", Toast.LENGTH_SHORT).show()

@@ -1,8 +1,7 @@
 package com.example.trellocloneapp.activities
 
-import android.app.Activity
+import android.app.AlertDialog
 import android.app.Dialog
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -33,6 +32,7 @@ import java.net.URL
 class MembersActivity : BaseActivity() {
 
     private lateinit var mAssignedMemberList: ArrayList<User>
+    private lateinit var mAdapter: MembersListAdapter
     private var mBoardDetails: Board = Board()
     private var mGroup: Group = Group()
     private var binding: ActivityMembersBinding? = null
@@ -72,8 +72,62 @@ class MembersActivity : BaseActivity() {
             R.id.action_add_member ->{
                 dialogSearchMember()
             }
+            R.id.action_exit_member ->{
+                alertDialogForRemoveMember()
+            }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun alertDialogForRemoveMember() {
+        val user = mAssignedMemberList.find{it.id == getCurrentUserId()}!!
+        val position = mAssignedMemberList.indexOf(user)
+
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Alert")
+        builder.setIcon(android.R.drawable.ic_dialog_alert)
+        if(mAssignedMemberList.size != 1) {
+            builder.setMessage("Are you sure you want to exit?")
+            builder.setIcon(android.R.drawable.ic_dialog_alert)
+            builder.setPositiveButton("Yes") { dialogInterface, _ ->
+                dialogInterface.dismiss()
+                mAdapter.removeItem(position)
+                if(intent.hasExtra(Constants.GROUPS)) {
+                    mGroup.groupMembersId.removeAt(position)
+                    FirestoreClass().assignMemberToGroup(this, mGroup)
+                    setResult(RESULT_CANCELED)
+                } else {
+                    mBoardDetails.assignedTo.removeAt(position)
+                    FirestoreClass().assignMemberToBoard(this, mBoardDetails, user)
+                    setResult(RESULT_CANCELED)
+                }
+                finish()
+            }
+        } else {
+            if(intent.hasExtra(Constants.GROUPS)) {
+                builder.setMessage("Are you sure you want to delete ${mGroup.title} group?")
+            } else {
+                builder.setMessage("Are you sure you want to delete this board?")
+            }
+            builder.setIcon(android.R.drawable.ic_dialog_alert)
+            builder.setPositiveButton("Yes") { dialogInterface, _ ->
+                dialogInterface.dismiss()
+                if(intent.hasExtra(Constants.GROUPS)) {
+                    FirestoreClass().deleteGroup(this,mGroup.documentId)
+                    setResult(RESULT_CANCELED)
+                } else {
+                    FirestoreClass().deleteBoard(this,mBoardDetails.documentId)
+                    setResult(RESULT_CANCELED)
+                }
+                finish()
+            }
+        }
+        builder.setNegativeButton("No") { dialogInterface, _ ->
+            dialogInterface.dismiss()
+        }
+        val alertDialog: AlertDialog = builder.create()
+        alertDialog.setCancelable(false)
+        alertDialog.show()
     }
 
     private fun dialogSearchMember(){
@@ -132,6 +186,7 @@ class MembersActivity : BaseActivity() {
         hideProgressDialog()
 
         mAssignedMemberList = list
+        mAdapter = MembersListAdapter(this, mAssignedMemberList)
 
         binding?.rvMembersList?.layoutManager = LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false)
         binding?.rvMembersList?.setHasFixedSize(true)
