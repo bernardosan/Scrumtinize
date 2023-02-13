@@ -31,18 +31,18 @@ open class GroupListAdapter(private var list: ArrayList<Group>) :
             itemBinding.tvGroupName.text = model.title
 
 
-            itemBinding.llGroupItem.setOnLongClickListener {
+            itemBinding.flGroupItem.setOnLongClickListener {
                 it.isSelected = true
                 true
             }
 
             if(position == list.lastIndex || list.size == 1) {
                 itemBinding.llAddGroup.visibility = View.VISIBLE
-                itemBinding.llGroupItem.visibility = View.GONE
+                itemBinding.flGroupItem.visibility = View.GONE
 
             } else{
                 itemBinding.llAddGroup.visibility = View.GONE
-                itemBinding.llGroupItem.visibility = View.VISIBLE
+                itemBinding.flGroupItem.visibility = View.VISIBLE
             }
 
         }
@@ -69,13 +69,13 @@ open class GroupListAdapter(private var list: ArrayList<Group>) :
     override fun onBindViewHolder(holder: GroupViewHolder, position: Int) {
         holder.bindItem(position)
 
-        holder.itemBinding.llGroupItem.setOnClickListener {
+        holder.itemBinding.flGroupItem.setOnClickListener {
             if (onClickListener != null) {
                 onClickListener!!.onClick(position)
             }
         }
 
-        holder.itemBinding.llGroupItem.setOnLongClickListener {
+        holder.itemBinding.flGroupItem.setOnLongClickListener {
             if (onLongClickListener != null) {
                 onLongClickListener!!.onLongClick(position)
             }

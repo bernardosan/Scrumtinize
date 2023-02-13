@@ -8,23 +8,13 @@
     android:orientation="horizontal"
     android:gravity="center_vertical">
 
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="@dimen/board_image_size"
-            android:layout_height="@dimen/board_image_size"
-            android:progressTint="@color/white"
-            android:background="@drawable/shape_circular_backgroud"
-            android:backgroundTint="@color/colorAccent"
-            android:visibility="gone"/>
-
-        <LinearLayout
-            android:id="@+id/ll_group_item"
+        <FrameLayout
+            android:id="@+id/fl_group_item"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:background="@drawable/shape_btn_rounded"
             android:backgroundTint="@color/colorAccent"
-            android:visibility="gone"
             android:clickable="true"
             android:focusable="true"
             >
@@ -40,6 +30,7 @@
                 tools:text="Group Name"
 
                 />
+
             <!--
             <TextView
                 android:id="@+id/tv_create_by"
@@ -52,7 +43,7 @@
                 />
             -->
 
-        </LinearLayout>
+        </FrameLayout>
 
     <LinearLayout
         android:id="@+id/ll_add_group"
@@ -62,6 +53,7 @@
         android:background="@drawable/white_borded_shape_btn_rounded_ripple"
         android:clickable="true"
         android:focusable="true"
+        android:visibility="gone"
         >
 
         <TextView
@@ -72,7 +64,7 @@
             android:textStyle="bold"
             android:textSize="20sp"
             android:gravity="center"
-            android:text="Add Group"
+            android:text="@string/add_group"
 
             />
 

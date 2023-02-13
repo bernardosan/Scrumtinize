@@ -52,7 +52,7 @@
                     android:textColor="@color/primary_text_color"
                     android:textStyle="bold"
                     android:visibility="visible"
-                    tools:text="0"/>
+                    tools:text="0" />
 
             </LinearLayout>
 

@@ -301,7 +301,7 @@ class FirestoreClass {
             }
     }
 
-    fun getMemberDetails(activity: MembersActivity, email: String){
+    fun getMemberDetails(activity: Activity, email: String){
 
         mFireStore.collection(Constants.USERS)
             .whereEqualTo(Constants.EMAIL, email)
@@ -309,14 +309,27 @@ class FirestoreClass {
             .addOnSuccessListener {
                 if(it.documents.size > 0){
                     val user = it.documents[0].toObject(User::class.java)!!
-                    activity.memberDetails(user)
+                    if(activity is MembersActivity) {
+                        activity.memberDetails(user)
+                    } else if (activity is CreateGroupActivity){
+                        activity.memberDetails(user)
+                    }
                 } else {
-                    activity.hideProgressDialog()
-                    activity.showErrorSnackBar("No such member found")
+                    if(activity is MembersActivity){
+                        activity.hideProgressDialog()
+                        activity.showErrorSnackBar("No such member found")
+                    } else if(activity is CreateGroupActivity){
+                        activity.hideProgressDialog()
+                        activity.showErrorSnackBar("No such member found")
+                    }
                 }
             }
             .addOnFailureListener {
-                activity.hideProgressDialog()
+                if(activity is MembersActivity){
+                    activity.hideProgressDialog()
+                } else if(activity is CreateGroupActivity){
+                    activity.hideProgressDialog()
+                }
                 it.printStackTrace()
             }
 

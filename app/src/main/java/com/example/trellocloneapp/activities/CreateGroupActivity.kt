@@ -1,21 +1,29 @@
 package com.example.trellocloneapp.activities
 
 import android.Manifest
+import android.app.Dialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.view.View
+import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.example.trellocloneapp.R
+import com.example.trellocloneapp.adapters.CardMemberListItemsAdapter
 import com.example.trellocloneapp.databinding.ActivityCreateGroupBinding
 import com.example.trellocloneapp.firebase.FirestoreClass
 import com.example.trellocloneapp.models.Group
+import com.example.trellocloneapp.models.SelectedMembers
+import com.example.trellocloneapp.models.User
 import com.example.trellocloneapp.utils.Constants
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -26,6 +34,11 @@ class CreateGroupActivity : BaseActivity() {
     private var binding: ActivityCreateGroupBinding? = null
     private var mSelectedImageFileUri: Uri? = null
     private var mGroupImageURL: String = ""
+
+    private val mAssignedMembers = ArrayList<User>()
+    private val assignedMembersId = ArrayList<String>()
+    private lateinit var mAdapter: CardMemberListItemsAdapter
+    private val selectedMembersList = ArrayList<SelectedMembers> ()
 
 
     private val openGalleryLauncher: ActivityResultLauncher<Intent> = registerForActivityResult(
@@ -73,6 +86,7 @@ class CreateGroupActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding?.root)
         setupActionBar()
+        setupSelectedMembersList()
 
         binding?.toolbarAddGroup?.setNavigationOnClickListener {
             onBackPressed()
@@ -87,14 +101,74 @@ class CreateGroupActivity : BaseActivity() {
             if (mSelectedImageFileUri != null){
                 showProgressDialog(getString(R.string.please_wait))
                 uploadBoardImage()
-            } else{
+            } else if (binding?.etGroupName?.text?.isNotEmpty()!! && binding?.etGroupName?.text?.isNotBlank()!!){
                 showProgressDialog(getString(R.string.please_wait))
                 createGroup()
+            } else {
+                showErrorSnackBar(getString(R.string.enter_valid_group_name_error))
             }
 
         }
 
     }
+
+    private fun setupSelectedMembersList() {
+        /*
+        for (i in mAssignedMembers.indices) {
+            for (j in assignedMembersId) {
+                if (mAssignedMembers[i].id == j) {
+                    val selectedMembers = SelectedMembers(
+                        mAssignedMembers[i].id,
+                        mAssignedMembers[i].image
+                    )
+                    selectedMembersList.add(selectedMembers)
+                }
+            }
+        }*/
+
+        selectedMembersList.add(SelectedMembers(getCurrentUserId(), ""))
+        binding?.rvSelectedMembersList?.layoutManager = GridLayoutManager(this, 6)
+        mAdapter = CardMemberListItemsAdapter(this, selectedMembersList, true)
+        binding?.rvSelectedMembersList?.adapter = mAdapter
+        mAdapter.setOnClickListener(
+            object : CardMemberListItemsAdapter.OnClickListener {
+                override fun onClick(position: Int) {
+                    dialogSearchMember()
+                }
+            }
+        )
+    }
+
+    fun memberDetails(user: User){
+        hideProgressDialog()
+        mAssignedMembers.add(user)
+        selectedMembersList.add(0,SelectedMembers(user.id, user.image))
+        assignedMembersId.add(user.id)
+        mAdapter.notifyItemInserted(0)
+    }
+
+    private fun dialogSearchMember(){
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.dialog_search_member)
+        dialog.findViewById<TextView>(R.id.tv_add).setOnClickListener {
+            val email = dialog.findViewById<EditText>(R.id.et_email_search_member).text.toString().lowercase()
+            if(email.isNotEmpty() && !checkIfUserAlreadyAssigned(mAssignedMembers, email)){
+                dialog.dismiss()
+                showProgressDialog(resources.getString(R.string.please_wait))
+                FirestoreClass().getMemberDetails(this, email)
+            } else if ( checkIfUserAlreadyAssigned(mAssignedMembers, email)) {
+                showErrorSnackBar("Member already assigned!")
+            } else{
+                showErrorSnackBar("Please enter email address.")
+            }
+        }
+        dialog.findViewById<TextView>(R.id.tv_cancel).setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.show()
+
+    }
+
 
     private fun setupActionBar() {
         setSupportActionBar(binding?.toolbarAddGroup)
@@ -156,15 +230,14 @@ class CreateGroupActivity : BaseActivity() {
 
     private fun createGroup(){
 
-        val assignedUsersArrayList: ArrayList<String> = ArrayList()
-        assignedUsersArrayList.add(getCurrentUserId())
+        assignedMembersId.add(getCurrentUserId())
 
         val group = Group(
             "",
             binding?.etGroupName?.text.toString(),
             mGroupImageURL,
             getCurrentUserId(),
-            assignedUsersArrayList
+            assignedMembersId
         )
 
         FirestoreClass().createGroup(this, group)
@@ -174,5 +247,14 @@ class CreateGroupActivity : BaseActivity() {
         hideProgressDialog()
         setResult(RESULT_OK, intent.putExtra(Constants.GROUPS, group))
         finish()
+    }
+
+    private fun checkIfUserAlreadyAssigned(assignedto: ArrayList<User>, email: String): Boolean{
+        for(i in assignedto.indices){
+            if(assignedto[i].email.lowercase() == email.lowercase()){
+                return true
+            }
+        }
+        return false
     }
 }
