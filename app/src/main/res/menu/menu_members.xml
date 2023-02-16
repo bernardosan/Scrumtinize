@@ -3,8 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_members"
-        android:orderInCategory="100"
+        android:orderInCategory="1"
         android:title="@string/members"
+        app:showAsAction="never"
+        />
+    <item
+        android:id="@+id/action_groups"
+        android:orderInCategory="2"
+        android:title="@string/groups"
         app:showAsAction="never"
         />
 </menu>

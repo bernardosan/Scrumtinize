@@ -3,6 +3,8 @@ package com.example.trellocloneapp.activities
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
+import android.os.PersistableBundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
@@ -26,6 +28,7 @@ class TaskListActivity :BaseActivity() {
     private var mBoardDocumentId: String = ""
     private lateinit var mBoardDetails: Board
     lateinit var mAssignedMemberDetailList: ArrayList<User>
+    private lateinit var listState: Parcelable
 
     private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
@@ -43,6 +46,11 @@ class TaskListActivity :BaseActivity() {
         binding = ActivityTaskListBinding.inflate(layoutInflater)
         setContentView(binding?.root)
 
+        if(savedInstanceState?.get("listState") != null) {
+            listState = savedInstanceState.getParcelable("listState")!!
+            (binding?.rvTaskList?.layoutManager as LinearLayoutManager).onRestoreInstanceState(listState)
+        }
+
         if(intent.hasExtra(Constants.DOCUMENT_ID)) {
             mBoardDocumentId = intent.getStringExtra(Constants.DOCUMENT_ID)!!
         }
@@ -50,6 +58,11 @@ class TaskListActivity :BaseActivity() {
         showProgressDialog(resources.getString(R.string.please_wait))
         FirestoreClass().getBoardDetails(this, mBoardDocumentId)
 
+    }
+
+    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+        super.onSaveInstanceState(outState, outPersistentState)
+        outState.putParcelable("listState",  (binding?.rvTaskList?.layoutManager as LinearLayoutManager).onSaveInstanceState())
     }
 
     fun boardDetails(board: Board){
@@ -72,8 +85,8 @@ class TaskListActivity :BaseActivity() {
 
     fun createTaskList(taskListName: String){
         val task = Task(taskListName,FirestoreClass().getCurrentUserId())
-        mBoardDetails.taskList.add(0,task)
         mBoardDetails.taskList.removeAt(mBoardDetails.taskList.size - 1)
+        mBoardDetails.taskList.add(mBoardDetails.taskList.size,task)
 
         showProgressDialog(resources.getString(R.string.please_wait))
         FirestoreClass().addUpdateTaskList(this, mBoardDetails)
@@ -119,6 +132,11 @@ class TaskListActivity :BaseActivity() {
 
             R.id.action_members ->{
                 val intent = Intent(this, MembersActivity::class.java)
+                intent.putExtra(Constants.BOARD_DETAIL, mBoardDetails)
+                resultLauncher.launch(intent)
+            }
+            R.id.action_groups ->{
+                val intent = Intent(this, GroupsMembersActivity::class.java)
                 intent.putExtra(Constants.BOARD_DETAIL, mBoardDetails)
                 resultLauncher.launch(intent)
             }
@@ -180,22 +198,16 @@ class TaskListActivity :BaseActivity() {
         val addTaskList = Task(resources.getString(R.string.add_list))
         mBoardDetails.taskList.add(addTaskList)
 
-        val adapter = TaskListAdapter(this, mBoardDetails.taskList)
-        binding?.rvTaskList?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        binding?.rvTaskList?.setHasFixedSize(true)
+        val adapter = TaskListAdapter(this, mBoardDetails)
+        val linearLayoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        binding?.rvTaskList?.layoutManager = linearLayoutManager
+        binding?.rvTaskList?.setHasFixedSize(false)
+        binding?.rvTaskList?.isNestedScrollingEnabled = false
         binding?.rvTaskList?.adapter = adapter
+
+
         val itemTouchHelper = ItemTouchHelper(ItemMoveCallback(adapter = adapter as RecyclerView.Adapter<RecyclerView.ViewHolder>))
         itemTouchHelper.attachToRecyclerView(binding?.rvTaskList)
-    }
-
-    private fun countBoardWeight(): Int{
-        var weight = 0
-        for(i in mBoardDetails.taskList.indices){
-            for(j in mBoardDetails.taskList[i].cardList.indices){
-                weight += mBoardDetails.taskList[i].cardList[j].weight
-            }
-        }
-        return weight
     }
 
     private fun countListWeight(taskPosition: Int): Int{

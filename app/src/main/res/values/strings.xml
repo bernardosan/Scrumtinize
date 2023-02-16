@@ -82,5 +82,8 @@
     <string name="add_group">Add Group</string>
     <string name="group_name">Group Name</string>
     <string name="exit_group">Exit</string>
-    <string name="enter_valid_group_name_error">Enter a valid group name</string>
+    <string name="enter_valid_group_name_error">Enter a valid group name and key</string>
+    <string name="search_group">Search Group</string>
+    <string name="group_id">Group Id</string>
+    <string name="group_key">Group Key</string>
 </resources>

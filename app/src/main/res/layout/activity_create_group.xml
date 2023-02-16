@@ -41,7 +41,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="30dp"
-        android:layout_marginVertical="20dp"
+        android:layout_marginTop="20dp"
         android:textCursorDrawable="@null"
         android:visibility="visible">
 
@@ -55,7 +55,9 @@
             android:textCursorDrawable="@null"
             android:textIsSelectable="false" />
 
+
     </com.google.android.material.textfield.TextInputLayout>
+
 
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="match_parent"

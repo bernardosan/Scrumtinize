@@ -48,7 +48,9 @@
                     android:backgroundTint="@color/white"
                     android:hint="@string/e_mail"
                     android:inputType="textEmailAddress"
-                    android:textSize="@dimen/et_text_size" />
+                    android:textSize="@dimen/et_text_size"
+                    android:visibility="visible"/>
+
             </com.google.android.material.textfield.TextInputLayout>
 
             <LinearLayout

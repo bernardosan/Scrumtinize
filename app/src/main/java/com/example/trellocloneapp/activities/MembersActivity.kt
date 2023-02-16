@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
@@ -44,13 +45,19 @@ class MembersActivity : BaseActivity() {
         setContentView(binding?.root)
 
         if(intent.hasExtra(Constants.BOARD_DETAIL)){
+            binding?.llGroupStats?.visibility = View.GONE
             mBoardDetails = intent.getParcelableExtra(Constants.BOARD_DETAIL)!!
             showProgressDialog(resources.getString(R.string.please_wait))
             FirestoreClass().getAssignedMembersList(this,mBoardDetails.assignedTo)
         } else if(intent.hasExtra(Constants.GROUPS)){
             mGroup = intent.getParcelableExtra(Constants.GROUPS)!!
+            binding?.llGroupStats?.visibility = View.VISIBLE
+            binding?.etGroupId?.setText(mGroup.documentId)
+            binding?.etGroupId?.keyListener = null
+            binding?.etGroupId?.setTextIsSelectable(true)
             showProgressDialog(resources.getString(R.string.please_wait))
             FirestoreClass().getAssignedMembersList(this,mGroup.groupMembersId)
+
         }
 
         setupActionBar()
@@ -169,6 +176,8 @@ class MembersActivity : BaseActivity() {
             mGroup.groupMembersId.add(user.id)
             binding?.rvMembersList?.adapter?.notifyItemInserted(binding?.rvMembersList?.adapter!!.itemCount)
             FirestoreClass().assignMemberToGroup(this, mGroup, user)
+            user.groups.add(mGroup.documentId)
+            FirestoreClass().updateUserGroupList(user)
         }
     }
 

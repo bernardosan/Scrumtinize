@@ -30,9 +30,6 @@ import com.facebook.login.LoginManager
 import java.util.*
 import android.content.pm.PackageManager
 
-import android.content.pm.PackageInfo
-import android.util.Base64.DEFAULT
-import android.util.Base64.encodeToString
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 

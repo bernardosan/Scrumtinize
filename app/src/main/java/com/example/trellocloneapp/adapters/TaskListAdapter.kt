@@ -1,8 +1,8 @@
 package com.example.trellocloneapp.adapters
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.AlertDialog
-import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.view.LayoutInflater
@@ -13,33 +13,32 @@ import android.widget.Toast
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.trellocloneapp.R
 import com.example.trellocloneapp.activities.TaskListActivity
 import com.example.trellocloneapp.databinding.ItemTaskBinding
+import com.example.trellocloneapp.firebase.FirestoreClass
+import com.example.trellocloneapp.models.Board
 import com.example.trellocloneapp.models.Task
 import java.util.*
-import kotlin.collections.ArrayList
-import com.example.trellocloneapp.utils.ItemMoveCallback
 
 
-open class TaskListAdapter(private val context: Context, private var list: ArrayList<Task>) :
+open class TaskListAdapter(private val activity: Activity, private var board: Board):
     RecyclerView.Adapter<TaskListAdapter.TaskViewHolder>(){
 
     private var mPositionDraggedFrom = -1
     private var mPositionDraggedTo = -1
+    val list = board.taskList
 
     inner class TaskViewHolder (val itemBinding: ItemTaskBinding) : RecyclerView.ViewHolder(itemBinding.root){
-
-        val mList = list
-
 
 
         @SuppressLint("SetTextI18n")
         fun bindItem(position: Int) {
             val model = list[position]
 
-            itemBinding.rvCardList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            itemBinding.rvCardList.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
             itemBinding.rvCardList.setHasFixedSize(true)
-            itemBinding.rvCardList.adapter = CardListAdapter(context, model.cardList)
+            itemBinding.rvCardList.adapter = CardListAdapter(activity, model.cardList)
 
             if(list.size > 0){
                 itemBinding.rvCardList.visibility = View.VISIBLE
@@ -78,14 +77,14 @@ open class TaskListAdapter(private val context: Context, private var list: Array
             itemBinding.ibDoneListName.setOnClickListener{
                 val listName = itemBinding.etTaskListName.text.toString()
                 if(listName.isNotEmpty()){
-                    if(context is TaskListActivity) {
-                        context.createTaskList(listName)
+                    if(activity is TaskListActivity) {
+                        activity.createTaskList(listName)
                         itemBinding.cvAddTaskListName.visibility = View.GONE
                         itemBinding.llTitleView.visibility = View.VISIBLE
 
                     }
                 } else {
-                    Toast.makeText(context, "Please enter list name.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, "Please enter list name.", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -106,11 +105,11 @@ open class TaskListAdapter(private val context: Context, private var list: Array
 
                 val listName = itemBinding.etEditTaskListName.text.toString()
                 if(listName.isNotEmpty()){
-                    if(context is TaskListActivity){
-                        context.updateTaskList(position,listName,model)
+                    if(activity is TaskListActivity){
+                        activity.updateTaskList(position,listName,model)
                     }
                 } else {
-                    Toast.makeText(context, "Please enter a list name.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, "Please enter a list name.", Toast.LENGTH_SHORT).show()
                 }
                 itemBinding.llTitleView.visibility = View.GONE
                 itemBinding.cvEditTaskListName.visibility = View.VISIBLE
@@ -130,11 +129,11 @@ open class TaskListAdapter(private val context: Context, private var list: Array
             itemBinding.ibDoneCardName.setOnClickListener {
                 val cardName = itemBinding.etCardName.text.toString()
                 if(cardName.isNotEmpty()){
-                    if(context is TaskListActivity){
-                        context.createCard(cardName, position)
+                    if(activity is TaskListActivity){
+                        activity.createCard(cardName, position)
                     }
                 } else {
-                    Toast.makeText(context, "Please enter a card name.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, "Please enter a card name.", Toast.LENGTH_SHORT).show()
                 }
                 itemBinding.tvAddCard.visibility = View.VISIBLE
                 itemBinding.cvAddCard.visibility = View.GONE
@@ -169,13 +168,13 @@ open class TaskListAdapter(private val context: Context, private var list: Array
     override fun onBindViewHolder(holder: TaskViewHolder, @SuppressLint("RecyclerView") taskPosition: Int) {
         holder.bindItem(taskPosition)
 
-        val adapter = CardListAdapter(context, list[holder.adapterPosition].cardList)
+        val adapter = CardListAdapter(activity, list[holder.adapterPosition].cardList)
         holder.itemBinding.rvCardList.adapter = adapter
         adapter.setOnClickListener(
             object:CardListAdapter.OnClickListener{
                 override fun onClick(position: Int) {
-                    if(context is TaskListActivity){
-                        context.cardDetails(holder.adapterPosition, position)
+                    if(activity is TaskListActivity){
+                        activity.cardDetails(holder.adapterPosition, position)
                     }
                 }
             }
@@ -236,7 +235,7 @@ open class TaskListAdapter(private val context: Context, private var list: Array
 
                 if (mPositionDraggedFrom != -1 && mPositionDraggedTo != -1 && mPositionDraggedFrom != mPositionDraggedTo) {
 
-                    (context as TaskListActivity).updateCard(
+                    (activity as TaskListActivity).updateCard(
                         holder.adapterPosition,
                         list[holder.adapterPosition].cardList
                     )
@@ -260,15 +259,15 @@ open class TaskListAdapter(private val context: Context, private var list: Array
     }
 
     fun alertDialogForDeleteList(position: Int, title: String){
-        val builder = AlertDialog.Builder(context)
+        val builder = AlertDialog.Builder(activity)
         builder.setTitle("Alert")
         builder.setMessage("Are you sure you want to delete $title list?")
         builder.setIcon(android.R.drawable.ic_dialog_alert)
         builder.setPositiveButton("Yes"){
                 dialogInterface, _ -> dialogInterface.dismiss()
 
-            if(context is TaskListActivity){
-                context.deleteTaskList(position)
+            if(activity is TaskListActivity){
+                activity.deleteTaskList(position)
             }
         }
         builder.setNegativeButton("No"){
@@ -298,6 +297,12 @@ open class TaskListAdapter(private val context: Context, private var list: Array
             Collections.swap(list, fromPosition, toPosition)
             notifyItemMoved(fromPosition, toPosition)
         }
+    }
+
+    fun itemMoved(){
+        (activity as TaskListActivity).showProgressDialog(activity.resources.getString(R.string.please_wait))
+        list.removeAt(list.lastIndex)
+        FirestoreClass().addUpdateTaskList(activity, board)
     }
 
 

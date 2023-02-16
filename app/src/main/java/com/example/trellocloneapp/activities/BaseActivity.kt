@@ -51,6 +51,7 @@ abstract class BaseActivity : AppCompatActivity() {
         return FirebaseAuth.getInstance().currentUser!!.uid
     }
 
+
     fun signOutUser(){
         FirebaseAuth.getInstance().signOut()
     }

@@ -245,6 +245,10 @@ class CreateGroupActivity : BaseActivity() {
 
     fun groupCreatedSuccessfully(group: Group){
         hideProgressDialog()
+        mAssignedMembers.forEach {
+            it.groups.add(group.documentId)
+            FirestoreClass().updateUserGroupList(it)
+        }
         setResult(RESULT_OK, intent.putExtra(Constants.GROUPS, group))
         finish()
     }

@@ -11,6 +11,7 @@ data class User(
     val description: String = "",
     val mobile: Long = 0,
     val fcmToken: String = "",
+    val groups: ArrayList<String> = ArrayList(),
     var selected: Boolean = false
 ): Parcelable {
     constructor(parcel: Parcel): this(
@@ -20,7 +21,8 @@ data class User(
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readLong(),
-        parcel.readString()!!
+        parcel.readString()!!,
+        parcel.createStringArrayList()!!
     ){
 
     }
@@ -33,6 +35,7 @@ data class User(
         parcel.writeString(description)
         parcel.writeLong(mobile)
         parcel.writeString(fcmToken)
+        parcel.writeStringList(groups)
     }
 
     override fun describeContents(): Int {
@@ -49,3 +52,5 @@ data class User(
         }
     }
 }
+
+

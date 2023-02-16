@@ -39,7 +39,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private var binding: ActivityMainBinding? = null
-    private var mUserName: String? = null
+    private var mUser: User? = null
     private lateinit var mSharedPreferences: SharedPreferences
     private lateinit var mAdapter: BoardAdapter
 
@@ -86,7 +86,7 @@ open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelecte
 
         binding?.fabAddBoard?.setOnClickListener {
             val intent = Intent(this, CreateBoardActivity::class.java)
-            intent.putExtra(Constants.NAME, mUserName)
+            intent.putExtra(Constants.NAME, mUser?.name)
             resultLauncher.launch(intent)
         }
 
@@ -201,7 +201,7 @@ open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelecte
 
     fun updateNavigationUserDetails(user: User, readBoardsList: Boolean) {
 
-        mUserName = user.name
+        mUser = user
 
         val tvUserName = findViewById<TextView>(R.id.tv_username)
         val tvUserDescription = findViewById<TextView>(R.id.tv_user_description)

@@ -9,10 +9,12 @@ import com.example.trellocloneapp.models.Group
 import com.example.trellocloneapp.models.User
 import com.example.trellocloneapp.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestoreSettings
+import com.google.firebase.firestore.model.Document
 import com.google.firebase.ktx.Firebase
 
 class FirestoreClass {
@@ -69,6 +71,28 @@ class FirestoreClass {
             }
     }
 
+    fun getBoardsFromGroups(activity: MainActivity, user: User){
+        mFireStore.collection(Constants.BOARDS)
+            .whereArrayContainsAny(Constants.GROUPS, user.groups)
+            .get()
+            .addOnSuccessListener {
+                    document->
+                Log.i(activity.javaClass.simpleName,  document.documents.toString())
+                val boardList: ArrayList<Board> = ArrayList()
+                for(i in document.documents){
+                    val board = i.toObject(Board::class.java)!!
+                    board.documentId = i.id
+                    boardList.add(board)
+                }
+                activity.hideProgressDialog()
+                activity.boardsListToUI(boardList)
+            }
+            .addOnFailureListener {
+                activity.hideProgressDialog()
+                Log.e(activity.javaClass.simpleName,"Error while creating the board",it)
+            }
+    }
+
     /* fun getUserNameById(id: String): String{
         var username = "username"
         mFireStore
@@ -97,19 +121,37 @@ class FirestoreClass {
             }
     }
 
-    fun updateBoard(activity: CreateBoardActivity, boardInfo: Board){
+    fun updateBoard(activity: Activity, boardInfo: Board){
 
         val boardHashMap = HashMap<String, Any>()
-        boardHashMap[Constants.NAME] = boardInfo.name
-        boardHashMap[Constants.IMAGE] = boardInfo.image
+        when (activity) {
+            is CreateBoardActivity -> {
+                boardHashMap[Constants.NAME] = boardInfo.name
+                boardHashMap[Constants.IMAGE] = boardInfo.image
+            }
+            is GroupsMembersActivity -> {
+                boardHashMap[Constants.GROUPS_ID] = boardInfo.groupsId
+            }
+        }
 
         mFireStore.collection(Constants.BOARDS)
             .document(boardInfo.documentId)
             .update(boardHashMap)
             .addOnSuccessListener {
-                activity.boardCreatedSuccessfully()
+                when (activity) {
+                    is CreateBoardActivity -> {
+                        activity.boardCreatedSuccessfully()
+                    }
+                    is GroupsMembersActivity -> {
+                        Toast.makeText(activity.applicationContext, "Group added to board!", Toast.LENGTH_SHORT).show()
+                        activity.hideProgressDialog()
+                        activity.callForGroupList()
+                    }
+                }
+
             }
             .addOnFailureListener {
+                it.printStackTrace()
                 Log.e(activity.javaClass.simpleName,"Error writing document")
             }
     }
@@ -360,7 +402,7 @@ class FirestoreClass {
     fun getGroupsAssigned(activity: GroupsActivity){
         val groupList = ArrayList<Group>()
 
-        mFireStore.collection(Constants.GROUPS)
+        mFireStore.collection(Constants.GROUP)
             .whereArrayContains(Constants.GROUPS_MEMBERS_ID,getCurrentUserId())
             .get()
             .addOnSuccessListener {
@@ -391,9 +433,49 @@ class FirestoreClass {
 
     }
 
+    fun getGroupsAssignedToBoard(activity: GroupsMembersActivity, board: Board) {
+        mFireStore.collection(Constants.GROUP)
+            .whereIn(Constants.DOCUMENT_ID, board.groupsId)
+            .get()
+            .addOnSuccessListener {
+                val groupList = ArrayList<Group>()
+
+                Toast.makeText(activity, "GROUPS FOUND:" + it.documents.size, Toast.LENGTH_SHORT).show()
+                for(i in it.documents){
+                    val group = i.toObject(Group::class.java)!!
+                    groupList.add(group)
+                }
+
+                activity.getAssignedGroupList(groupList)
+            }
+            .addOnFailureListener {
+                it.printStackTrace()
+                activity.hideProgressDialog()
+                Toast.makeText(activity, "Error when loading groups.", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    fun addGroupToBoard(activity: GroupsMembersActivity, id: String){
+        mFireStore.collection(Constants.GROUP)
+            .document(id)
+            .get()
+            .addOnSuccessListener {
+                val group = it.toObject(Group::class.java)!!
+                activity.addGroupSuccessfully(group)
+            }
+            .addOnFailureListener {
+                activity.hideProgressDialog()
+                it.printStackTrace()
+                Toast.makeText(activity, "Failed to delete group.", Toast.LENGTH_SHORT).show()
+            }
+    }
+
     fun createGroup(activity: CreateGroupActivity, group: Group){
-        mFireStore.collection(Constants.GROUPS)
-            .document()
+
+        group.documentId = mFireStore.collection(Constants.GROUP).document().id
+
+        mFireStore.collection(Constants.GROUP)
+            .document(group.documentId)
             .set(group, SetOptions.merge())
             .addOnSuccessListener {
                 activity.groupCreatedSuccessfully(group)
@@ -404,7 +486,7 @@ class FirestoreClass {
     }
 
     fun deleteGroup(activity: Activity, groupId: String){
-        mFireStore.collection(Constants.GROUPS)
+        mFireStore.collection(Constants.GROUP)
             .document(groupId)
             .delete()
             .addOnSuccessListener {
@@ -422,6 +504,17 @@ class FirestoreClass {
             }
     }
 
+    fun updateUserGroupList(user: User){
+        val userHashMap = HashMap<String, Any>()
+        userHashMap[Constants.GROUPS] = user.groups
+        mFireStore.collection(Constants.USERS)
+            .document(user.id)
+            .update(userHashMap)
+            .addOnFailureListener {
+                it.printStackTrace()
+            }
+    }
+
 
     fun updateGroup(activity: CreateGroupActivity, group: Group){
         val groupHashMap = HashMap<String, Any>()
@@ -430,7 +523,7 @@ class FirestoreClass {
         groupHashMap[Constants.IMAGE] = group.image
         groupHashMap[Constants.GROUPS_MEMBERS_ID] = group.image
 
-        mFireStore.collection(Constants.GROUPS)
+        mFireStore.collection(Constants.GROUP)
             .document(group.documentId)
             .update(groupHashMap)
             .addOnSuccessListener {
@@ -445,7 +538,7 @@ class FirestoreClass {
         val assignedToHashMap = HashMap<String, Any>()
         assignedToHashMap[Constants.GROUPS_MEMBERS_ID] = group.groupMembersId
 
-        mFireStore.collection(Constants.GROUPS)
+        mFireStore.collection(Constants.GROUP)
             .document(group.documentId)
             .update(assignedToHashMap)
             .addOnSuccessListener {
