@@ -27,18 +27,27 @@
         android:id="@+id/ll_group_stats"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingHorizontal="50dp"
+        android:paddingVertical="10dp"
         android:background="@color/bgColor"
         android:orientation="vertical"
         >
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/group_id"
+            android:textColor="@color/secondary_text_color"
+            android:textSize="@dimen/card_details_label_text_size" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_group_id"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="50dp"
-        android:layout_marginVertical="20dp"
         android:textCursorDrawable="@null"
+        app:endIconMode="custom"
+        app:endIconDrawable="@drawable/ic_content_copy_24"
         android:visibility="visible">
 
         <androidx.appcompat.widget.AppCompatEditText
@@ -62,9 +71,10 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_members_list"
+        android:paddingTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingHorizontal="@dimen/members_content_padding"/>
+        android:paddingHorizontal="@dimen/members_content_padding" />
 
 
 </LinearLayout>

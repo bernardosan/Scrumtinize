@@ -35,7 +35,7 @@ class ItemMoveCallback(private val adapter:Adapter<RecyclerView.ViewHolder>) : I
         val fromPosition = viewHolder.adapterPosition
         val toPosition = target.adapterPosition
 
-        if(adapter is TaskListAdapter) {
+        if(adapter is TaskListAdapter && toPosition < adapter.itemCount-1) {
             adapter.onItemMove(fromPosition, toPosition)
             adapter.createViewHolder(recyclerView, 0)
         } else if (adapter is GroupListAdapter){

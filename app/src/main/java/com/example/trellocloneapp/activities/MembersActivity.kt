@@ -1,5 +1,6 @@
 package com.example.trellocloneapp.activities
 
+import android.R.attr
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
@@ -29,6 +30,13 @@ import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.SocketTimeoutException
 import java.net.URL
+import android.R.attr.label
+
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.widget.Toast
+
 
 class MembersActivity : BaseActivity() {
 
@@ -52,9 +60,19 @@ class MembersActivity : BaseActivity() {
         } else if(intent.hasExtra(Constants.GROUPS)){
             mGroup = intent.getParcelableExtra(Constants.GROUPS)!!
             binding?.llGroupStats?.visibility = View.VISIBLE
+
             binding?.etGroupId?.setText(mGroup.documentId)
             binding?.etGroupId?.keyListener = null
             binding?.etGroupId?.setTextIsSelectable(true)
+
+            binding?.tilGroupId?.setEndIconOnClickListener {
+                val clipboard: ClipboardManager =
+                    getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText(label.toString(), binding?.etGroupId?.text.toString())
+                clipboard.setPrimaryClip(clip)
+                Toast.makeText(this, "Group ID copied to clipboard!", Toast.LENGTH_SHORT).show()
+            }
+
             showProgressDialog(resources.getString(R.string.please_wait))
             FirestoreClass().getAssignedMembersList(this,mGroup.groupMembersId)
 
