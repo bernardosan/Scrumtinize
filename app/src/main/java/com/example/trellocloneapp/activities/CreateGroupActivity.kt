@@ -38,6 +38,7 @@ class CreateGroupActivity : BaseActivity() {
 
     private val mAssignedMembers = ArrayList<User>()
     private val assignedMembersId = ArrayList<String>()
+    private val assignedMembersImage = ArrayList<String>()
     private lateinit var mAdapter: CardMemberListItemsAdapter
     private val selectedMembersList = ArrayList<SelectedMembers> ()
 
@@ -150,6 +151,7 @@ class CreateGroupActivity : BaseActivity() {
         mAssignedMembers.add(user)
         selectedMembersList.add(0,SelectedMembers(user.id, user.image))
         assignedMembersId.add(user.id)
+        assignedMembersImage.add(user.image)
         mAdapter.notifyItemInserted(0)
     }
 
@@ -237,6 +239,7 @@ class CreateGroupActivity : BaseActivity() {
     private fun createGroup(){
 
         assignedMembersId.add(mUser!!.id)
+        assignedMembersImage.add(mUser!!.image)
 
 
         val group = Group(
@@ -246,7 +249,7 @@ class CreateGroupActivity : BaseActivity() {
             getCurrentUserId(),
             ArrayList(),
             assignedMembersId,
-            arrayListOf(mUser!!.image)
+            assignedMembersImage
         )
 
         FirestoreClass().createGroup(this, group)
