@@ -2,7 +2,7 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/cv_group_member"
     android:layout_width="match_parent"
-    android:layout_height="110dp"
+    android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginHorizontal="8dp"
@@ -15,6 +15,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/shape_btn_rounded_ripple"
         android:orientation="vertical">
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -30,15 +31,28 @@
         tools:text="Group Name" />
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_group_members"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:layout_marginHorizontal="15dp"
-            tools:listitem="@layout/item_selected_member"
+            android:layout_marginVertical="8dp"
             tools:itemCount="1"
-            />
+            tools:listitem="@layout/item_selected_member" />
+
+        <TextView
+            android:id="@+id/tv_group_size"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginTop="8dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="20dp"
+            android:text="@string/group_members_size"
+            android:textColor="@color/secondary_text_color"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:visibility="gone"/>
 
     </LinearLayout>
-
 
 </androidx.cardview.widget.CardView>

@@ -27,8 +27,9 @@ object Constants {
     const val GROUPS: String = "groups"
     const val GROUP: String = "group"
     const val GROUPS_ID: String = "groupsId"
-    const val GROUPS_MEMBERS_ID: String = "groupMembersId"
-    const val KEY: String = "key"
+    const val ASSIGNED_BOARDS: String = "assignedBoards"
+    const val GROUP_MEMBERS_ID: String = "groupMembersId"
+    const val GROUP_MEMBERS_IMAGE: String = "groupMembersImage"
 
     const val BOARD_DETAIL: String = "board_detail"
     const val ID: String = "id"

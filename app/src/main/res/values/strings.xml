@@ -86,4 +86,5 @@
     <string name="search_group">Search Group</string>
     <string name="group_id">Group Id</string>
     <string name="group_key">Group Key</string>
+    <string name="group_members_size">Group Size</string>
 </resources>

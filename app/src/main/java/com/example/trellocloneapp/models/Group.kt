@@ -8,23 +8,28 @@ data class Group(
     var title: String = "",
     val image: String = "",
     val createdBy: String = "",
-    var groupMembersId: ArrayList<String> = ArrayList()
+    val assignedBoards: ArrayList<String> = ArrayList(),
+    var groupMembersId: ArrayList<String> = ArrayList(),
+    var groupMembersImage: ArrayList<String> = ArrayList()
 ): Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
+        parcel.createStringArrayList()!!,
+        parcel.createStringArrayList()!!,
         parcel.createStringArrayList()!!
-    ) {
-    }
+    )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(documentId)
         parcel.writeString(title)
         parcel.writeString(image)
         parcel.writeString(createdBy)
+        parcel.writeStringList(assignedBoards)
         parcel.writeStringList(groupMembersId)
+        parcel.writeStringList(groupMembersImage)
     }
 
     override fun describeContents(): Int {

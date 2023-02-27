@@ -4,15 +4,12 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.widget.AppCompatEditText
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.trellocloneapp.R
 import com.example.trellocloneapp.adapters.GroupMembersListAdapter
@@ -28,7 +25,7 @@ class GroupsMembersActivity : BaseActivity() {
 
     private var mAssignedGroupList: ArrayList<Group> = ArrayList()
     private var binding: ActivityGroupMembersBinding? = null
-    private lateinit var mAdapter: GroupMembersListAdapter
+    private var mAdapter: GroupMembersListAdapter? = null
     private lateinit var mBoardDetails: Board
 
     private var resultLauncher = registerForActivityResult(
@@ -97,13 +94,13 @@ class GroupsMembersActivity : BaseActivity() {
     fun setupGroupRecyclerView(){
 
         Toast.makeText(this, "groups" + mAssignedGroupList.size.toString(), Toast.LENGTH_SHORT).show()
-        mAdapter = GroupMembersListAdapter(mAssignedGroupList)
+        mAdapter = GroupMembersListAdapter(this, mAssignedGroupList)
         binding?.rvGroupsList?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding?.rvGroupsList?.adapter = mAdapter
         binding?.rvGroupsList?.setHasFixedSize(true)
 
 
-        mAdapter.setOnClickListener(
+        mAdapter!!.setOnClickListener(
             object:GroupMembersListAdapter.OnClickListener{
                 override fun onClick(position: Int) {
                     startMembersActivity(mAssignedGroupList[position])
@@ -121,12 +118,12 @@ class GroupsMembersActivity : BaseActivity() {
         dialog.setContentView(R.layout.dialog_search_group)
         dialog.findViewById<TextView>(R.id.tv_add).setOnClickListener {
             val id = dialog.findViewById<EditText>(R.id.et_email_search_group).text.toString()
-            if(id.isNotEmpty() && !checkIfGroupAlreadyAssigned(mAssignedGroupList, id)){
+            val isGroupAlreadyAssigned = checkIfGroupAlreadyAssigned(mAssignedGroupList,id)
+            if(id.isNotEmpty() && !isGroupAlreadyAssigned){
                 dialog.dismiss()
                 showProgressDialog(resources.getString(R.string.please_wait))
-                mBoardDetails.groupsId.add(id)
-                FirestoreClass().addGroupToBoard(this, id)
-            } else if ( checkIfGroupAlreadyAssigned(mAssignedGroupList, id)) {
+                FirestoreClass().getGroup(this, id)
+            } else if (isGroupAlreadyAssigned) {
                 dialog.dismiss()
                 showErrorSnackBar("Group already assigned!")
             } else{
@@ -141,11 +138,16 @@ class GroupsMembersActivity : BaseActivity() {
 
     }
 
+    fun addGroup(group: Group){
+        mBoardDetails.groupsId.add(group.documentId)
+        group.assignedBoards.add(mBoardDetails.documentId)
+        FirestoreClass().updateBoard(this, mBoardDetails, group)
+    }
+
     fun addGroupSuccessfully(group: Group){
         hideProgressDialog()
-        mAssignedGroupList.add(0,group)
-        mBoardDetails.groupsId.add(group.documentId)
-        mAdapter.notifyItemInserted(0)
+        mAssignedGroupList.add(group)
+        mAdapter?.notifyItemInserted(mAssignedGroupList.size-1)
     }
 
     private fun startMembersActivity(group: Group){

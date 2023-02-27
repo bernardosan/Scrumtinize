@@ -1,6 +1,5 @@
 package com.example.trellocloneapp.activities
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
@@ -35,7 +34,7 @@ class TaskListActivity :BaseActivity() {
             // val data: Intent? = result.data
             showProgressDialog(resources.getString(R.string.please_wait))
             FirestoreClass().getBoardDetails(this, mBoardDetails.documentId)
-        } else if(result.resultCode == RESULT_CANCELED){
+        } else if(result.resultCode == RESULT_FIRST_USER){
             finish()
         }
     }

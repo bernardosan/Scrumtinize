@@ -22,12 +22,12 @@ data class SelectedMembers(
         return 0
     }
 
-    companion object CREATOR : Parcelable.Creator<Task> {
-        override fun createFromParcel(parcel: Parcel): Task {
-            return Task(parcel)
+    companion object CREATOR : Parcelable.Creator<SelectedMembers> {
+        override fun createFromParcel(parcel: Parcel): SelectedMembers {
+            return SelectedMembers(parcel)
         }
 
-        override fun newArray(size: Int): Array<Task?> {
+        override fun newArray(size: Int): Array<SelectedMembers?> {
             return arrayOfNulls(size)
         }
     }

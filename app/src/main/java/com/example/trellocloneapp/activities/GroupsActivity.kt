@@ -1,7 +1,6 @@
 package com.example.trellocloneapp.activities
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
@@ -18,6 +17,7 @@ import com.example.trellocloneapp.adapters.GroupListAdapter
 import com.example.trellocloneapp.databinding.ActivityGroupsBinding
 import com.example.trellocloneapp.firebase.FirestoreClass
 import com.example.trellocloneapp.models.Group
+import com.example.trellocloneapp.models.User
 import com.example.trellocloneapp.utils.Constants
 import com.example.trellocloneapp.utils.ItemMoveCallback
 
@@ -27,6 +27,7 @@ class GroupsActivity : BaseActivity() {
     private var mAssignedGroupList: ArrayList<Group> = ArrayList()
     private var binding: ActivityGroupsBinding? = null
     private lateinit var mAdapter: GroupListAdapter
+    private var mUser: User? = null
 
     private var resultLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -39,7 +40,7 @@ class GroupsActivity : BaseActivity() {
                     group.groupMembersId
             }
             callForGroupList()
-        } else if(result.resultCode == RESULT_CANCELED) {
+        } else if(result.resultCode == RESULT_FIRST_USER){
             callForGroupList()
         }
     }
@@ -52,6 +53,10 @@ class GroupsActivity : BaseActivity() {
         setContentView(binding?.root)
         setupActionBar()
         callForGroupList()
+
+        if(intent.hasExtra(Constants.USERS)){
+            mUser = intent.getParcelableExtra(Constants.USERS)!!
+        }
 
         binding?.toolbarGroups?.setNavigationOnClickListener {
             onBackPressed()
@@ -140,7 +145,9 @@ class GroupsActivity : BaseActivity() {
     }
 
     private fun startCreateGroupActivity(){
-        resultLauncher.launch(Intent(this@GroupsActivity, CreateGroupActivity::class.java))
+        val intent = Intent(this, CreateGroupActivity::class.java)
+        intent.putExtra(Constants.USERS, mUser)
+        resultLauncher.launch(intent)
     }
 
     fun getAssignedGroupList(groupList: ArrayList<Group>){

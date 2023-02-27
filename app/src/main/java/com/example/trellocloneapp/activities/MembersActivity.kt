@@ -1,6 +1,5 @@
 package com.example.trellocloneapp.activities
 
-import android.R.attr
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
@@ -36,6 +35,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.widget.Toast
+import com.example.trellocloneapp.models.SelectedMembers
 
 
 class MembersActivity : BaseActivity() {
@@ -75,7 +75,6 @@ class MembersActivity : BaseActivity() {
 
             showProgressDialog(resources.getString(R.string.please_wait))
             FirestoreClass().getAssignedMembersList(this,mGroup.groupMembersId)
-
         }
 
         setupActionBar()
@@ -119,12 +118,13 @@ class MembersActivity : BaseActivity() {
                 mAdapter.removeItem(position)
                 if(intent.hasExtra(Constants.GROUPS)) {
                     mGroup.groupMembersId.removeAt(position)
+                    mGroup.groupMembersImage.removeAt(position)
                     FirestoreClass().assignMemberToGroup(this, mGroup)
-                    setResult(RESULT_CANCELED)
+                    setResult(RESULT_FIRST_USER)
                 } else {
                     mBoardDetails.assignedTo.removeAt(position)
                     FirestoreClass().assignMemberToBoard(this, mBoardDetails, user)
-                    setResult(RESULT_CANCELED)
+                    setResult(RESULT_FIRST_USER)
                 }
                 finish()
             }
@@ -139,10 +139,10 @@ class MembersActivity : BaseActivity() {
                 dialogInterface.dismiss()
                 if(intent.hasExtra(Constants.GROUPS)) {
                     FirestoreClass().deleteGroup(this,mGroup.documentId)
-                    setResult(RESULT_CANCELED)
+                    setResult(RESULT_FIRST_USER)
                 } else {
                     FirestoreClass().deleteBoard(this,mBoardDetails.documentId)
-                    setResult(RESULT_CANCELED)
+                    setResult(RESULT_FIRST_USER)
                 }
                 finish()
             }
@@ -192,6 +192,7 @@ class MembersActivity : BaseActivity() {
             FirestoreClass().assignMemberToBoard(this, mBoardDetails, user)
         } else {
             mGroup.groupMembersId.add(user.id)
+            mGroup.groupMembersImage.add(user.image)
             binding?.rvMembersList?.adapter?.notifyItemInserted(binding?.rvMembersList?.adapter!!.itemCount)
             FirestoreClass().assignMemberToGroup(this, mGroup, user)
             user.groups.add(mGroup.documentId)

@@ -185,7 +185,8 @@ open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelecte
 
             R.id.nav_groups ->{
                 val intent = Intent(this, GroupsActivity::class.java)
-                startActivity(intent)
+                intent.putExtra(Constants.USERS, mUser!!)
+                resultLauncher.launch(intent)
             }
 
             R.id.nav_about ->{

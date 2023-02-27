@@ -1,19 +1,22 @@
 package com.example.trellocloneapp.adapters
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.trellocloneapp.databinding.ItemGroupBinding
+import com.example.trellocloneapp.R
 import com.example.trellocloneapp.databinding.ItemMemberGroupBinding
 import com.example.trellocloneapp.models.Group
+import com.example.trellocloneapp.models.SelectedMembers
 import com.example.trellocloneapp.utils.ItemMoveCallback
 import java.util.*
 import kotlin.collections.ArrayList
 
-class GroupMembersListAdapter(private var list: ArrayList<Group>) :
+class GroupMembersListAdapter(private val context: Context, private var list: ArrayList<Group>) :
     RecyclerView.Adapter<GroupMembersListAdapter.GroupViewHolder>(), ItemMoveCallback.ItemTouchHelperAdapter {
 
     private var onClickListener: OnClickListener? = null
@@ -28,6 +31,30 @@ class GroupMembersListAdapter(private var list: ArrayList<Group>) :
             val model = list[position]
 
             itemBinding.tvGroupName.text = model.title
+
+            if(model.groupMembersId.size < 13 && model.groupMembersId.size == model.groupMembersImage.size){
+                itemBinding.rvGroupMembers.visibility = View.VISIBLE
+                itemBinding.tvGroupSize.visibility = View.GONE
+                val selectedMembers = ArrayList<SelectedMembers>()
+                for (i in model.groupMembersId.indices) {
+                    selectedMembers.add(
+                        SelectedMembers(
+                            model.groupMembersId[i],
+                            model.groupMembersImage[i]
+                        )
+                    )
+                }
+
+                val adapter = CardMemberListItemsAdapter(context, selectedMembers, false)
+                itemBinding.rvGroupMembers.layoutManager = GridLayoutManager(context, 6)
+                itemBinding.rvGroupMembers.adapter = adapter
+            } else {
+                itemBinding.rvGroupMembers.visibility = View.GONE
+                itemBinding.tvGroupSize.visibility = View.VISIBLE
+                itemBinding.tvGroupSize.text =
+                    context.resources.getString(R.string.group_members_size) + ": " +
+                            (model.groupMembersId.size).toString()
+            }
 
         }
 

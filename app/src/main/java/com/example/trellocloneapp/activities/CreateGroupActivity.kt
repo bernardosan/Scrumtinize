@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
-import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
@@ -34,6 +33,8 @@ class CreateGroupActivity : BaseActivity() {
     private var binding: ActivityCreateGroupBinding? = null
     private var mSelectedImageFileUri: Uri? = null
     private var mGroupImageURL: String = ""
+
+    private var mUser: User? = null
 
     private val mAssignedMembers = ArrayList<User>()
     private val assignedMembersId = ArrayList<String>()
@@ -86,6 +87,11 @@ class CreateGroupActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding?.root)
         setupActionBar()
+
+        if(intent.hasExtra(Constants.USERS)){
+            mUser = intent.getParcelableExtra(Constants.USERS)!!
+        }
+
         setupSelectedMembersList()
 
         binding?.toolbarAddGroup?.setNavigationOnClickListener {
@@ -126,7 +132,7 @@ class CreateGroupActivity : BaseActivity() {
             }
         }*/
 
-        selectedMembersList.add(SelectedMembers(getCurrentUserId(), ""))
+        selectedMembersList.add(SelectedMembers(mUser!!.id, mUser!!.image))
         binding?.rvSelectedMembersList?.layoutManager = GridLayoutManager(this, 6)
         mAdapter = CardMemberListItemsAdapter(this, selectedMembersList, true)
         binding?.rvSelectedMembersList?.adapter = mAdapter
@@ -230,14 +236,17 @@ class CreateGroupActivity : BaseActivity() {
 
     private fun createGroup(){
 
-        assignedMembersId.add(getCurrentUserId())
+        assignedMembersId.add(mUser!!.id)
+
 
         val group = Group(
             "",
             binding?.etGroupName?.text.toString(),
             mGroupImageURL,
             getCurrentUserId(),
-            assignedMembersId
+            ArrayList(),
+            assignedMembersId,
+            arrayListOf(mUser!!.image)
         )
 
         FirestoreClass().createGroup(this, group)
