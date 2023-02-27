@@ -200,7 +200,7 @@ class CreateGroupActivity : BaseActivity() {
         // Check if the permission was denied and show rationale
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)){
             Constants.showRationaleDialog(this, getString(R.string.app_name),
-                getString(R.string.app_name) + "needs to Access Your External Storage")
+                getString(R.string.app_name) + " " + getString(R.string.need_access_external_storage))
         }
         else {
             requestPermission.launch(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE))

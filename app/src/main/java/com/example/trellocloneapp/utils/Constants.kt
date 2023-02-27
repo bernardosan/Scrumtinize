@@ -7,6 +7,11 @@ import android.net.Uri
 import android.webkit.MimeTypeMap
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
+
+import android.content.Intent
+import android.provider.Settings
+
 
 object Constants {
 
@@ -23,7 +28,7 @@ object Constants {
     //const val CREATED_BY: String = "createdBy"
     const val TASK_LIST: String = "taskList"
     //const val CARD_LIST: String = "cardList"
-    const val STATE: String = "state"
+    //const val STATE: String = "state"
     const val GROUPS: String = "groups"
     const val GROUP: String = "group"
     const val GROUPS_ID: String = "groupsId"
@@ -75,6 +80,15 @@ object Constants {
         val builder: AlertDialog.Builder = AlertDialog.Builder(activity)
         builder.setTitle(title).setMessage(message).setPositiveButton("Cancel") {
                 dialog, _ -> dialog.dismiss()
+        }.setNegativeButton("Settings"){
+            dialog,_ ->
+            dialog.dismiss()
+            val intent = Intent(
+                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                Uri.fromParts("package", activity.packageName, null)
+            )
+            startActivity(activity,intent, null)
+
         }
         builder.create().show()
     }

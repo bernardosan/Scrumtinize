@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Bernardo/AndroidStudioProjects/Birth2minutes/TrelloCloneApp/app/src/main/res/layout/activity_create_board.xml" value="0.1" />
         <entry key="..\:/Users/Bernardo/AndroidStudioProjects/Birth2minutes/TrelloCloneApp/app/src/main/res/layout/activity_create_group.xml" value="0.2046875" />
         <entry key="..\:/Users/Bernardo/AndroidStudioProjects/Birth2minutes/TrelloCloneApp/app/src/main/res/layout/activity_groups.xml" value="0.1" />
         <entry key="..\:/Users/Bernardo/AndroidStudioProjects/Birth2minutes/TrelloCloneApp/app/src/main/res/layout/activity_members.xml" value="0.264" />
