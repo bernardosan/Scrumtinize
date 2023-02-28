@@ -1,7 +1,6 @@
 package com.example.trellocloneapp.firebase
 
 import android.app.Activity
-import android.provider.ContactsContract
 import android.util.Log
 import android.widget.Toast
 import com.example.trellocloneapp.activities.*
@@ -47,26 +46,47 @@ class FirestoreClass {
             }
     }
 
-    fun getBoardsList(activity: MainActivity){
-        mFireStore.collection(Constants.BOARDS)
-            .whereArrayContains(Constants.ASSIGNED_TO,getCurrentUserId())
-            .get()
-            .addOnSuccessListener {
-                    document->
-                Log.i(activity.javaClass.simpleName,document.documents.toString())
-                val boardList: ArrayList<Board> = ArrayList()
-                for(i in document.documents){
-                    val board = i.toObject(Board::class.java)!!
-                    board.documentId = i.id
-                    boardList.add(board)
+    fun getBoardsList(activity: MainActivity, groups: Boolean, user: User? = null){
+
+        if(!groups) {
+            mFireStore.collection(Constants.BOARDS)
+                .whereArrayContains(Constants.ASSIGNED_TO, getCurrentUserId())
+                .get()
+                .addOnSuccessListener { document ->
+                    Log.i(activity.javaClass.simpleName, document.documents.toString())
+                    val boardList: ArrayList<Board> = ArrayList()
+                    for (i in document.documents) {
+                        val board = i.toObject(Board::class.java)!!
+                        board.documentId = i.id
+                        boardList.add(board)
+                    }
+                    activity.hideProgressDialog()
+                    activity.boardsListToUI(boardList)
                 }
-                activity.hideProgressDialog()
-                activity.boardsListToUI(boardList)
-            }
-            .addOnFailureListener {
-                activity.hideProgressDialog()
-                Log.e(activity.javaClass.simpleName,"Error while creating the board",it)
-            }
+                .addOnFailureListener {
+                    activity.hideProgressDialog()
+                    Log.e(activity.javaClass.simpleName, "Error while creating the board", it)
+                }
+        } else {
+            mFireStore.collection(Constants.BOARDS)
+                .whereArrayContainsAny(Constants.GROUPS_ID, user!!.groups)
+                .get()
+                .addOnSuccessListener { document ->
+                    Log.i(activity.javaClass.simpleName, document.documents.toString())
+                    val boardList: ArrayList<Board> = ArrayList()
+                    for (i in document.documents) {
+                        val board = i.toObject(Board::class.java)!!
+                        board.documentId = i.id
+                        boardList.add(board)
+                    }
+                    activity.hideProgressDialog()
+                    activity.boardsListToUI(boardList)
+                }
+                .addOnFailureListener {
+                    activity.hideProgressDialog()
+                    Log.e(activity.javaClass.simpleName, "Error while creating the board", it)
+                }
+        }
     }
 
     fun getBoardsFromGroups(activity: MainActivity, user: User){

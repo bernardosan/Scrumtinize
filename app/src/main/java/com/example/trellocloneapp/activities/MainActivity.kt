@@ -8,6 +8,7 @@ import android.content.SharedPreferences
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
@@ -40,6 +41,7 @@ open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelecte
 
     private var binding: ActivityMainBinding? = null
     private var mUser: User? = null
+    private var groups: Boolean = false
     private lateinit var mSharedPreferences: SharedPreferences
     private lateinit var mAdapter: BoardAdapter
 
@@ -96,9 +98,13 @@ open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelecte
         showProgressDialog(resources.getString(R.string.please_wait))
         FirestoreClass().updateUserData(this, true)
         super.onResume()
-
     }
 
+    override fun onRestart() {
+        showProgressDialog(resources.getString(R.string.please_wait))
+        FirestoreClass().updateUserData(this, true)
+        super.onRestart()
+    }
 
     fun boardsListToUI(boardsList: ArrayList<Board>) {
 
@@ -163,6 +169,32 @@ open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelecte
         } else {
             doubleBackToExit()
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_boards, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.action_board_member->{
+                if(groups){
+                    groups = false
+                    showProgressDialog(resources.getString(R.string.please_wait))
+                    FirestoreClass().updateUserData(this, true)
+                }
+
+            }
+            R.id.action_group_member->{
+                if(!groups){
+                    groups = true
+                    showProgressDialog(resources.getString(R.string.please_wait))
+                    FirestoreClass().updateUserData(this, true)
+                }
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -254,7 +286,7 @@ open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelecte
 
 
         if (readBoardsList) {
-            FirestoreClass().getBoardsList(this)
+            FirestoreClass().getBoardsList(this, groups, mUser)
         } else {
             hideProgressDialog()
         }
@@ -264,7 +296,7 @@ open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelecte
     private fun deleteBoard(boardId: String) {
         showProgressDialog(getString(R.string.please_wait))
         FirestoreClass().deleteBoard(this, boardId)
-        FirestoreClass().getBoardsList(this)
+        FirestoreClass().getBoardsList(this, groups, mUser)
     }
 
 
@@ -295,7 +327,7 @@ open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelecte
                 //mAdapter.removeItem(position)
                 board.assignedTo.remove(getCurrentUserId())
                 FirestoreClass().assignMemberToBoard(this, board)
-                FirestoreClass().getBoardsList(this)
+                FirestoreClass().getBoardsList(this, groups, mUser)
             }
         } else {
             builder.setMessage("Are you sure you want to delete ${board.name} board?")
@@ -309,7 +341,7 @@ open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelecte
             dialogInterface.dismiss()
             mAdapter.restoreItem(board, position)
             showProgressDialog(resources.getString(R.string.please_wait))
-            FirestoreClass().getBoardsList(this)
+            FirestoreClass().getBoardsList(this, groups, mUser)
         }
         val alertDialog: AlertDialog = builder.create()
         alertDialog.setCancelable(false)
