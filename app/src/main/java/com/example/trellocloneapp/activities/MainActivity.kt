@@ -41,9 +41,10 @@ open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelecte
 
     private var binding: ActivityMainBinding? = null
     private var mUser: User? = null
-    private var groups: Boolean = false
     private lateinit var mSharedPreferences: SharedPreferences
     private lateinit var mAdapter: BoardAdapter
+
+    var groups: Boolean = false
 
 
     @SuppressLint("NotifyDataSetChanged")
@@ -51,7 +52,6 @@ open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelecte
         if (result.resultCode == RESULT_OK) {
             Toast.makeText(this, "Boards list updated!", Toast.LENGTH_SHORT).show()
             binding?.rvBoardsList?.adapter?.notifyDataSetChanged()
-            FirestoreClass().updateUserData(this,readBoardsList = true)
         }
     }
 
@@ -95,15 +95,8 @@ open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onResume() {
-        showProgressDialog(resources.getString(R.string.please_wait))
         FirestoreClass().updateUserData(this, true)
         super.onResume()
-    }
-
-    override fun onRestart() {
-        showProgressDialog(resources.getString(R.string.please_wait))
-        FirestoreClass().updateUserData(this, true)
-        super.onRestart()
     }
 
     fun boardsListToUI(boardsList: ArrayList<Board>) {
@@ -119,10 +112,10 @@ open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelecte
 
             binding?.rvBoardsList?.setHasFixedSize(true)
 
-
-            mAdapter.enableItemSwipeToDelete(this, binding?.rvBoardsList!!, boardsList)
-
-            mAdapter.enableItemSwipeToEdit(this, binding?.rvBoardsList!!)
+            if(!groups) {
+                mAdapter.enableItemSwipeToDelete(this, binding?.rvBoardsList!!, boardsList)
+                mAdapter.enableItemSwipeToEdit(this, binding?.rvBoardsList!!)
+            }
 
             mAdapter.setOnClickListener(object : BoardAdapter.OnClickListener {
                 override fun onClick(position: Int, model: Board) {
@@ -181,7 +174,6 @@ open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelecte
             R.id.action_board_member->{
                 if(groups){
                     groups = false
-                    showProgressDialog(resources.getString(R.string.please_wait))
                     FirestoreClass().updateUserData(this, true)
                 }
 
@@ -189,7 +181,6 @@ open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelecte
             R.id.action_group_member->{
                 if(!groups){
                     groups = true
-                    showProgressDialog(resources.getString(R.string.please_wait))
                     FirestoreClass().updateUserData(this, true)
                 }
             }
@@ -235,13 +226,10 @@ open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelecte
     fun updateNavigationUserDetails(user: User, readBoardsList: Boolean) {
 
         mUser = user
-
         val tvUserName = findViewById<TextView>(R.id.tv_username)
         val tvUserDescription = findViewById<TextView>(R.id.tv_user_description)
         val navUserImage = findViewById<CircleImageView>(R.id.nav_user_image)
         val progressBar = findViewById<ProgressBar>(R.id.progressBarNavHeader)
-
-        hideProgressDialog()
 
         progressBar?.visibility = View.VISIBLE
         navUserImage?.visibility = View.INVISIBLE
@@ -252,7 +240,7 @@ open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelecte
         } else {
             tvUserDescription?.visibility = View.INVISIBLE
         }
-        // Load the user image in the ImageView.
+
         Glide
             .with(this@MainActivity)
             .load(user.image) // URL of the image
@@ -305,7 +293,6 @@ open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelecte
         val editor: SharedPreferences.Editor = mSharedPreferences.edit()
         editor.putBoolean(Constants.FCM_TOKEN_UPDATED, true)
         editor.apply()
-        showProgressDialog(resources.getString(R.string.please_wait))
         FirestoreClass().updateUserData(this, true)
     }
 

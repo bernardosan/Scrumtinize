@@ -140,7 +140,7 @@ class BoardAdapter(private val boardList: ArrayList<Board>, val context: Context
     }
 
 
-    fun enableItemSwipeToDelete(context: MainActivity, recyclerView: RecyclerView, boardList: ArrayList<Board>) {
+    fun enableItemSwipeToDelete(activity: MainActivity, recyclerView: RecyclerView, boardList: ArrayList<Board>) {
         val helper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.START) {
 
             private val background = ColorDrawable()
@@ -148,18 +148,13 @@ class BoardAdapter(private val boardList: ArrayList<Board>, val context: Context
             private val clearPaint = Paint().apply { xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR) }
             //private val userId = FirebaseAuth.getInstance().currentUser!!.uid
 
-            /*override fun getMovementFlags(
+            override fun getMovementFlags(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder
             ): Int {
-                /**
-                 * To disable "swipe" for specific item return 0 here.
-                 * For example:
-                 * if (viewHolder?.itemViewType == YourAdapter.SOME_TYPE) return 0
-                 * if (viewHolder?.adapterPosition == 0) return 0
-                 */
+                if (activity.groups) return 0
                 return super.getMovementFlags(recyclerView, viewHolder)
-            }*/
+            }
 
 
             override fun onMove(
@@ -175,7 +170,7 @@ class BoardAdapter(private val boardList: ArrayList<Board>, val context: Context
                 viewHolder: RecyclerView.ViewHolder,
                 direction: Int
             ) { // remove from adapter
-                context.alertDialogForRemoveMember(boardList[viewHolder.adapterPosition], viewHolder.adapterPosition)
+                activity.alertDialogForRemoveMember(boardList[viewHolder.adapterPosition], viewHolder.adapterPosition)
             }
 
             override fun onChildDraw(c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
@@ -240,7 +235,7 @@ class BoardAdapter(private val boardList: ArrayList<Board>, val context: Context
                  * if (viewHolder?.itemViewType == YourAdapter.SOME_TYPE) return 0
                  * if (viewHolder?.adapterPosition == 0) return 0
                  */
-                //if (viewHolder.adapterPosition == 10) return 0
+                if (activity.groups) return 0
                 return super.getMovementFlags(recyclerView, viewHolder)
             }
 

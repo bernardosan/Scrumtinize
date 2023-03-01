@@ -76,7 +76,6 @@ class MyProfileActivity : BaseActivity() {
         }
 
 
-        showProgressDialog(resources.getString(R.string.please_wait))
         FirestoreClass().updateUserData(this@MyProfileActivity)
 
         binding?.toolbarMyProfile?.setNavigationOnClickListener {

@@ -3,6 +3,7 @@ package com.example.trellocloneapp.firebase
 import android.app.Activity
 import android.util.Log
 import android.widget.Toast
+import com.example.trellocloneapp.R
 import com.example.trellocloneapp.activities.*
 import com.example.trellocloneapp.models.Board
 import com.example.trellocloneapp.models.Group
@@ -191,6 +192,7 @@ class FirestoreClass {
     }
 
     fun updateUserData(activity: Activity, readBoardsList: Boolean = false){
+        (activity as BaseActivity).showProgressDialog(activity.resources.getString(R.string.please_wait))
         mFireStore.collection(Constants.USERS)
             .document(getCurrentUserId())
             .get()
@@ -201,6 +203,7 @@ class FirestoreClass {
                     is SignInActivity -> activity.signInSuccess()
                     is MainActivity-> activity.updateNavigationUserDetails(loggedInUser!!, readBoardsList)
                     is MyProfileActivity -> activity.setUserDataInUI(loggedInUser!!)
+                    is CreateBoardActivity -> activity.hideProgressDialog()
                 }
 
             }
@@ -210,6 +213,7 @@ class FirestoreClass {
                     is SignInActivity -> activity.hideProgressDialog()
                     is MainActivity -> activity.hideProgressDialog()
                     is MyProfileActivity -> activity.hideProgressDialog()
+                    is CreateBoardActivity -> activity.hideProgressDialog()
                 }
 
                 Log.e("signInUser", "Failed signing in user", e)
