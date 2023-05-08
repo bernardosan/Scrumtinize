@@ -60,11 +60,9 @@ class MembersActivity : BaseActivity() {
         } else if(intent.hasExtra(Constants.GROUPS)){
             mGroup = intent.getParcelableExtra(Constants.GROUPS)!!
             binding?.llGroupStats?.visibility = View.VISIBLE
-
-            binding?.etGroupId?.setText(mGroup.documentId)
             binding?.etGroupId?.keyListener = null
             binding?.etGroupId?.setTextIsSelectable(true)
-
+            binding?.etGroupId?.setText(mGroup.documentId)
             binding?.tilGroupId?.setEndIconOnClickListener {
                 val clipboard: ClipboardManager =
                     getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -117,16 +115,22 @@ class MembersActivity : BaseActivity() {
                 dialogInterface.dismiss()
                 mAdapter.removeItem(position)
                 if(intent.hasExtra(Constants.GROUPS)) {
-                    mGroup.groupMembersId.removeAt(position)
-                    mGroup.groupMembersImage.removeAt(position)
-                    FirestoreClass().assignMemberToGroup(this, mGroup)
-                    setResult(RESULT_FIRST_USER)
+                    val i = mGroup.groupMembersId.indexOf(getCurrentUserId())
+                    mGroup.groupMembersId.removeAt(i)
+                    mGroup.groupMembersImage.removeAt(i)
+
+                    //removing group from user's groups arraylist and updating in db
+                    user.groups.remove(mGroup.documentId)
+                    val userHashMap = HashMap<String, Any?>()
+                    userHashMap[Constants.GROUPS] = user.groups
+                    showProgressDialog(resources.getString(R.string.please_wait))
+                    FirestoreClass().updateUserData(this,getCurrentUserId(), userHashMap)
                 } else {
-                    mBoardDetails.assignedTo.removeAt(position)
+                    mBoardDetails.assignedTo.remove(getCurrentUserId())
                     FirestoreClass().assignMemberToBoard(this, mBoardDetails, user)
-                    setResult(RESULT_FIRST_USER)
+                    setResult(1)
+                    finish()
                 }
-                finish()
             }
         } else {
             if(intent.hasExtra(Constants.GROUPS)) {
@@ -153,6 +157,12 @@ class MembersActivity : BaseActivity() {
         val alertDialog: AlertDialog = builder.create()
         alertDialog.setCancelable(false)
         alertDialog.show()
+    }
+
+    fun removeUserFromGroupSuccessfully(){
+        FirestoreClass().assignMemberToGroup(this, mGroup, null)
+        setResult(3)
+        finish()
     }
 
     private fun dialogSearchMember(){

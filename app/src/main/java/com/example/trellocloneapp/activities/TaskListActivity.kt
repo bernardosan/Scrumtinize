@@ -36,6 +36,8 @@ class TaskListActivity :BaseActivity() {
             FirestoreClass().getBoardDetails(this, mBoardDetails.documentId)
         } else if(result.resultCode == RESULT_FIRST_USER){
             finish()
+        } else if(result.resultCode == 3){
+            finish()
         }
     }
 
@@ -135,7 +137,7 @@ class TaskListActivity :BaseActivity() {
                 resultLauncher.launch(intent)
             }
             R.id.action_groups ->{
-                val intent = Intent(this, GroupsMembersActivity::class.java)
+                val intent = Intent(this, GroupMembersActivity::class.java)
                 intent.putExtra(Constants.BOARD_DETAIL, mBoardDetails)
                 resultLauncher.launch(intent)
             }

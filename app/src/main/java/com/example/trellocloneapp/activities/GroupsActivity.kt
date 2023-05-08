@@ -40,7 +40,7 @@ class GroupsActivity : BaseActivity() {
                     group.groupMembersId
             }
             callForGroupList()
-        } else if(result.resultCode == RESULT_FIRST_USER){
+        } else if(result.resultCode == 3){
             callForGroupList()
         }
     }

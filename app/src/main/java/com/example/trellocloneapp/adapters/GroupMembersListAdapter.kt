@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.trellocloneapp.R
 import com.example.trellocloneapp.databinding.ItemMemberGroupBinding
+import com.example.trellocloneapp.models.Board
 import com.example.trellocloneapp.models.Group
 import com.example.trellocloneapp.models.SelectedMembers
 import com.example.trellocloneapp.utils.ItemMoveCallback
@@ -20,6 +21,7 @@ class GroupMembersListAdapter(private val context: Context, private var list: Ar
     RecyclerView.Adapter<GroupMembersListAdapter.GroupViewHolder>(), ItemMoveCallback.ItemTouchHelperAdapter {
 
     private var onClickListener: OnClickListener? = null
+    private var onLongClickListener: OnLongClickListener? = null
 
 
     inner class GroupViewHolder(val itemBinding: ItemMemberGroupBinding) :
@@ -36,7 +38,7 @@ class GroupMembersListAdapter(private val context: Context, private var list: Ar
                 itemBinding.rvGroupMembers.visibility = View.VISIBLE
                 itemBinding.tvGroupSize.visibility = View.GONE
                 val selectedMembers = ArrayList<SelectedMembers>()
-                for (i in model.groupMembersId.indices) {
+                for (i in model.groupMembersId.distinct().indices) {
                     selectedMembers.add(
                         SelectedMembers(
                             model.groupMembersId[i],
@@ -49,15 +51,14 @@ class GroupMembersListAdapter(private val context: Context, private var list: Ar
                 itemBinding.rvGroupMembers.layoutManager = GridLayoutManager(context, 6)
                 itemBinding.rvGroupMembers.adapter = adapter
             } else {
+
                 itemBinding.rvGroupMembers.visibility = View.GONE
                 itemBinding.tvGroupSize.visibility = View.VISIBLE
                 itemBinding.tvGroupSize.text =
                     context.resources.getString(R.string.group_members_size) + ": " +
                             (model.groupMembersId.size).toString()
             }
-
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupViewHolder {
@@ -86,16 +87,39 @@ class GroupMembersListAdapter(private val context: Context, private var list: Ar
             }
         }
 
+        holder.itemView.setOnLongClickListener {
+            onLongClickListener!!.onLongClick(position, list[position])
+            true
+        }
     }
 
     interface OnClickListener {
         fun onClick(position: Int)
     }
 
+    interface  OnLongClickListener{
+        fun onLongClick(position: Int, group: Group){
+        }
+    }
+
     fun setOnClickListener(onClickListener: OnClickListener) {
         this.onClickListener = onClickListener
     }
 
+    fun setOnLongClickListener(onLongClickListener: OnLongClickListener){
+        this.onLongClickListener = onLongClickListener
+    }
+
+
+    fun removeItem(position: Int) {
+        list.removeAt(position)
+        notifyItemRemoved(position)
+    }
+
+    fun restoreItem(group: Group, position: Int) {
+        list.add(position, group)
+        notifyItemInserted(position)
+    }
 
     override fun getItemCount(): Int {
         return list.size

@@ -1,6 +1,7 @@
 package com.example.trellocloneapp.activities
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
@@ -21,7 +22,7 @@ import com.example.trellocloneapp.utils.Constants
 
 
 
-class GroupsMembersActivity : BaseActivity() {
+class GroupMembersActivity : BaseActivity() {
 
     private var mAssignedGroupList: ArrayList<Group> = ArrayList()
     private var binding: ActivityGroupMembersBinding? = null
@@ -41,6 +42,9 @@ class GroupsMembersActivity : BaseActivity() {
             callForGroupList()
         } else if(result.resultCode == RESULT_CANCELED) {
             callForGroupList()
+        } else if(result.resultCode == 3){
+            setResult(3)
+            finish()
         }
     }
 
@@ -80,7 +84,7 @@ class GroupsMembersActivity : BaseActivity() {
     private fun setupActionBar() {
         setSupportActionBar(binding?.toolbarGroupMembers)
         binding?.toolbarGroupMembers?.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
-        binding?.toolbarGroupMembers?.title = resources.getString(R.string.groups)
+        binding?.toolbarGroupMembers?.setTitle(mBoardDetails.name)
     }
 
     fun callForGroupList(){
@@ -89,6 +93,42 @@ class GroupsMembersActivity : BaseActivity() {
             showProgressDialog(resources.getString(R.string.please_wait))
             FirestoreClass().getGroupsAssignedToBoard(this, mBoardDetails)
         }
+    }
+
+    fun alertDialogForRemoveGroup(group: Group, position: Int) {
+        mAdapter?.removeItem(position)
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Alert")
+        builder.setIcon(android.R.drawable.ic_dialog_alert)
+        if(group.groupMembersId.contains(getCurrentUserId())) {
+            builder.setMessage("You want to remove the group (${group.title}) from the board? \nYou may lose your access to this board.")
+            builder.setIcon(android.R.drawable.ic_dialog_alert)
+            builder.setPositiveButton("Yes") { dialogInterface, _ ->
+                dialogInterface.dismiss()
+                group.assignedBoards.remove(mBoardDetails.documentId)
+                mBoardDetails.groupsId.remove(group.documentId)
+                showProgressDialog(resources.getString(R.string.please_wait))
+                FirestoreClass().updateBoard(this, mBoardDetails, group, false)
+            }
+        } else {
+            builder.setMessage("Are you sure you want to delete the group (${group.title})?")
+            builder.setIcon(android.R.drawable.ic_dialog_alert)
+            builder.setPositiveButton("Yes") { dialogInterface, _ ->
+                dialogInterface.dismiss()
+                mAssignedGroupList.removeAt(position)
+                group.assignedBoards.remove(mBoardDetails.documentId)
+                mBoardDetails.groupsId.remove(group.documentId)
+                showProgressDialog(resources.getString(R.string.please_wait))
+                FirestoreClass().updateBoard(this, mBoardDetails, group, false)
+            }
+        }
+        builder.setNegativeButton("No") { dialogInterface, _ ->
+            dialogInterface.dismiss()
+            mAdapter?.restoreItem(group, position)
+        }
+        val alertDialog: AlertDialog = builder.create()
+        alertDialog.setCancelable(false)
+        alertDialog.show()
     }
 
     fun setupGroupRecyclerView(){
@@ -107,6 +147,12 @@ class GroupsMembersActivity : BaseActivity() {
                 }
             }
         )
+
+        mAdapter!!.setOnLongClickListener(object : GroupMembersListAdapter.OnLongClickListener {
+                override fun onLongClick(position: Int, group: Group) {
+                    alertDialogForRemoveGroup(group, position)
+                }
+        })
 
         //val itemTouchHelper = ItemTouchHelper(ItemMoveCallback(mAdapter as RecyclerView.Adapter<RecyclerView.ViewHolder>))
         // itemTouchHelper.attachToRecyclerView(binding?.rvGroupsList)
@@ -141,7 +187,7 @@ class GroupsMembersActivity : BaseActivity() {
     fun addGroup(group: Group){
         mBoardDetails.groupsId.add(group.documentId)
         group.assignedBoards.add(mBoardDetails.documentId)
-        FirestoreClass().updateBoard(this, mBoardDetails, group)
+        FirestoreClass().updateBoard(this, mBoardDetails, group, true)
     }
 
     fun addGroupSuccessfully(group: Group){

@@ -14,6 +14,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestoreSettings
+import java.lang.reflect.Member
 
 class FirestoreClass {
 
@@ -140,7 +141,7 @@ class FirestoreClass {
             }
     }
 
-    fun updateBoard(activity: Activity, boardInfo: Board, group: Group? = null){
+    fun updateBoard(activity: Activity, boardInfo: Board, group: Group? = null, isAddingGroupToBoard: Boolean = false){
 
         val boardHashMap = HashMap<String, Any>()
         when (activity) {
@@ -148,7 +149,7 @@ class FirestoreClass {
                 boardHashMap[Constants.NAME] = boardInfo.name
                 boardHashMap[Constants.IMAGE] = boardInfo.image
             }
-            is GroupsMembersActivity -> {
+            is GroupMembersActivity -> {
                 boardHashMap[Constants.GROUPS_ID] = boardInfo.groupsId
             }
         }
@@ -161,9 +162,9 @@ class FirestoreClass {
                     is CreateBoardActivity -> {
                         activity.boardCreatedSuccessfully()
                     }
-                    is GroupsMembersActivity -> {
+                    is GroupMembersActivity -> {
                         if (group != null) {
-                            updateGroup(activity, group)
+                            updateGroup(activity, group,false)
                         }
                     }
                 }
@@ -171,7 +172,7 @@ class FirestoreClass {
             }
             .addOnFailureListener {
                 it.printStackTrace()
-                if( activity is GroupsMembersActivity){
+                if( activity is GroupMembersActivity){
                     activity.hideProgressDialog()
                 }
                 Log.e(activity.javaClass.simpleName,"Error writing document")
@@ -235,6 +236,37 @@ class FirestoreClass {
                     }
                     is MyProfileActivity -> {
                         activity.profileUpdateSuccess()
+                    }
+                }
+            }
+            .addOnFailureListener {
+                Log.e(activity.javaClass.simpleName,"Error while creating a board.")
+                Toast.makeText(activity, "Error when updating profile!", Toast.LENGTH_SHORT).show()
+            }
+
+
+    }
+
+    fun updateUserData(activity: Activity, userId: String, Data: HashMap<String, Any?>){
+        val userHashMap = HashMap<String, Any>()
+
+        if(activity is MembersActivity){
+            Data[Constants.GROUPS].let {
+                if (it != null) {
+                    userHashMap[Constants.GROUPS] = it
+                }
+            }
+        }
+
+        mFireStore.collection(Constants.USERS)
+            .document(userId)
+            .update(userHashMap)
+            .addOnSuccessListener {
+                Log.i(activity.javaClass.simpleName, "Profile")
+                Toast.makeText(activity, "Updated Successfully!", Toast.LENGTH_SHORT).show()
+                when(activity){
+                    is MembersActivity ->{
+                        activity.removeUserFromGroupSuccessfully()
                     }
                 }
             }
@@ -457,7 +489,7 @@ class FirestoreClass {
 
     }
 
-    fun getGroupsAssignedToBoard(activity: GroupsMembersActivity, board: Board) {
+    fun getGroupsAssignedToBoard(activity: GroupMembersActivity, board: Board) {
         mFireStore.collection(Constants.GROUP)
             .whereArrayContains(Constants.ASSIGNED_BOARDS,board.documentId)
             .get()
@@ -479,7 +511,7 @@ class FirestoreClass {
     }
 
 
-    fun getGroup(activity: GroupsMembersActivity, id: String){
+    fun getGroup(activity: GroupMembersActivity, id: String){
         mFireStore.collection(Constants.GROUP)
             .document(id)
             .get()
@@ -540,14 +572,14 @@ class FirestoreClass {
     }
 
 
-    fun updateGroup(activity: Activity, group: Group){
+    fun updateGroup(activity: Activity, group: Group, isAddingGroup: Boolean? = false){
         val groupHashMap = HashMap<String, Any>()
 
         if(activity is CreateGroupActivity) {
             groupHashMap[Constants.NAME] = group.title
             groupHashMap[Constants.IMAGE] = group.image
             groupHashMap[Constants.GROUP_MEMBERS_ID] = group.image
-        } else if (activity is GroupsMembersActivity) {
+        } else if (activity is GroupMembersActivity) {
             groupHashMap[Constants.ASSIGNED_BOARDS] = group.assignedBoards
         }
         mFireStore.collection(Constants.GROUP)
@@ -556,12 +588,16 @@ class FirestoreClass {
             .addOnSuccessListener {
                 if(activity is CreateGroupActivity) {
                     activity.groupCreatedSuccessfully(group)
-                } else if(activity is GroupsMembersActivity){
-                    activity.addGroupSuccessfully(group)
+                } else if(activity is GroupMembersActivity){
+                    if(isAddingGroup == true) {
+                        activity.addGroupSuccessfully(group)
+                    } else {
+                        activity.hideProgressDialog()
+                    }
                 }
             }
             .addOnFailureListener {
-                if( activity is GroupsMembersActivity){
+                if( activity is GroupMembersActivity){
                     activity.hideProgressDialog()
                 }
                 Log.e(activity.javaClass.simpleName,"Error writing document")
