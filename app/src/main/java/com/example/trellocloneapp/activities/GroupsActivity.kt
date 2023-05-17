@@ -97,7 +97,7 @@ class GroupsActivity : BaseActivity() {
         mAdapter = GroupListAdapter(mAssignedGroupList)
 
         binding?.rvGroupsList?.layoutManager = when {
-            mAdapter.itemCount > 5 -> {
+            mAdapter.itemCount > 6 -> {
                 GridLayoutManager(
                     this,
                     if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) 2 else 4,

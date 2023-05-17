@@ -32,6 +32,10 @@ abstract class BaseActivity : AppCompatActivity() {
         mProgressDialog.show()
     }
 
+    fun isProgressDialogOpen(): Boolean{
+        return mProgressDialog.isShowing
+    }
+
     fun hideProgressDialog(){
         mProgressDialog.dismiss()
     }

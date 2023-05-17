@@ -10,10 +10,12 @@ import com.example.trellocloneapp.models.Group
 import com.example.trellocloneapp.models.User
 import com.example.trellocloneapp.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestoreSettings
+import java.lang.IllegalArgumentException
 import java.lang.reflect.Member
 
 class FirestoreClass {
@@ -53,41 +55,104 @@ class FirestoreClass {
         if(!groups) {
             mFireStore.collection(Constants.BOARDS)
                 .whereArrayContains(Constants.ASSIGNED_TO, getCurrentUserId())
-                .get()
-                .addOnSuccessListener { document ->
-                    Log.i(activity.javaClass.simpleName, document.documents.toString())
-                    val boardList: ArrayList<Board> = ArrayList()
-                    for (i in document.documents) {
-                        val board = i.toObject(Board::class.java)!!
-                        board.documentId = i.id
-                        boardList.add(board)
+                .orderBy(Constants.NAME)
+                .addSnapshotListener { document, error ->
+
+                    if (error != null) {
+                        Log.w("SNAPSHOT", "Listen error", error)
+                        return@addSnapshotListener
                     }
-                    activity.hideProgressDialog()
-                    activity.boardsListToUI(boardList)
-                }
-                .addOnFailureListener {
-                    activity.hideProgressDialog()
-                    Log.e(activity.javaClass.simpleName, "Error while creating the board", it)
+
+                    for (change in document!!.documentChanges) {
+
+                        if(!activity.isProgressDialogOpen()){
+                            activity.showProgressDialog(activity.resources.getString(R.string.please_wait))
+                        }
+
+                        if (change.type == DocumentChange.Type.MODIFIED  ) {
+                            Log.d("SNAPSHOT", "New Data: ${change.document.data}")
+                        } else {
+                            activity.hideProgressDialog()
+                        }
+
+                        val source = if (document.metadata.isFromCache) {
+                            Log.i(activity.javaClass.simpleName, document.documents.toString())
+                            val boardList: ArrayList<Board> = ArrayList()
+                            for (i in document.documents) {
+                                val board = i.toObject(Board::class.java)!!
+                                board.documentId = i.id
+                                boardList.add(board)
+                            }
+                            activity.hideProgressDialog()
+                            activity.boardsListToUI(boardList)
+                        } else {
+                            Log.i(activity.javaClass.simpleName, document.documents.toString())
+                            val boardList: ArrayList<Board> = ArrayList()
+                            for (i in document.documents) {
+                                val board = i.toObject(Board::class.java)!!
+                                board.documentId = i.id
+                                boardList.add(board)
+                            }
+                            activity.hideProgressDialog()
+                            activity.boardsListToUI(boardList)
+                        }
+                    }
+
                 }
         } else {
-            mFireStore.collection(Constants.BOARDS)
-                .whereArrayContainsAny(Constants.GROUPS_ID, user!!.groups)
-                .get()
-                .addOnSuccessListener { document ->
-                    Log.i(activity.javaClass.simpleName, document.documents.toString())
-                    val boardList: ArrayList<Board> = ArrayList()
-                    for (i in document.documents) {
-                        val board = i.toObject(Board::class.java)!!
-                        board.documentId = i.id
-                        boardList.add(board)
+
+            try {
+                mFireStore.collection(Constants.BOARDS)
+                    .whereArrayContainsAny(Constants.GROUPS_ID, user!!.groups)
+                    .orderBy(Constants.NAME)
+                    .addSnapshotListener { document, error ->
+
+                        if (error != null) {
+                            Log.w("SNAPSHOT", "Listen error", error)
+                            return@addSnapshotListener
+                        }
+
+                        for (change in document!!.documentChanges) {
+
+                            if(!activity.isProgressDialogOpen()){
+                                activity.showProgressDialog(activity.resources.getString(R.string.please_wait))
+                            }
+
+                            if (change.type == DocumentChange.Type.MODIFIED  ) {
+                                Log.d("SNAPSHOT", "New Data: ${change.document.data}")
+                            } else {
+                                activity.hideProgressDialog()
+                            }
+
+                            val source = if (document.metadata.isFromCache) {
+                                Log.i(activity.javaClass.simpleName, document.documents.toString())
+                                val boardList: ArrayList<Board> = ArrayList()
+                                for (i in document.documents) {
+                                    val board = i.toObject(Board::class.java)!!
+                                    board.documentId = i.id
+                                    boardList.add(board)
+                                }
+                                activity.hideProgressDialog()
+                                activity.boardsListToUI(boardList)
+                            } else {
+                                Log.i(activity.javaClass.simpleName, document.documents.toString())
+                                val boardList: ArrayList<Board> = ArrayList()
+                                for (i in document.documents) {
+                                    val board = i.toObject(Board::class.java)!!
+                                    board.documentId = i.id
+                                    boardList.add(board)
+                                }
+                                activity.hideProgressDialog()
+                                activity.boardsListToUI(boardList)
+                            }
+                        }
+
                     }
-                    activity.hideProgressDialog()
-                    activity.boardsListToUI(boardList)
-                }
-                .addOnFailureListener {
-                    activity.hideProgressDialog()
-                    Log.e(activity.javaClass.simpleName, "Error while creating the board", it)
-                }
+            } catch(e: IllegalArgumentException){
+                Toast.makeText(activity, "Error: more than 10 boards assigned to your groups", Toast.LENGTH_SHORT).show()
+                activity.hideProgressDialog()
+                activity.groups = false
+            }
         }
     }
 

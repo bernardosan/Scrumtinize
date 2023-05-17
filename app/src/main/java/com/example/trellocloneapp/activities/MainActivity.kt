@@ -92,11 +92,15 @@ open class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelecte
             resultLauncher.launch(intent)
         }
 
+        FirestoreClass().updateUserData(this, true)
+
+        FirestoreClass().getBoardsList(this, groups, mUser)
+
     }
 
-    override fun onResume() {
-        FirestoreClass().updateUserData(this, true)
-        super.onResume()
+    override fun onRestart() {
+        FirestoreClass().getBoardsList(this, groups, mUser)
+        super.onRestart()
     }
 
     fun boardsListToUI(boardsList: ArrayList<Board>) {
